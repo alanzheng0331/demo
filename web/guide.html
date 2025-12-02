@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 兼职指南</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏（和index.html完全一致） */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.login {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 返回首页按钮样式 */
+        .back-home-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .back-home-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+
+        .back-home-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        /* 主内容区 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .page-desc {
+            text-align: center;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 60px;
+            line-height: 1.6;
+        }
+
+        /* 指南分类导航 */
+        .guide-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .guide-tab {
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .guide-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .guide-tab:hover:not(.active) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        /* 指南内容区 - 切换容器 */
+        .guide-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 每个标签对应的内容区域 - 默认隐藏 */
+        .tab-content {
+            display: none;
+        }
+
+        /* 激活的内容区域显示 */
+        .tab-content.active {
+            display: block;
+        }
+
+        .guide-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .section-content {
+            padding-left: 65px;
+        }
+
+        .guide-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .guide-item {
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .guide-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .guide-item h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .guide-item h4::before {
+            content: '•';
+            color: #667eea;
+            font-size: 24px;
+        }
+
+        .guide-item p {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .guide-item ul {
+            padding-left: 20px;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .guide-item ul li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        /* 底部（和index.html完全一致） */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 60px 20px 30px;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: #667eea;
+            border-radius: 1px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: white;
+            margin-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 20px;
+            }
+
+            .main-container {
+                padding-top: 120px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .section-content {
+                padding-left: 0;
+            }
+
+            .back-home-btn {
+                padding: 8px 25px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .guide-tab {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <h1>易兼职</h1>
+            </a>
+            <div class="nav-buttons">
+                <a href="index.html"class="nav-btn login" >返回首页</a>
+                <a href="login.html" class="nav-btn home">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+
+        <h2 class="page-title">兼职指南</h2>
+        <p class="page-desc">
+            无论是兼职新手还是有经验的老手，这份指南都能帮你避开陷阱、提高效率，
+            让你的兼职之路更加顺畅。从防骗技巧到薪资谈判，全方位为你保驾护航。
+        </p>
+
+        <!-- 指南分类导航 -->
+        <div class="guide-tabs">
+            <div class="guide-tab active" data-tab="anti-fraud">防骗技巧</div>
+            <div class="guide-tab" data-tab="interview">面试准备</div>
+            <div class="guide-tab" data-tab="salary">薪资谈判</div>
+            <div class="guide-tab" data-tab="rights">权益保障</div>
+            <div class="guide-tab" data-tab="time">时间管理</div>
+        </div>
+
+        <!-- 指南内容 - 切换区域 -->
+        <div class="guide-content">
+            <!-- 1. 防骗技巧 -->
+            <div class="tab-content active" id="anti-fraud">
+                <section class="guide-section">
+                    <div class="section-header">
+                        <div class="section-icon">🛡️</div>
+                        <h3 class="section-title">兼职防骗技巧</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="guide-list">
+                            <div class="guide-item">
+                                <h4>警惕预先收费的兼职</h4>
+                                <p>任何要求先交"押金"、"培训费"、"服装费"、"保证金"的兼职都要高度警惕，正规兼职不会要求求职者预先支付任何费用。</p>
+                                <p>典型骗局：某"打字员兼职"要求先交200元押金，声称入职后返还，收款后却以各种理由拒绝安排工作，甚至拉黑求职者。</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>核实招聘信息真实性</h4>
+                                <p>通过企业官网、天眼查、企查查等渠道核实招聘方信息，对于模糊不清的公司名称、地址、联系方式要格外小心。</p>
+                                <ul>
+                                    <li>要求提供固定办公地址并实地考察（拒绝仅线上沟通）</li>
+                                    <li>通过官方渠道联系企业确认招聘信息真伪</li>
+                                    <li>避免通过私人微信/QQ/手机号沟通重要事宜</li>
+                                    <li>拒绝"无公司名称""无需面试直接上岗"的兼职</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>保护个人信息安全</h4>
+                                <p>不要轻易提供银行卡密码、身份证正反面照片、手持身份证照片、短信验证码等敏感信息，入职时仅提供必要的身份信息复印件即可。</p>
+                                <p class="highlight">特别提醒：凡是要求提供短信验证码的，极有可能是诈骗！</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>警惕高报酬低要求的陷阱</h4>
+                                <p>如果一份兼职宣称"轻松月入过万"、"无需经验"、"不限时间地点"，且工作内容简单（如点赞、刷单、转发），99%是骗局。</p>
+                                <p>理性认知：任何工作的报酬都与付出成正比，兼职薪资通常符合行业平均水平，过高的报酬必然存在陷阱。</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>远离"刷单返利"类兼职</h4>
+                                <p>所有"刷单返利"都是明确的诈骗行为，初期可能给小额返利诱导你加大投入，最终卷走所有资金。</p>
+                                <p>法律提示：刷单本身属于违规行为，参与刷单不仅可能被骗，还需承担相应法律责任。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 2. 面试准备 -->
+            <div class="tab-content" id="interview">
+                <section class="guide-section">
+                    <div class="section-header">
+                        <div class="section-icon">🎯</div>
+                        <h3 class="section-title">兼职面试准备</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="guide-list">
+                            <div class="guide-item">
+                                <h4>面试前：了解兼职核心信息</h4>
+                                <p>面试前务必明确以下信息，避免浪费时间和精力，同时判断是否符合自身需求：</p>
+                                <ul>
+                                    <li>工作内容：具体做什么、难度如何、是否需要特定技能</li>
+                                    <li>工作时间：具体时段、是否固定、能否灵活调整</li>
+                                    <li>工作地点：详细地址、交通是否便利、是否有通勤补贴</li>
+                                    <li>薪资细节：时薪/日薪/计件工资、结算周期、发放方式</li>
+                                    <li>其他要求：是否需要自备工具、是否有试用期、试用期薪资</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>材料准备：简洁实用即可</h4>
+                                <p>兼职面试无需复杂材料，根据兼职类型准备核心材料即可：</p>
+                                <ul>
+                                    <li>通用材料：身份证原件/复印件、学生证（学生兼职）</li>
+                                    <li>技能类兼职：相关作品/证书（如家教带成绩单、设计带作品集）</li>
+                                    <li>服务类兼职：健康证（餐饮/家政）、无犯罪记录证明（安保）</li>
+                                    <li>简历：1页纸即可，突出与兼职相关的经验和技能，避免冗余</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>形象准备：贴合兼职场景</h4>
+                                <p>兼职面试无需正装，但需根据工作类型调整形象，体现职业态度：</p>
+                                <ul>
+                                    <li>餐饮/服务类：穿着整洁、无夸张饰品、头发梳理整齐</li>
+                                    <li>家教/办公类：穿着得体、简约大方，体现专业感</li>
+                                    <li>体力类：穿着舒适、便于活动，避免高跟鞋/紧身衣</li>
+                                    <li>通用要求：保持干净整洁，避免浓妆、奇装异服、过度纹身暴露</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>面试中：主动提问，理性判断</h4>
+                                <p>面试是双向选择，除了回答问题，也要主动提问，判断兼职是否靠谱：</p>
+                                <ul>
+                                    <li>薪资发放："薪资具体哪天发？如果逾期未发怎么办？"</li>
+                                    <li>工作保障："是否有简单的用工协议？"</li>
+                                    <li>工作边界："是否会安排超出招聘描述的工作内容？"</li>
+                                    <li>离职规则："如果临时无法继续兼职，需要提前多久告知？"</li>
+                                </ul>
+                                <p class="highlight">提示：如果面试官回避核心问题、言辞闪烁，需提高警惕！</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>面试礼仪：细节体现态度</h4>
+                                <ul>
+                                    <li>提前10-15分钟到达，迟到需提前告知并道歉</li>
+                                    <li>主动打招呼，保持微笑和眼神交流</li>
+                                    <li>回答问题简洁明了，不夸大、不隐瞒自身情况</li>
+                                    <li>不随意打断面试官讲话，耐心听完再回应</li>
+                                    <li>面试结束时礼貌道别，可主动询问结果反馈时间</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 3. 薪资谈判 -->
+            <div class="tab-content" id="salary">
+                <section class="guide-section">
+                    <div class="section-header">
+                        <div class="section-icon">💬</div>
+                        <h3 class="section-title">薪资谈判技巧</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="guide-list">
+                            <div class="guide-item">
+                                <h4>谈判前：了解市场行情，明确底线</h4>
+                                <p>提前查询同类兼职的薪资范围，避免被低薪坑，也避免提出不切实际的要求：</p>
+                                <ul>
+                                    <li>家教类：小学30-50元/小时、初高中50-80元/小时、艺考/竞赛80-150元/小时</li>
+                                    <li>餐饮服务：15-25元/小时（含加班费）、节假日通常1.5-2倍薪资</li>
+                                    <li>电商客服：18-25元/小时、晚班/节假日有补贴</li>
+                                    <li>设计类：简单海报50-100元/张、详情页200-500元/个、LOGO设计300-2000元</li>
+                                    <li>跑腿配送：按单计费（基础费+距离费+重量费），日均100-300元</li>
+                                </ul>
+                                <p>明确自己的薪资底线：结合时间成本、交通成本、技能价值，确定可接受的最低薪资。</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>谈判中：突出自身优势，有理有据</h4>
+                                <p>谈判的核心是让对方认可你的价值，而非单纯"要高价"：</p>
+                                <ul>
+                                    <li>突出经验："我有1年的餐饮兼职经验，熟悉点餐、收银流程，能快速上手"</li>
+                                    <li>突出技能："我英语六级，能流利沟通，适合做涉外家教/客服"</li>
+                                    <li>突出稳定性："我每周能固定出勤5天，且能做长期，不用频繁换人"</li>
+                                    <li>突出灵活性："我可以接受晚班/周末上班，能弥补高峰期人手不足"</li>
+                                </ul>
+                                <p>错误示范："我觉得薪资太低，必须涨"（无依据，易引起反感）</p>
+                                <p>正确示范："我有相关的经验，能快速胜任工作，希望薪资能达到20元/小时（行业中等水平）"</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>灵活谈判：不止是数字，还有福利</h4>
+                                <p>如果对方无法满足薪资要求，可争取其他福利，降低时间成本：</p>
+                                <ul>
+                                    <li>通勤补贴："薪资如果无法调整，能否提供交通补贴？"</li>
+                                    <li>餐补/水补："工作时长8小时以上，能否提供工作餐？"</li>
+                                    <li>结算周期："薪资能否日结/周结，而非月结？"</li>
+                                    <li>其他福利：提供饮用水、休息区、加班补贴、节日福利等</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>确认细节：避免口头承诺</h4>
+                                <p>谈妥薪资后，务必确认所有细节，最好写入简单协议：</p>
+                                <ul>
+                                    <li>薪资标准：明确时薪/日薪/计件工资，避免"底薪+提成"模糊表述</li>
+                                    <li>结算周期：精确到日期（如"每周五结算上周薪资"）</li>
+                                    <li>发放渠道：微信/支付宝/银行卡（保留转账记录）</li>
+                                    <li>加班薪资："加班按1.5倍时薪计算，且需提前告知"</li>
+                                    <li>扣款规则：明确哪些情况会扣款（如迟到、失误），扣款上限</li>
+                                </ul>
+                                <p class="highlight">重要：所有薪资约定尽量书面化，哪怕是微信文字确认，避免后续纠纷！</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>谈判禁忌：避免这些错误</h4>
+                                <ul>
+                                    <li>不要一开始就报高价，先询问对方的薪资范围</li>
+                                    <li>不要贬低其他兼职平台/雇主，保持客观</li>
+                                    <li>不要过度妥协，低于底线的薪资无需接受</li>
+                                    <li>不要仅凭口头承诺就上岗，务必确认薪资细节</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 4. 权益保障 -->
+            <div class="tab-content" id="rights">
+                <section class="guide-section">
+                    <div class="section-header">
+                        <div class="section-icon">📜</div>
+                        <h3 class="section-title">兼职权益保障</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="guide-list">
+                            <div class="guide-item">
+                                <h4>签订书面协议，明确权利义务</h4>
+                                <p>即使是短期兼职，也应签订简单的用工协议（劳务协议），避免口头约定：</p>
+                                <ul>
+                                    <li>协议核心内容：工作内容、工作时间、薪资标准、结算方式、双方责任</li>
+                                    <li>协议形式：纸质协议（签字盖章）、电子协议（有电子签名）、微信文字确认（保底方案）</li>
+                                    <li>拒绝"无协议""先上岗后补协议"的要求，协议是维权的核心依据</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>保留所有证据，防患于未然</h4>
+                                <p>从面试到工作结束，全程保留相关证据，以防发生纠纷：</p>
+                                <ul>
+                                    <li>面试/沟通记录：微信/QQ聊天记录、通话录音（提前告知）、招聘信息截图</li>
+                                    <li>工作记录：考勤表、打卡记录、工作任务单、完成的工作成果</li>
+                                    <li>薪资记录：薪资发放转账记录、工资条、对账记录</li>
+                                    <li>其他证据：工作照片/视频、同事证言、企业营业执照复印件</li>
+                                </ul>
+                                <p class="highlight">提示：证据保留至少6个月，避免后续维权无依据！</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>薪资拖欠：及时维权，避免拖延</h4>
+                                <p>如遇薪资拖欠，按以下步骤维权，避免拖延导致证据丢失：</p>
+                                <ol>
+                                    <li>友好沟通：先与雇主沟通，明确拖欠原因和支付时间（保留沟通记录）</li>
+                                    <li>平台投诉：通过兼职平台的投诉通道反馈（如有）</li>
+                                    <li>官方投诉：拨打12333（劳动保障热线）、12315（消费者维权）</li>
+                                    <li>现场投诉：向当地劳动监察大队、市场监督管理局提交材料投诉</li>
+                                    <li>法律途径：金额较大时，可申请劳动仲裁或向法院起诉（小额可走简易程序）</li>
+                                </ol>
+                            </div>
+                            <div class="guide-item">
+                                <h4>工伤/意外：明确责任，及时索赔</h4>
+                                <p>兼职期间发生工伤/意外，雇主需承担相应责任：</p>
+                                <ul>
+                                    <li>紧急处理：先就医，保留诊断证明、医疗费用票据、事故现场证据</li>
+                                    <li>责任认定：证明事故发生在工作时间、工作地点、因工作原因导致</li>
+                                    <li>索赔要求：医疗费、误工费、营养费（根据伤情协商）</li>
+                                    <li>预防措施：提前询问是否购买意外险，高危兼职（如配送、施工）建议自行购买短期意外险</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>拒绝违法/违规工作，保护自身权益</h4>
+                                <p>如发现兼职内容涉及违法违规，立即停止并举报：</p>
+                                <ul>
+                                    <li>违法兼职：刷单、传销、诈骗、泄露信息、售卖假货、违规金融操作</li>
+                                    <li>违规兼职：无资质的家教、无健康证的餐饮服务、超时加班（每日超过8小时）</li>
+                                    <li>维权提示：参与违法兼职不受法律保护，发现后可向警方/相关部门举报</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 5. 时间管理 -->
+            <div class="tab-content" id="time">
+                <section class="guide-section">
+                    <div class="section-header">
+                        <div class="section-icon">⏰</div>
+                        <h3 class="section-title">兼职时间管理</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="guide-list">
+                            <div class="guide-item">
+                                <h4>明确优先级：平衡主业与兼职</h4>
+                                <p>兼职的前提是不影响主业（学生以学习为主，上班族以本职工作为主），避免本末倒置：</p>
+                                <ul>
+                                    <li>学生群体：优先完成学业（上课、作业、考试），利用课余时间兼职，避免逃课/挂科</li>
+                                    <li>上班族：优先完成本职工作，利用下班、周末兼职，避免影响本职工作效率</li>
+                                    <li>宝妈/自由职业者：结合家庭事务/核心工作安排兼职，避免过度劳累</li>
+                                    <li>优先级原则：健康 > 主业 > 兼职，不熬夜、不超时、不影响正常生活</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>制定计划：合理分配时间，提高效率</h4>
+                                <p>提前规划兼职时间，避免临时慌乱，提高时间利用率：</p>
+                                <ul>
+                                    <li>周计划：每周日规划下周兼职时间，明确哪天/哪个时段可兼职，预留弹性时间</li>
+                                    <li>日计划：兼职前列出当天要完成的工作，按优先级排序，避免拖延</li>
+                                    <li>时间块划分：将时间分成固定块（如19:00-21:00家教），避免碎片化时间浪费</li>
+                                    <li>工具辅助：使用日历（手机自带）、待办清单（Notion/滴答清单）记录计划</li>
+                                </ul>
+                                <p>示例（学生）：周一/三/五 18:00-20:00 家教，周二/四 19:00-21:00 自习，周末半天兼职、半天休息</p>
+                            </div>
+                            <div class="guide-item">
+                                <h4>拒绝过度兼职：避免身心透支</h4>
+                                <p>兼职是为了增加收入，而非牺牲健康，需控制兼职时长：</p>
+                                <ul>
+                                    <li>学生：每周兼职时长建议不超过15小时，避免影响学习和休息</li>
+                                    <li>上班族：每周兼职时长建议不超过10小时，避免影响本职工作和睡眠</li>
+                                    <li>通用标准：每天工作（含本职+兼职）不超过12小时，保证7小时以上睡眠</li>
+                                    <li>信号提醒：出现疲劳、注意力不集中、情绪烦躁时，及时减少兼职时长</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>提高效率：在有限时间内赚更多钱</h4>
+                                <p>与其增加兼职时长，不如提高单位时间的效率和价值：</p>
+                                <ul>
+                                    <li>技能提升：学习高价值技能（如设计、剪辑、翻译），替换低时薪兼职（如发传单）</li>
+                                    <li>批量处理：将同类工作批量完成（如一次性完成5个设计稿，而非零散做）</li>
+                                    <li>减少无效时间：兼职途中避免刷手机、闲聊，专注完成工作</li>
+                                    <li>合理通勤：选择就近兼职，或利用通勤时间处理简单工作（如回复消息、整理资料）</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>灵活调整：应对突发情况</h4>
+                                <p>生活中难免有突发情况，需提前与雇主沟通，灵活调整兼职时间：</p>
+                                <ul>
+                                    <li>提前告知：无法按时兼职时，至少提前1天告知雇主，协商调整时间/找人替代</li>
+                                    <li>预留缓冲：每周预留1-2天弹性时间，应对突发的学业/工作/家庭事务</li>
+                                    <li>合理拒绝：如兼职安排与重要事务冲突（如考试、加班、家人生病），果断拒绝</li>
+                                    <li>长期调整：如主业压力增大，及时减少或暂停兼职，待压力缓解后再恢复</li>
+                                </ul>
+                            </div>
+                            <div class="guide-item">
+                                <h4>复盘优化：持续调整时间安排</h4>
+                                <p>每周/每月复盘兼职时间使用情况，持续优化：</p>
+                                <ul>
+                                    <li>记录数据：每周记录兼职时长、收入、效率（如小时收入）</li>
+                                    <li>分析问题：哪些时间效率低？哪些兼职性价比低？哪些时段容易疲劳？</li>
+                                    <li>优化调整：替换低性价比兼职、调整低效时段、增加高价值工作时间</li>
+                                    <li>定期休息：每月预留1-2周的"轻兼职周"，适当放松，避免 burnout</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">联系方式</a></li>
+                    <li><a href="#">加入我们</a></li>
+                    <li><a href="#">企业合作</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>用户服务</h3>
+                <ul>
+                    <li><a href="guide.html">兼职指南</a></li>
+                    <li><a href="#">安全保障</a></li>
+                    <li><a href="#">投诉建议</a></li>
+                    <li><a href="#">兼职防骗</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>商家服务</h3>
+                <ul>
+                    <li><a href="#">商家入驻</a></li>
+                    <li><a href="#">发布兼职</a></li>
+                    <li><a href="#">招聘管理</a></li>
+                    <li><a href="#">商家认证</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">版权声明</a></li>
+                    <li><a href="#">免责条款</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2025 易兼职 All Rights Reserved. 京ICP备12345678号
+        </div>
+    </footer>
+<script src="theme-control.js"></script>
+    <script>
+        // 指南标签切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有标签和内容区域
+            const tabs = document.querySelectorAll('.guide-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            // 标签点击事件
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签的active状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // 给当前点击的标签添加active
+                    this.classList.add('active');
+
+                    // 获取当前标签对应的内容ID
+                    const tabId = this.getAttribute('data-tab');
+                    // 移除所有内容的active状态
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    // 显示对应内容
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // 未完成功能提示（和index.html逻辑一致）
+            const links = document.querySelectorAll('a');
+            links.forEach(link => {
+                if (link.href === '#' || !link.href.includes('.html')) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert(`【${this.textContent.trim()}】功能正在建设中，敬请期待！`);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
