@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员后台 - 兼职管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 20px 0;
+            height: calc(100vh - 70px);
+            position: fixed;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-title {
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+
+        .sidebar-menu li a {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 25px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #f5f7fa;
+            color: #667eea;
+        }
+
+        .sidebar-menu li a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .menu-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* 内容区 */
+        .content {
+            flex: 1;
+            margin-left: 220px;
+            padding: 30px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* 表格样式 */
+        .job-table, .resume-table, .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .job-table th, .resume-table th, .user-table th {
+            background: #f5f7fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e1e1e1;
+        }
+
+        .job-table td, .resume-table td, .user-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e1e1e1;
+            color: #666;
+        }
+
+        .job-table tr:hover, .resume-table tr:hover, .user-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        /* 状态标签 */
+        .status-tag {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-offline {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-pending {
+            background: #fff8e1;
+            color: #ff8f00;
+        }
+
+        .status-approved {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* 新增用户状态标签 */
+        .status-normal {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-frozen {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* 操作按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background: #1976d2;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        .approve-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .approve-btn:hover {
+            background: #388e3c;
+        }
+
+        .reject-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .reject-btn:hover {
+            background: #d32f2f;
+        }
+
+        .view-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            background: #1976d2;
+        }
+
+        /* 新增用户操作按钮 */
+        .freeze-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .freeze-btn:hover {
+            background: #f57c00;
+        }
+
+        .unfreeze-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .unfreeze-btn:hover {
+            background: #388e3c;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid #e1e1e1;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .page-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* 提示信息 */
+        .msg-box {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success-msg {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: none;
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            display: none;
+        }
+
+        /* 发布兼职弹窗 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            display: none;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 编辑兼职弹窗 */
+        #editModal {
+            display: none;
+        }
+
+        /* 简历详情弹窗 */
+        #resumeDetailModal {
+            display: none;
+            max-width: 800px;
+        }
+
+        .resume-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .resume-info h4 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .resume-info p {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .resume-desc {
+            grid-column: 1 / 3;
+            background: #f5f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+
+        .resume-desc h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* 审核备注弹窗 */
+        #reviewModal {
+            display: none;
+            max-width: 500px;
+        }
+
+        /* 新增用户冻结/解冻弹窗 */
+        #userStatusModal {
+            display: none;
+            max-width: 500px;
+        }
+
+        /* 内容模块隐藏/显示 */
+        .content-module {
+            display: none;
+        }
+
+        .content-module.active {
+            display: block;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .sidebar-menu li a span {
+                display: none;
+            }
+
+            .content {
+                margin-left: 80px;
+                padding: 20px;
+            }
+
+            .form-row, .resume-detail {
+                grid-template-columns: 1fr;
+            }
+
+            .resume-desc {
+                grid-column: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .job-table th:nth-child(4),
+            .job-table td:nth-child(4),
+            .job-table th:nth-child(5),
+            .job-table td:nth-child(5) {
+                display: none;
+            }
+
+            .resume-table th:nth-child(5),
+            .resume-table td:nth-child(5) {
+                display: none;
+            }
+
+            /* 用户表格响应式 */
+            .user-table th:nth-child(4),
+            .user-table td:nth-child(4),
+            .user-table th:nth-child(5),
+            .user-table td:nth-child(5) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .resume-table th:nth-child(4),
+            .resume-table td:nth-child(4) {
+                display: none;
+            }
+
+            /* 用户表格进一步适配 */
+            .user-table th:nth-child(3),
+            .user-table td:nth-child(3) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-logo">易兼职—管理员后台</div>
+        <div class="header-user">
+            <span>欢迎, 管理员</span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </header>
+
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 侧边栏（新增用户管理菜单） -->
+       <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-title">主菜单</li>
+                <li>
+                    <a href="javascript:void(0)" class="active" onclick="switchModule('job', this)">
+                        <span class="menu-icon">💼</span>
+                        <span>兼职管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" onclick="switchModule('resume', this)">
+                        <span class="menu-icon">📄</span>
+                        <span>简历审核</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" onclick="switchModule('user', this)">
+                        <span class="menu-icon">👥</span>
+                        <span>用户管理</span>
+                    </a>
+                </li>
+                <li class="menu-title">系统管理</li>
+                <li>
+                    <a href="system-setting.html"> <!-- 跳系统设置子页面 -->
+                        <span class="menu-icon">⚙️</span>
+                        <span>系统设置</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="operation-log.html"> <!-- 跳操作日志子页面 -->
+                        <span class="menu-icon">📝</span>
+                        <span>操作日志</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 内容区 -->
+        <div class="content">
+            <!-- 提示信息 -->
+            <div class="msg-box success-msg" id="successMsg">操作成功！</div>
+            <div class="msg-box error-msg" id="errorMsg">操作失败，请重试！</div>
+
+            <!-- 兼职管理模块 -->
+            <div class="content-module active" id="moduleJob">
+                <!-- 原有兼职管理内容，无修改 -->
+                <div class="content-header">
+                    <h1 class="page-title">兼职管理</h1>
+                    <button class="add-btn" onclick="openAddModal()">
+                        <span>+</span> 发布新兼职
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="搜索兼职标题/地点" id="searchKey">
+                        <select class="search-input" id="statusSelect">
+                            <option value="">全部状态</option>
+                            <option value="1">已发布</option>
+                            <option value="0">已下架</option>
+                        </select>
+                        <button class="search-btn" onclick="searchJob()">搜索</button>
+                    </div>
+
+                    <table class="job-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>兼职标题</th>
+                                <th>薪资</th>
+                                <th>工作地点</th>
+                                <th>发布时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobTableBody">
+                            <tr>
+                                <td>1</td>
+                                <td>小学家教辅导（数学/英语）</td>
+                                <td>¥180/小时</td>
+                                <td>朝阳区亚运村</td>
+                                <td>2025-05-01 10:30</td>
+                                <td>
+                                    <span class="status-tag status-online">已发布</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="edit-btn" onclick="openEditModal(1)">编辑</button>
+                                    <button class="delete-btn" onclick="deleteJob(1)">删除</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>短视频剪辑兼职</td>
+                                <td>¥400/条</td>
+                                <td>远程办公</td>
+                                <td>2025-05-03 14:20</td>
+                                <td>
+                                    <span class="status-tag status-online">已发布</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="edit-btn" onclick="openEditModal(2)">编辑</button>
+                                    <button class="delete-btn" onclick="deleteJob(2)">删除</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>奶茶店店员（兼职）</td>
+                                <td>¥28/小时</td>
+                                <td>海淀区中关村</td>
+                                <td>2025-04-28 09:15</td>
+                                <td>
+                                    <span class="status-tag status-offline">已下架</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="edit-btn" onclick="openEditModal(3)">编辑</button>
+                                    <button class="delete-btn" onclick="deleteJob(3)">删除</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>活动现场协助人员</td>
+                                <td>¥150/天</td>
+                                <td>东城区王府井</td>
+                                <td>2025-05-05 16:40</td>
+                                <td>
+                                    <span class="status-tag status-online">已发布</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="edit-btn" onclick="openEditModal(4)">编辑</button>
+                                    <button class="delete-btn" onclick="deleteJob(4)">删除</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>校园推广兼职</td>
+                                <td>¥100/单</td>
+                                <td>海淀区五道口</td>
+                                <td>2025-05-02 11:00</td>
+                                <td>
+                                    <span class="status-tag status-offline">已下架</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="edit-btn" onclick="openEditModal(5)">编辑</button>
+                                    <button class="delete-btn" onclick="deleteJob(5)">删除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev', 'job')">«</a>
+                        <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1, 'job')">1</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage(2, 'job')">2</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage(3, 'job')">3</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage('next', 'job')">»</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 简历审核模块 -->
+            <div class="content-module" id="moduleResume">
+                <!-- 原有简历审核内容，无修改 -->
+                <div class="content-header">
+                    <h1 class="page-title">简历审核</h1>
+                    <div>
+                        <select class="search-input" id="resumeStatusSelect" style="width: auto; display: inline-block; margin-right: 10px;">
+                            <option value="">全部状态</option>
+                            <option value="pending">待审核</option>
+                            <option value="approved">已通过</option>
+                            <option value="rejected">已拒绝</option>
+                        </select>
+                        <button class="search-btn" onclick="searchResume()">筛选</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="搜索姓名/应聘职位/联系方式" id="resumeSearchKey">
+                        <button class="search-btn" onclick="searchResume()">搜索</button>
+                    </div>
+
+                    <table class="resume-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>姓名</th>
+                                <th>应聘职位</th>
+                                <th>联系方式</th>
+                                <th>投递时间</th>
+                                <th>审核状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resumeTableBody">
+                            <tr>
+                                <td>101</td>
+                                <td>张三</td>
+                                <td>小学家教辅导</td>
+                                <td>138****1234</td>
+                                <td>2025-05-10 14:30</td>
+                                <td>
+                                    <span class="status-tag status-pending">待审核</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewResume(101)">查看</button>
+                                    <button class="approve-btn" onclick="reviewResume(101, 'approved')">通过</button>
+                                    <button class="reject-btn" onclick="reviewResume(101, 'rejected')">拒绝</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>102</td>
+                                <td>李四</td>
+                                <td>短视频剪辑兼职</td>
+                                <td>139****5678</td>
+                                <td>2025-05-08 09:15</td>
+                                <td>
+                                    <span class="status-tag status-pending">待审核</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewResume(102)">查看</button>
+                                    <button class="approve-btn" onclick="reviewResume(102, 'approved')">通过</button>
+                                    <button class="reject-btn" onclick="reviewResume(102, 'rejected')">拒绝</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>103</td>
+                                <td>王五</td>
+                                <td>奶茶店店员（兼职）</td>
+                                <td>137****9012</td>
+                                <td>2025-05-01 11:20</td>
+                                <td>
+                                    <span class="status-tag status-rejected">已拒绝</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewResume(103)">查看</button>
+                                    <button class="approve-btn" onclick="reviewResume(103, 'approved')">通过</button>
+                                    <button class="reject-btn" disabled style="background: #ccc; cursor: not-allowed;">拒绝</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>104</td>
+                                <td>赵六</td>
+                                <td>活动现场协助人员</td>
+                                <td>136****3456</td>
+                                <td>2025-05-05 16:40</td>
+                                <td>
+                                    <span class="status-tag status-approved">已通过</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewResume(104)">查看</button>
+                                    <button class="approve-btn" disabled style="background: #ccc; cursor: not-allowed;">通过</button>
+                                    <button class="reject-btn" onclick="reviewResume(104, 'rejected')">拒绝</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>105</td>
+                                <td>钱七</td>
+                                <td>校园推广兼职</td>
+                                <td>135****7890</td>
+                                <td>2025-05-02 11:00</td>
+                                <td>
+                                    <span class="status-tag status-pending">待审核</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewResume(105)">查看</button>
+                                    <button class="approve-btn" onclick="reviewResume(105, 'approved')">通过</button>
+                                    <button class="reject-btn" onclick="reviewResume(105, 'rejected')">拒绝</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev', 'resume')">«</a>
+                        <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1, 'resume')">1</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage(2, 'resume')">2</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage(3, 'resume')">3</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage('next', 'resume')">»</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增：用户管理模块 -->
+            <div class="content-module" id="moduleUser">
+                <div class="content-header">
+                    <h1 class="page-title">用户管理</h1>
+                    <div>
+                        <select class="search-input" id="userStatusSelect" style="width: auto; display: inline-block; margin-right: 10px;">
+                            <option value="">全部状态</option>
+                            <option value="normal">正常</option>
+                            <option value="frozen">已冻结</option>
+                        </select>
+                        <button class="search-btn" onclick="searchUser()">筛选</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="搜索用户名/手机号/邮箱" id="userSearchKey">
+                        <button class="search-btn" onclick="searchUser()">搜索</button>
+                    </div>
+
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>用户ID</th>
+                                <th>用户名</th>
+                                <th>手机号</th>
+                                <th>邮箱</th>
+                                <th>注册时间</th>
+                                <th>账号状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- 静态用户数据 -->
+                            <tr>
+                                <td>201</td>
+                                <td>zhangsan123</td>
+                                <td>138****1234</td>
+                                <td>zhangsan@example.com</td>
+                                <td>2025-04-01 10:30</td>
+                                <td>
+                                    <span class="status-tag status-normal">正常</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewUser(201)">详情</button>
+                                    <button class="freeze-btn" onclick="changeUserStatus(201, 'frozen')">冻结</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>202</td>
+                                <td>lisi456</td>
+                                <td>139****5678</td>
+                                <td>lisi@example.com</td>
+                                <td>2025-04-05 14:20</td>
+                                <td>
+                                    <span class="status-tag status-normal">正常</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewUser(202)">详情</button>
+                                    <button class="freeze-btn" onclick="changeUserStatus(202, 'frozen')">冻结</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>203</td>
+                                <td>wangwu789</td>
+                                <td>137****9012</td>
+                                <td>wangwu@example.com</td>
+                                <td>2025-03-28 09:15</td>
+                                <td>
+                                    <span class="status-tag status-frozen">已冻结</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewUser(203)">详情</button>
+                                    <button class="unfreeze-btn" onclick="changeUserStatus(203, 'normal')">解冻</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>204</td>
+                                <td>zhaoliu000</td>
+                                <td>136****3456</td>
+                                <td>zhaoliu@example.com</td>
+                                <td>2025-04-10 16:40</td>
+                                <td>
+                                    <span class="status-tag status-normal">正常</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewUser(204)">详情</button>
+                                    <button class="freeze-btn" onclick="changeUserStatus(204, 'frozen')">冻结</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>205</td>
+                                <td>qianqi888</td>
+                                <td>135****7890</td>
+                                <td>qianqi@example.com</td>
+                                <td>2025-04-15 11:00</td>
+                                <td>
+                                    <span class="status-tag status-frozen">已冻结</span>
+                                </td>
+                                <td class="btn-group">
+                                    <button class="view-btn" onclick="viewUser(205)">详情</button>
+                                    <button class="unfreeze-btn" onclick="changeUserStatus(205, 'normal')">解冻</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev', 'user')">«</a>
+                        <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1, 'user')">1</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage(2, 'user')">2</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage(3, 'user')">3</a>
+                        <a href="javascript:void(0)" class="page-btn" onclick="changePage('next', 'user')">»</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 原有弹窗：发布兼职、编辑兼职、简历详情、审核备注 -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">发布新兼职</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="addJobForm" onsubmit="return submitAddForm()">
+                <div class="form-group">
+                    <label class="form-label" for="jobTitle">兼职标题</label>
+                    <input type="text" class="form-control" id="jobTitle" name="jobTitle" placeholder="请输入兼职标题" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="salary">薪资范围</label>
+                        <input type="text" class="form-control" id="salary" name="salary" placeholder="例如：¥180/小时" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="location">工作地点</label>
+                        <input type="text" class="form-control" id="location" name="location" placeholder="请输入工作地点" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="payType">结算方式</label>
+                        <select class="form-control" id="payType" name="payType" required>
+                            <option value="">请选择结算方式</option>
+                            <option value="日结">日结</option>
+                            <option value="周结">周结</option>
+                            <option value="月结">月结</option>
+                            <option value="按单结">按单结</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="status">发布状态</label>
+                        <select class="form-control" id="status" name="status" required>
+                            <option value="1">已发布</option>
+                            <option value="0">已下架</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="workTime">工作时间</label>
+                    <input type="text" class="form-control" id="workTime" name="workTime" placeholder="例如：周末9:00-12:00" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="description">兼职描述</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="请详细描述兼职内容" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">发布兼职</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">编辑兼职信息</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="editJobForm" onsubmit="return submitEditForm()">
+                <input type="hidden" id="editJobId" value="">
+                <div class="form-group">
+                    <label class="form-label" for="editJobTitle">兼职标题</label>
+                    <input type="text" class="form-control" id="editJobTitle" name="editJobTitle" placeholder="请输入兼职标题" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="editSalary">薪资范围</label>
+                        <input type="text" class="form-control" id="editSalary" name="editSalary" placeholder="例如：¥180/小时" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editLocation">工作地点</label>
+                        <input type="text" class="form-control" id="editLocation" name="editLocation" placeholder="请输入工作地点" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="editPayType">结算方式</label>
+                        <select class="form-control" id="editPayType" name="editPayType" required>
+                            <option value="">请选择结算方式</option>
+                            <option value="日结">日结</option>
+                            <option value="周结">周结</option>
+                            <option value="月结">月结</option>
+                            <option value="按单结">按单结</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editStatus">发布状态</label>
+                        <select class="form-control" id="editStatus" name="editStatus" required>
+                            <option value="1">已发布</option>
+                            <option value="0">已下架</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editWorkTime">工作时间</label>
+                    <input type="text" class="form-control" id="editWorkTime" name="editWorkTime" placeholder="例如：周末9:00-12:00" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editDescription">兼职描述</label>
+                    <textarea class="form-control" id="editDescription" name="editDescription" rows="4" placeholder="请详细描述兼职内容" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">保存修改</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="resumeDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">简历详情</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="resumeDetailContent">
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="close-btn" style="background: #f5f7fa; padding: 8px 20px; border-radius: 6px; font-size: 14px;" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="reviewModalTitle">审核处理</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="reviewForm" onsubmit="return submitReview()">
+                <input type="hidden" id="reviewResumeId" value="">
+                <input type="hidden" id="reviewAction" value="">
+                <div class="form-group">
+                    <label class="form-label" for="reviewRemark">审核备注</label>
+                    <textarea class="form-control" id="reviewRemark" name="reviewRemark" rows="4" placeholder="请输入审核备注（选填）"></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="reviewSubmitBtn">确认审核</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 新增：用户状态修改弹窗（冻结/解冻） -->
+    <div class="modal" id="userStatusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="userStatusModalTitle">冻结用户</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="userStatusForm" onsubmit="return submitUserStatus()">
+                <input type="hidden" id="userStatusId" value="">
+                <input type="hidden" id="userStatusAction" value="">
+                <div class="form-group">
+                    <label class="form-label" for="userStatusRemark">操作备注</label>
+                    <textarea class="form-control" id="userStatusRemark" name="userStatusRemark" rows="4" placeholder="请输入操作备注（选填），例如：违规发布信息/恶意投递简历等"></textarea>
+                    <p style="margin-top: 8px; color: #999; font-size: 12px;">冻结后用户将无法登录系统，解冻后恢复正常</p>
+                </div>
+                <button type="submit" class="submit-btn" id="userStatusSubmitBtn">确认冻结</button>
+            </form>
+        </div>
+    </div>
+
+<script src="theme-control.js"></script>
+    <script>
+        let currentJobPage = 1;
+        let currentResumePage = 1;
+        let currentUserPage = 1; // 新增用户分页变量
+        const totalJobPages = 3;
+        const totalResumePages = 3;
+        const totalUserPages = 3; // 新增用户总分页数
+        
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = 'login.html';
+            }
+        }
+        
+function switchModule(moduleName, el) {
+    // 移除所有菜单的active
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.classList.remove('active');
+    });
+    // 给当前点击的菜单加active
+    el.classList.add('active');
+    // 记录到本地存储（防止刷新丢失）
+    localStorage.setItem('adminActiveModule', moduleName);
+}
+
+// 2. 解析URL参数的工具函数
+function getUrlParam(name) {
+    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
+    const r = window.location.search.substr(1).match(reg);
+    return r ? decodeURIComponent(r[2]) : '';
+}
+
+// 3. 页面加载时：优先解析子页面传来的参数，再读本地存储
+window.onload = function() {
+    // 步骤1：获取子页面传来的module参数（比如 ?module=resume）
+    const fromSubPageModule = getUrlParam('module');
+    // 步骤2：有参数则用参数，无则读本地存储，默认job
+    const targetModule = fromSubPageModule || localStorage.getItem('adminActiveModule') || 'job';
+    
+    // 步骤3：找到对应菜单并加active
+    const targetLink = document.querySelector(`.sidebar-menu a[onclick*="switchModule('${targetModule}'"]`);
+    if (targetLink) {
+        // 清空所有active
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.classList.remove('active');
+        });
+        // 给目标菜单加active
+        targetLink.classList.add('active');
+    }
+};
+
+        function switchModule(moduleName, element) {
+            if (element.classList.contains('active')) {
+                return;
+            }
+            // 1. 隐藏所有模块
+            document.getElementById('moduleJob').classList.remove('active');
+            document.getElementById('moduleResume').classList.remove('active');
+            document.getElementById('moduleUser').classList.remove('active');
+    
+             // 2. 移除所有菜单的 active 样式
+             const sidebarLinks = document.querySelectorAll('.sidebar-menu li a');
+             sidebarLinks.forEach(link => link.classList.remove('active'));
+    
+            // 3. 激活目标模块和菜单（直接传入点击元素，避免 event.target 问题）
+            document.getElementById('module' + moduleName.charAt(0).toUpperCase() + moduleName.slice(1)).classList.add('active');
+            element.classList.add('active');
+    
+            hideMessages();
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+            document.getElementById('addJobForm').reset();
+            hideMessages();
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').style.display = 'none';
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('resumeDetailModal').style.display = 'none';
+            document.getElementById('reviewModal').style.display = 'none';
+            document.getElementById('userStatusModal').style.display = 'none'; // 新增关闭用户状态弹窗
+            hideMessages();
+        }
+
+        function openEditModal(id) {
+            hideMessages();
+            const jobData = {
+                1: {
+                    title: '小学家教辅导（数学/英语）',
+                    salary: '¥180/小时',
+                    location: '朝阳区亚运村',
+                    payType: '日结',
+                    status: '1',
+                    workTime: '周末9:00-12:00',
+                    description: '辅导小学3-6年级学生的数学和英语作业，讲解知识点，培养学习习惯。'
+                },
+                2: {
+                    title: '短视频剪辑兼职',
+                    salary: '¥400/条',
+                    location: '远程办公',
+                    payType: '按单结',
+                    status: '1',
+                    workTime: '不限时间，每周完成5条以上',
+                    description: '根据提供的素材剪辑短视频，要求会使用剪映/PR，有创意，能把控视频节奏。'
+                },
+                3: {
+                    title: '奶茶店店员（兼职）',
+                    salary: '¥28/小时',
+                    location: '海淀区中关村',
+                    payType: '日结',
+                    status: '0',
+                    workTime: '工作日18:00-22:00',
+                    description: '负责奶茶制作、收银、清洁等工作，要求有健康证，服务态度好。'
+                },
+                4: {
+                    title: '活动现场协助人员',
+                    salary: '¥150/天',
+                    location: '东城区王府井',
+                    payType: '日结',
+                    status: '1',
+                    workTime: '5月10日-5月12日 9:00-18:00',
+                    description: '协助活动现场布置、引导嘉宾、物料管理等工作，要求吃苦耐劳，有责任心。'
+                },
+                5: {
+                    title: '校园推广兼职',
+                    salary: '¥100/单',
+                    location: '海淀区五道口',
+                    payType: '按单结',
+                    status: '0',
+                    workTime: '课余时间',
+                    description: '在校园内推广APP下载，完成注册任务，按单结算，多劳多得。'
+                }
+            };
+            
+            const data = jobData[id] || {
+                title: '',
+                salary: '',
+                location: '',
+                payType: '',
+                status: '1',
+                workTime: '',
+                description: ''
+            };
+            
+            document.getElementById('editJobId').value = id;
+            document.getElementById('editJobTitle').value = data.title;
+            document.getElementById('editSalary').value = data.salary;
+            document.getElementById('editLocation').value = data.location;
+            document.getElementById('editPayType').value = data.payType;
+            document.getElementById('editStatus').value = data.status;
+            document.getElementById('editWorkTime').value = data.workTime;
+            document.getElementById('editDescription').value = data.description;
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function deleteJob(id) {
+            if (confirm('确定要删除该兼职吗？删除后不可恢复！')) {
+                const rows = document.querySelectorAll('#jobTableBody tr');
+                let deleted = false;
+                
+                rows.forEach(row => {
+                    if (row.cells[0].textContent === id.toString()) {
+                        row.remove();
+                        deleted = true;
+                        showSuccessMessage('兼职删除成功！');
+                        
+                        const tableBody = document.getElementById('jobTableBody');
+                        if (tableBody.children.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">暂无兼职数据</td></tr>';
+                        }
+                    }
+                });
+                
+                if (!deleted) {
+                    showErrorMessage('删除失败，未找到该兼职！');
+                }
+            }
+        }
+
+        function searchJob() {
+            hideMessages();
+            const searchKey = document.getElementById('searchKey').value.trim().toLowerCase();
+            const status = document.getElementById('statusSelect').value;
+            
+            const rows = document.querySelectorAll('#jobTableBody tr');
+            let hasResults = false;
+            
+            rows.forEach(row => {
+                const title = row.cells[1].textContent.toLowerCase();
+                const location = row.cells[3].textContent.toLowerCase();
+                const rowStatus = row.querySelector('.status-tag').classList.contains('status-online') ? '1' : '0';
+                
+                const matchSearch = !searchKey || title.includes(searchKey) || location.includes(searchKey);
+                const matchStatus = !status || rowStatus === status;
+                
+                if (matchSearch && matchStatus) {
+                    row.style.display = '';
+                    hasResults = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            const tableBody = document.getElementById('jobTableBody');
+            if (!hasResults) {
+                const emptyRow = tableBody.querySelector('tr td[colspan="7"]');
+                if (!emptyRow) {
+                    tableBody.innerHTML += '<tr id="emptyRow"><td colspan="7" style="text-align: center; color: #999;">未找到符合条件的兼职</td></tr>';
+                }
+            } else {
+                const emptyRow = document.getElementById('emptyRow');
+                emptyRow && emptyRow.remove();
+            }
+            
+            currentJobPage = 1;
+            updatePagination('job');
+        }
+
+        function submitAddForm() {
+            const jobTitle = document.getElementById('jobTitle').value.trim();
+            const salary = document.getElementById('salary').value.trim();
+            const location = document.getElementById('location').value.trim();
+            
+            if (!jobTitle || !salary || !location) {
+                alert('请填写必填字段！');
+                return false;
+            }
+            
+            const status = document.getElementById('status').value;
+            const statusClass = status === '1' ? 'status-online' : 'status-offline';
+            const statusText = status === '1' ? '已发布' : '已下架';
+            
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
+            const rows = document.querySelectorAll('#jobTableBody tr');
+            const newId = rows.length > 0 ? parseInt(rows[rows.length-1].cells[0].textContent) + 1 : 1;
+            
+            const newRow = `
+                <tr>
+                    <td>${newId}</td>
+                    <td>${jobTitle}</td>
+                    <td>${salary}</td>
+                    <td>${location}</td>
+                    <td>${timeStr}</td>
+                    <td>
+                        <span class="status-tag ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(${newId})">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(${newId})">删除</button>
+                    </td>
+                </tr>
+            `;
+            
+            const tableBody = document.getElementById('jobTableBody');
+            const emptyRow = document.getElementById('emptyRow');
+            emptyRow && emptyRow.remove();
+            tableBody.insertAdjacentHTML('beforeend', newRow);
+            
+            closeModal();
+            showSuccessMessage('兼职发布成功！');
+            
+            return false;
+        }
+
+        function submitEditForm() {
+            const id = document.getElementById('editJobId').value;
+            const title = document.getElementById('editJobTitle').value.trim();
+            const salary = document.getElementById('editSalary').value.trim();
+            const location = document.getElementById('editLocation').value.trim();
+            
+            if (!title || !salary || !location) {
+                alert('请填写必填字段！');
+                return false;
+            }
+            
+            const status = document.getElementById('editStatus').value;
+            const statusClass = status === '1' ? 'status-online' : 'status-offline';
+            const statusText = status === '1' ? '已发布' : '已下架';
+            
+            const rows = document.querySelectorAll('#jobTableBody tr');
+            let updated = false;
+            
+            rows.forEach(row => {
+                if (row.cells[0].textContent === id) {
+                    row.cells[1].textContent = title;
+                    row.cells[2].textContent = salary;
+                    row.cells[3].textContent = document.getElementById('editLocation').value;
+                    
+                    const statusTag = row.querySelector('.status-tag');
+                    statusTag.className = `status-tag ${statusClass}`;
+                    statusTag.textContent = statusText;
+                    
+                    updated = true;
+                }
+            });
+            
+            closeModal();
+            if (updated) {
+                showSuccessMessage('兼职信息修改成功！');
+            } else {
+                showErrorMessage('修改失败，未找到该兼职！');
+            }
+            
+            return false;
+        }
+
+        function viewResume(id) {
+            hideMessages();
+            
+            const resumeData = {
+                101: {
+                    name: '张三',
+                    position: '小学家教辅导',
+                    phone: '138****1234',
+                    email: 'zhangsan@example.com',
+                    gender: '男',
+                    age: '22',
+                    education: '本科',
+                    major: '计算机科学与技术',
+                    school: '北京科技大学',
+                    experience: '1年家教经验，辅导小学3-6年级数学/英语',
+                    deliveryTime: '2025-05-10 14:30',
+                    status: 'pending',
+                    description: '本人是北京科技大学计算机专业大三学生，有较强的学习能力和责任心。擅长小学数学/英语辅导，有1年家教经验；熟练掌握Python编程、短视频剪辑（PR/剪映）；时间灵活，周末和节假日均可工作，做事认真负责，希望找到合适的兼职机会。'
+                },
+                102: {
+                    name: '李四',
+                    position: '短视频剪辑兼职',
+                    phone: '139****5678',
+                    email: 'lisi@example.com',
+                    gender: '女',
+                    age: '21',
+                    education: '本科',
+                    major: '数字媒体艺术',
+                    school: '北京传媒学院',
+                    experience: '2年短视频剪辑经验，熟练使用PR/AE/剪映',
+                    deliveryTime: '2025-05-08 09:15',
+                    status: 'pending',
+                    description: '数字媒体艺术专业大二学生，擅长短视频剪辑、特效制作、字幕制作。有2年短视频剪辑经验，曾为多个自媒体账号制作视频内容，熟悉抖音、快手、小红书等平台的视频风格和规则。可以保证每周完成5条以上视频剪辑，质量有保障。'
+                },
+                103: {
+                    name: '王五',
+                    position: '奶茶店店员（兼职）',
+                    phone: '137****9012',
+                    email: 'wangwu@example.com',
+                    gender: '女',
+                    age: '20',
+                    education: '大专',
+                    major: '酒店管理',
+                    school: '北京职业技术学院',
+                    experience: '无相关经验，有餐饮服务意愿',
+                    deliveryTime: '2025-05-01 11:20',
+                    status: 'rejected',
+                    description: '酒店管理专业学生，性格开朗，服务意识强。虽然没有奶茶店工作经验，但学习能力强，愿意接受培训。可以在工作日晚上和周末上班，能够长期稳定工作。持有健康证，无不良嗜好。',
+                    reviewRemark: '无相关工作经验，不符合岗位要求'
+                },
+                104: {
+                    name: '赵六',
+                    position: '活动现场协助人员',
+                    phone: '136****3456',
+                    email: 'zhaoliu@example.com',
+                    gender: '男',
+                    age: '23',
+                    education: '本科',
+                    major: '市场营销',
+                    school: '北京工商大学',
+                    experience: '多次活动执行经验，吃苦耐劳',
+                    deliveryTime: '2025-05-05 16:40',
+                    status: 'approved',
+                    description: '市场营销专业大四学生，有丰富的活动执行经验。曾参与多个线下活动的策划和执行工作，擅长现场协调、物料管理、嘉宾引导等工作。身体素质好，能够吃苦耐劳，服从安排，保证活动顺利进行。',
+                    reviewRemark: '符合岗位要求，同意通过'
+                },
+                105: {
+                    name: '钱七',
+                    position: '校园推广兼职',
+                    phone: '135****7890',
+                    email: 'qianqi@example.com',
+                    gender: '男',
+                    age: '20',
+                    education: '本科',
+                    major: '市场营销',
+                    school: '北京理工大学',
+                    experience: '校园代理经验，擅长推广',
+                    deliveryTime: '2025-05-02 11:00',
+                    status: 'pending',
+                    description: '市场营销专业大二学生，有校园代理经验。熟悉校园推广渠道，有丰富的学生资源，擅长线下推广和社群运营。可以快速完成推广任务，保证推广效果，按要求提交推广数据。'
+                }
+            };
+            
+            const data = resumeData[id] || {
+                name: '未知',
+                position: '未知',
+                phone: '未知',
+                email: '未知',
+                gender: '未知',
+                age: '未知',
+                education: '未知',
+                major: '未知',
+                school: '未知',
+                experience: '无',
+                deliveryTime: '未知',
+                status: 'pending',
+                description: '暂无简历描述',
+                reviewRemark: ''
+            };
+            
+            const statusText = {
+                'pending': '待审核',
+                'approved': '已通过',
+                'rejected': '已拒绝'
+            };
+            
+            const statusClass = {
+                'pending': 'status-pending',
+                'approved': 'status-approved',
+                'rejected': 'status-rejected'
+            };
+            
+            let reviewRemarkHtml = '';
+            if (data.reviewRemark) {
+                reviewRemarkHtml = `
+                    <div style="margin-top: 15px; padding: 10px; background: #f5f7fa; border-radius: 6px;">
+                        <h4 style="margin-bottom: 5px; color: #666;">审核备注：</h4>
+                        <p>${data.reviewRemark}</p>
+                    </div>
+                `;
+            }
+            
+            const resumeHtml = `
+                <div class="resume-detail">
+                    <div class="resume-info">
+                        <h4>基本信息</h4>
+                        <p><strong>姓名：</strong>${data.name}</p>
+                        <p><strong>性别：</strong>${data.gender}</p>
+                        <p><strong>年龄：</strong>${data.age}</p>
+                        <p><strong>学历：</strong>${data.education}</p>
+                        <p><strong>专业：</strong>${data.major}</p>
+                        <p><strong>学校：</strong>${data.school}</p>
+                    </div>
+                    <div class="resume-info">
+                        <h4>应聘信息</h4>
+                        <p><strong>应聘职位：</strong>${data.position}</p>
+                        <p><strong>联系电话：</strong>${data.phone}</p>
+                        <p><strong>电子邮箱：</strong>${data.email}</p>
+                        <p><strong>工作经验：</strong>${data.experience}</p>
+                        <p><strong>投递时间：</strong>${data.deliveryTime}</p>
+                        <p><strong>审核状态：</strong><span class="status-tag ${statusClass[data.status]}">${statusText[data.status]}</span></p>
+                    </div>
+                </div>
+                <div class="resume-desc">
+                    <h4>个人简介/求职描述</h4>
+                    <p>${data.description}</p>
+                    ${reviewRemarkHtml}
+                </div>
+            `;
+            
+            document.getElementById('resumeDetailContent').innerHTML = resumeHtml;
+            document.getElementById('resumeDetailModal').style.display = 'flex';
+        }
+
+        function reviewResume(id, action) {
+            hideMessages();
+            
+            document.getElementById('reviewResumeId').value = id;
+            document.getElementById('reviewAction').value = action;
+            
+            const actionText = action === 'approved' ? '通过' : '拒绝';
+            document.getElementById('reviewModalTitle').textContent = `审核${actionText}`;
+            document.getElementById('reviewSubmitBtn').textContent = `确认${actionText}`;
+            
+            document.getElementById('reviewRemark').value = '';
+            document.getElementById('reviewModal').style.display = 'flex';
+        }
+
+        function submitReview() {
+            const id = document.getElementById('reviewResumeId').value;
+            const action = document.getElementById('reviewAction').value;
+            const remark = document.getElementById('reviewRemark').value.trim();
+            
+            const rows = document.querySelectorAll('#resumeTableBody tr');
+            let updated = false;
+            
+            rows.forEach(row => {
+                if (row.cells[0].textContent === id) {
+                    const statusTag = row.querySelector('.status-tag');
+                    const btnGroup = row.querySelector('.btn-group');
+                    if (action === 'approved') {
+                        statusTag.className = 'status-tag status-approved';
+                        statusTag.textContent = '已通过';
+                        btnGroup.querySelector('.approve-btn').disabled = true;
+                        btnGroup.querySelector('.approve-btn').style.background = '#ccc';
+                        btnGroup.querySelector('.approve-btn').style.cursor = 'not-allowed';
+                    } else {
+                        statusTag.className = 'status-tag status-rejected';
+                        statusTag.textContent = '已拒绝';
+                        btnGroup.querySelector('.reject-btn').disabled = true;
+                        btnGroup.querySelector('.reject-btn').style.background = '#ccc';
+                        btnGroup.querySelector('.reject-btn').style.cursor = 'not-allowed';
+                    }
+                    updated = true;
+                }
+            });
+            
+            closeModal();
+            if (updated) {
+                showSuccessMessage(`简历${action === 'approved' ? '审核通过' : '审核拒绝'}成功！`);
+            } else {
+                showErrorMessage('审核操作失败，未找到该简历！');
+            }
+            
+            return false;
+        }
+
+        // 新增：查看用户详情
+        function viewUser(id) {
+            hideMessages();
+            
+            // 模拟用户详情数据
+            const userData = {
+                201: {
+                    userId: 201,
+                    username: 'zhangsan123',
+                    phone: '138****1234',
+                    email: 'zhangsan@example.com',
+                    registerTime: '2025-04-01 10:30',
+                    status: 'normal',
+                    realName: '张三',
+                    gender: '男',
+                    age: 22,
+                    address: '北京市朝阳区亚运村',
+                    lastLoginTime: '2025-05-15 09:20',
+                    loginCount: 86,
+                    freezeRecord: ''
+                },
+                202: {
+                    userId: 202,
+                    username: 'lisi456',
+                    phone: '139****5678',
+                    email: 'lisi@example.com',
+                    registerTime: '2025-04-05 14:20',
+                    status: 'normal',
+                    realName: '李四',
+                    gender: '女',
+                    age: 21,
+                    address: '北京市海淀区中关村',
+                    lastLoginTime: '2025-05-14 16:30',
+                    loginCount: 72,
+                    freezeRecord: ''
+                },
+                203: {
+                    userId: 203,
+                    username: 'wangwu789',
+                    phone: '137****9012',
+                    email: 'wangwu@example.com',
+                    registerTime: '2025-03-28 09:15',
+                    status: 'frozen',
+                    realName: '王五',
+                    gender: '男',
+                    age: 23,
+                    address: '北京市西城区金融街',
+                    lastLoginTime: '2025-05-10 11:15',
+                    loginCount: 95,
+                    freezeRecord: '2025-05-10 因违规发布虚假兼职信息被冻结'
+                },
+                204: {
+                    userId: 204,
+                    username: 'zhaoliu000',
+                    phone: '136****3456',
+                    email: 'zhaoliu@example.com',
+                    registerTime: '2025-04-10 16:40',
+                    status: 'normal',
+                    realName: '赵六',
+                    gender: '女',
+                    age: 20,
+                    address: '北京市东城区王府井',
+                    lastLoginTime: '2025-05-16 08:45',
+                    loginCount: 68,
+                    freezeRecord: ''
+                },
+                205: {
+                    userId: 205,
+                    username: 'qianqi888',
+                    phone: '135****7890',
+                    email: 'qianqi@example.com',
+                    registerTime: '2025-04-15 11:00',
+                    status: 'frozen',
+                    realName: '钱七',
+                    gender: '男',
+                    age: 24,
+                    address: '北京市海淀区五道口',
+                    lastLoginTime: '2025-05-12 14:50',
+                    loginCount: 102,
+                    freezeRecord: '2025-05-12 因恶意投递简历骚扰商家被冻结'
+                }
+            };
+            
+            const data = userData[id] || {
+                userId: id,
+                username: '未知',
+                phone: '未知',
+                email: '未知',
+                registerTime: '未知',
+                status: 'normal',
+                realName: '未认证',
+                gender: '未知',
+                age: '未知',
+                address: '未填写',
+                lastLoginTime: '从未登录',
+                loginCount: 0,
+                freezeRecord: ''
+            };
+            
+            const statusText = data.status === 'normal' ? '正常' : '已冻结';
+            const statusClass = data.status === 'normal' ? 'status-normal' : 'status-frozen';
+            
+            let freezeRecordHtml = '';
+            if (data.freezeRecord) {
+                freezeRecordHtml = `
+                    <div style="margin-top: 15px; padding: 10px; background: #ffebee; border-radius: 6px;">
+                        <h4 style="margin-bottom: 5px; color: #c62828; font-size: 16px;">冻结记录：</h4>
+                        <p>${data.freezeRecord}</p>
+                    </div>
+                `;
+            }
+            
+            // 复用简历详情弹窗展示用户信息
+            const userHtml = `
+                <div class="resume-detail">
+                    <div class="resume-info">
+                        <h4>账号信息</h4>
+                        <p><strong>用户ID：</strong>${data.userId}</p>
+                        <p><strong>用户名：</strong>${data.username}</p>
+                        <p><strong>手机号：</strong>${data.phone}</p>
+                        <p><strong>电子邮箱：</strong>${data.email}</p>
+                        <p><strong>注册时间：</strong>${data.registerTime}</p>
+                        <p><strong>账号状态：</strong><span class="status-tag ${statusClass}">${statusText}</span></p>
+                    </div>
+                    <div class="resume-info">
+                        <h4>个人信息</h4>
+                        <p><strong>真实姓名：</strong>${data.realName}</p>
+                        <p><strong>性别：</strong>${data.gender}</p>
+                        <p><strong>年龄：</strong>${data.age}</p>
+                        <p><strong>联系地址：</strong>${data.address}</p>
+                        <p><strong>最后登录：</strong>${data.lastLoginTime}</p>
+                        <p><strong>登录次数：</strong>${data.loginCount}次</p>
+                    </div>
+                </div>
+                <div class="resume-desc">
+                    ${freezeRecordHtml || '<p style="text-align: center; color: #666;">暂无异常记录</p>'}
+                </div>
+            `;
+            
+            document.getElementById('resumeDetailContent').innerHTML = userHtml;
+            document.getElementById('resumeDetailModal').style.display = 'flex';
+        }
+
+        // 新增：修改用户状态（冻结/解冻）
+        function changeUserStatus(id, action) {
+            hideMessages();
+            
+            document.getElementById('userStatusId').value = id;
+            document.getElementById('userStatusAction').value = action;
+            
+            const actionText = action === 'frozen' ? '冻结' : '解冻';
+            document.getElementById('userStatusModalTitle').textContent = `${actionText}用户`;
+            document.getElementById('userStatusSubmitBtn').textContent = `确认${actionText}`;
+            
+            document.getElementById('userStatusRemark').value = '';
+            document.getElementById('userStatusModal').style.display = 'flex';
+        }
+
+        // 新增：提交用户状态修改
+        function submitUserStatus() {
+            const id = document.getElementById('userStatusId').value;
+            const action = document.getElementById('userStatusAction').value;
+            const remark = document.getElementById('userStatusRemark').value.trim();
+            
+            const rows = document.querySelectorAll('#userTableBody tr');
+            let updated = false;
+            
+            rows.forEach(row => {
+                if (row.cells[0].textContent === id) {
+                    const statusTag = row.querySelector('.status-tag');
+                    const btnGroup = row.querySelector('.btn-group');
+                    
+                    if (action === 'frozen') {
+                        // 冻结用户
+                        statusTag.className = 'status-tag status-frozen';
+                        statusTag.textContent = '已冻结';
+                        btnGroup.innerHTML = `
+                            <button class="view-btn" onclick="viewUser(${id})">详情</button>
+                            <button class="unfreeze-btn" onclick="changeUserStatus(${id}, 'normal')">解冻</button>
+                        `;
+                    } else {
+                        // 解冻用户
+                        statusTag.className = 'status-tag status-normal';
+                        statusTag.textContent = '正常';
+                        btnGroup.innerHTML = `
+                            <button class="view-btn" onclick="viewUser(${id})">详情</button>
+                            <button class="freeze-btn" onclick="changeUserStatus(${id}, 'frozen')">冻结</button>
+                        `;
+                    }
+                    updated = true;
+                }
+            });
+            
+            closeModal();
+            if (updated) {
+                const actionText = action === 'frozen' ? '冻结' : '解冻';
+                showSuccessMessage(`用户${actionText}成功！${remark ? '备注：' + remark : ''}`);
+            } else {
+                showErrorMessage('用户状态修改失败，未找到该用户！');
+            }
+            
+            return false;
+        }
+
+        // 新增：搜索用户
+        function searchUser() {
+            hideMessages();
+            const searchKey = document.getElementById('userSearchKey').value.trim().toLowerCase();
+            const status = document.getElementById('userStatusSelect').value;
+            
+            const rows = document.querySelectorAll('#userTableBody tr');
+            let hasResults = false;
+            
+            rows.forEach(row => {
+                const username = row.cells[1].textContent.toLowerCase();
+                const phone = row.cells[2].textContent.toLowerCase();
+                const email = row.cells[3].textContent.toLowerCase();
+                const rowStatus = row.querySelector('.status-tag').classList.contains('status-normal') ? 'normal' : 'frozen';
+                
+                const matchSearch = !searchKey || username.includes(searchKey) || phone.includes(searchKey) || email.includes(searchKey);
+                const matchStatus = !status || rowStatus === status;
+                
+                if (matchSearch && matchStatus) {
+                    row.style.display = '';
+                    hasResults = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            const tableBody = document.getElementById('userTableBody');
+            if (!hasResults) {
+                const emptyRow = tableBody.querySelector('tr td[colspan="7"]');
+                if (!emptyRow) {
+                    tableBody.innerHTML += '<tr id="userEmptyRow"><td colspan="7" style="text-align: center; color: #999;">未找到符合条件的用户</td></tr>';
+                }
+            } else {
+                const emptyRow = document.getElementById('userEmptyRow');
+                emptyRow && emptyRow.remove();
+            }
+            
+            currentUserPage = 1;
+            updatePagination('user');
+        }
+
+        // 搜索简历
+        function searchResume() {
+            hideMessages();
+            const searchKey = document.getElementById('resumeSearchKey').value.trim().toLowerCase();
+            const status = document.getElementById('resumeStatusSelect').value;
+            
+            const rows = document.querySelectorAll('#resumeTableBody tr');
+            let hasResults = false;
+            
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const position = row.cells[2].textContent.toLowerCase();
+                const phone = row.cells[3].textContent.toLowerCase();
+                const rowStatus = row.querySelector('.status-tag').classList.contains('status-pending') ? 'pending' : 
+                                  row.querySelector('.status-tag').classList.contains('status-approved') ? 'approved' : 'rejected';
+                
+                const matchSearch = !searchKey || name.includes(searchKey) || position.includes(searchKey) || phone.includes(searchKey);
+                const matchStatus = !status || rowStatus === status;
+                
+                if (matchSearch && matchStatus) {
+                    row.style.display = '';
+                    hasResults = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            const tableBody = document.getElementById('resumeTableBody');
+            if (!hasResults) {
+                const emptyRow = tableBody.querySelector('tr td[colspan="7"]');
+                if (!emptyRow) {
+                    tableBody.innerHTML += '<tr id="resumeEmptyRow"><td colspan="7" style="text-align: center; color: #999;">未找到符合条件的简历</td></tr>';
+                }
+            } else {
+                const emptyRow = document.getElementById('resumeEmptyRow');
+                emptyRow && emptyRow.remove();
+            }
+            
+            currentResumePage = 1;
+            updatePagination('resume');
+        }
+
+        // 分页切换
+        function changePage(page, type) {
+            hideMessages();
+            let currentPage, totalPages;
+            
+            if (type === 'job') {
+                currentPage = currentJobPage;
+                totalPages = totalJobPages;
+            } else if (type === 'resume') {
+                currentPage = currentResumePage;
+                totalPages = totalResumePages;
+            } else if (type === 'user') {
+                currentPage = currentUserPage;
+                totalPages = totalUserPages;
+            }
+            
+            if (page === 'prev') {
+                currentPage = Math.max(1, currentPage - 1);
+            } else if (page === 'next') {
+                currentPage = Math.min(totalPages, currentPage + 1);
+            } else {
+                currentPage = parseInt(page);
+            }
+            
+            if (type === 'job') {
+                currentJobPage = currentPage;
+            } else if (type === 'resume') {
+                currentResumePage = currentPage;
+            } else if (type === 'user') {
+                currentUserPage = currentPage;
+            }
+            
+            updatePagination(type);
+            
+            // 模拟分页数据加载（实际项目中替换为AJAX请求）
+            showSuccessMessage(`已切换到${type === 'job' ? '兼职' : type === 'resume' ? '简历' : '用户'}第${currentPage}页`);
+        }
+
+        // 更新分页按钮状态
+        function updatePagination(type) {
+            const paginationBtns = document.querySelectorAll(`#module${type.charAt(0).toUpperCase() + type.slice(1)} .pagination .page-btn`);
+            let currentPage;
+            
+            if (type === 'job') {
+                currentPage = currentJobPage;
+            } else if (type === 'resume') {
+                currentPage = currentResumePage;
+            } else if (type === 'user') {
+                currentPage = currentUserPage;
+            }
+            
+            paginationBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === currentPage.toString()) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // 显示成功提示
+        function showSuccessMessage(msg) {
+            const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            errorMsg.style.display = 'none';
+            successMsg.textContent = msg || '操作成功！';
+            successMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+
+        // 显示错误提示
+        function showErrorMessage(msg) {
+            const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            successMsg.style.display = 'none';
+            errorMsg.textContent = msg || '操作失败，请重试！';
+            errorMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+
+        // 隐藏提示信息
+        function hideMessages() {
+            document.getElementById('successMsg').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        // 页面加载完成初始化
+        window.onload = function() {
+            hideMessages();
+            // 默认激活第一个模块的分页
+            updatePagination('job');
+        };
+    </script>
+</body>
+</html>
