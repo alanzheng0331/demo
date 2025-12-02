@@ -1,5 +1,3 @@
-
-
 import entity.Student;
 import entity.PartTimeJob;
 import entity.Application;
