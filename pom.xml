@@ -1,29 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
-    <artifactId>jsp-sqlserver-demo</artifactId>
-    <version>1.0.0</version>
+    <!-- 项目基础信息 -->
+    <groupId>com.student</groupId>
+    <artifactId>part-time-system</artifactId>
+    <version>1.0</version>
     <packaging>war</packaging>
 
     <properties>
+        <!-- 统一版本管理 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>4.13.2</junit.version>
     </properties>
 
+    <!-- 最小化依赖 -->
     <dependencies>
-        <!-- 1. SQL Server JDBC 驱动 -->
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>13.2.1.jre8</version>
-        </dependency>
-
-        <!-- 2. Servlet API (JSP 需要) -->
+        <!-- 1. Servlet API (Tomcat 9自带) -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -31,7 +30,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 3. JSP API -->
+        <!-- 2. JSP API (Tomcat 9自带) -->
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>javax.servlet.jsp-api</artifactId>
@@ -39,57 +38,84 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 4. JSTL 标签库 (推荐使用) -->
+        <!-- 3. SQL Server JDBC 驱动 (最小版本) -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>9.4.0.jre8</version>  <!-- 专为JRE 8优化 -->
         </dependency>
 
-        <!-- 5. JSP 标准标签库实现 -->
+        <!-- 4. 基础工具 -->
         <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>2.0.0</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
 
-        <!-- 6. 数据库连接池 (推荐) -->
+        <!-- 添加Tomcat依赖用于编译（仅compile作用域） -->
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>5.0.1</version>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <version>9.0.87</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- 7. 日志框架 -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.36</version>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>9.0.87</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
+    <!-- 构建配置 -->
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>part-time-system</finalName>
+
         <plugins>
-            <!-- Maven WAR 插件 -->
+            <!-- 1. 编译插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- 2. War打包插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.2</version>
-            </plugin>
-            <!-- Maven 编译器插件 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <!-- 3. Tomcat 9 Maven插件 -->
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <!-- 端口配置 -->
+                    <port>8080</port>
+                    <path>/</path>
+
+                    <!-- 编码配置 -->
+                    <uriEncoding>UTF-8</uriEncoding>
+
+                    <!-- Tomcat 9配置 -->
+                    <server>tomcat9</server>
+                    <url>http://localhost:8080/manager/text</url>
+
+                    <!-- 认证配置 -->
+                    <username>admin</username>
+                    <password>admin</password>
                 </configuration>
             </plugin>
         </plugins>
