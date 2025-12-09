@@ -16,3 +16,4 @@ Util 数据库的交互 【开数据库 ——>输入数据库 语句 -》【返
 有疑惑请修改 或删除这个数据包
 
 模板：TestInterface_DAO_SQL
+NPC.88=55+tt%tt+j**j.Class
