@@ -1,4 +1,4 @@
-package DAO_FOR_MYSQL_20252160A0925;
+package DAO_UTIL_SQL_SERVER_20252160A0925.DAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
