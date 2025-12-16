@@ -1,4 +1,4 @@
-package DAO_UTIL_SQL_SERVER_20252160A0925.Util;
+package DAO_UTIL_SQL_SERVER_20252160A0925.DAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.Map;
  */
 public class TestUtil {
     // SQL Server连接配置（替换为你的实际配置）
-    private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=YourDB;encrypt=true;trustServerCertificate=true;";
+    private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=StudentPartTimeJobDB;encrypt=true;trustServerCertificate=true;";
     private static final String USER = "sa";
-    private static final String PASSWORD = "YourPassword";
+    private static final String PASSWORD = "123456";
     private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
     // 加载驱动（仅执行一次）

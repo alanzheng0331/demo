@@ -1,0 +1,38 @@
+CREATE TABLE test_company (
+  COMPANY_ID int IDENTITY(1,1) NOT NULL,
+  ROOT_ID int,
+  Company_name varchar(999),
+  Company_address varchar(999),
+  TXT varchar(9999),
+  PRIMARY KEY (COMPANY_ID)
+);
+
+-- 文档2修改后:
+CREATE TABLE test_resume (
+  RESUME_ID int IDENTITY(1,1) NOT NULL,
+  COMPANY_ID int,
+  TXT varchar(9999),
+  PRIMARY KEY (RESUME_ID)
+);
+
+-- 文档3修改后:
+CREATE TABLE test_root (
+  ROOT_ID int IDENTITY(1,1) NOT NULL,
+  NAME varchar(50),
+  PASSWORD varchar(50),
+  PHONE int,
+  EMAIL varchar(333),
+  GENDER varchar(50),
+  PRIMARY KEY (ROOT_ID)
+);
+
+-- 文档4修改后:
+CREATE TABLE test_user (
+  USER_ID int IDENTITY(1,1) NOT NULL,
+  PASSWORD varchar(50),
+  NAME varchar(1000),
+  PHONE int,
+  EMAIL varchar(333),
+  GENDER varchar(50),
+  PRIMARY KEY (USER_ID)
+);
