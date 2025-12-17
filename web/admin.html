@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员后台 - 兼职管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 20px 0;
+            height: calc(100vh - 70px);
+            position: fixed;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-title {
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 25px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #f5f7fa;
+            color: #667eea;
+        }
+
+        .sidebar-menu li a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .menu-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* 内容区 */
+        .content {
+            flex: 1;
+            margin-left: 220px;
+            padding: 30px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* 表格样式 */
+        .job-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .job-table th {
+            background: #f5f7fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e1e1e1;
+        }
+
+        .job-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e1e1e1;
+            color: #666;
+        }
+
+        .job-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        /* 状态标签 */
+        .status-tag {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-offline {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* 操作按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background: #1976d2;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid #e1e1e1;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .page-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* 提示信息 */
+        .msg-box {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success-msg {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: none;
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            display: none;
+        }
+
+        /* 发布兼职弹窗 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            display: none;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 编辑兼职弹窗 */
+        #editModal {
+            display: none;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .sidebar-menu li a span {
+                display: none;
+            }
+
+            .content {
+                margin-left: 80px;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .job-table th:nth-child(4),
+            .job-table td:nth-child(4),
+            .job-table th:nth-child(5),
+            .job-table td:nth-child(5) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航 -->
+<header class="header">
+    <div class="header-logo">兼职管理系统 - 管理员后台</div>
+    <div class="header-user">
+        <span>欢迎, 管理员</span>
+        <button class="logout-btn" onclick="logout()">退出登录</button>
+    </div>
+</header>
+
+<!-- 主容器 -->
+<div class="main-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="menu-title">主菜单</li>
+            <li>
+                <a href="admin.html" class="active">
+                    <span class="menu-icon">💼</span>
+                    <span>兼职管理</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)">
+                    <span class="menu-icon">👥</span>
+                    <span>用户管理</span>
+                </a>
+            </li>
+            <li class="menu-title">系统管理</li>
+            <li>
+                <a href="javascript:void(0)">
+                    <span class="menu-icon">⚙️</span>
+                    <span>系统设置</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)">
+                    <span class="menu-icon">📝</span>
+                    <span>操作日志</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- 内容区 -->
+    <div class="content">
+        <!-- 提示信息 -->
+        <div class="msg-box success-msg" id="successMsg">操作成功！</div>
+        <div class="msg-box error-msg" id="errorMsg">操作失败，请重试！</div>
+
+        <!-- 内容头部 -->
+        <div class="content-header">
+            <h1 class="page-title">兼职管理</h1>
+            <button class="add-btn" onclick="openAddModal()">
+                <span>+</span> 发布新兼职
+            </button>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="card">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索兼职标题/地点" id="searchKey">
+                <select class="search-input" id="statusSelect">
+                    <option value="">全部状态</option>
+                    <option value="1">已发布</option>
+                    <option value="0">已下架</option>
+                </select>
+                <button class="search-btn" onclick="searchJob()">搜索</button>
+            </div>
+
+            <!-- 兼职列表表格 -->
+            <table class="job-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>兼职标题</th>
+                    <th>薪资</th>
+                    <th>工作地点</th>
+                    <th>发布时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="jobTableBody">
+                <!-- 静态示例数据 -->
+                <tr>
+                    <td>1</td>
+                    <td>小学家教辅导（数学/英语）</td>
+                    <td>¥180/小时</td>
+                    <td>朝阳区亚运村</td>
+                    <td>2025-05-01 10:30</td>
+                    <td>
+                        <span class="status-tag status-online">已发布</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(1)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(1)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>短视频剪辑兼职</td>
+                    <td>¥400/条</td>
+                    <td>远程办公</td>
+                    <td>2025-05-03 14:20</td>
+                    <td>
+                        <span class="status-tag status-online">已发布</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(2)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(2)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>奶茶店店员（兼职）</td>
+                    <td>¥28/小时</td>
+                    <td>海淀区中关村</td>
+                    <td>2025-04-28 09:15</td>
+                    <td>
+                        <span class="status-tag status-offline">已下架</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(3)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(3)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>活动现场协助人员</td>
+                    <td>¥150/天</td>
+                    <td>东城区王府井</td>
+                    <td>2025-05-05 16:40</td>
+                    <td>
+                        <span class="status-tag status-online">已发布</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(4)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(4)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>校园推广兼职</td>
+                    <td>¥100/单</td>
+                    <td>海淀区五道口</td>
+                    <td>2025-05-02 11:00</td>
+                    <td>
+                        <span class="status-tag status-offline">已下架</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(5)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(5)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            <div class="pagination">
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev')">«</a>
+                <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1)">1</a>
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage(2)">2</a>
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage(3)">3</a>
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage('next')">»</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 发布兼职弹窗 -->
+<div class="modal" id="addModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">发布新兼职</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <form id="addJobForm" onsubmit="return submitAddForm()">
+            <div class="form-group">
+                <label class="form-label" for="jobTitle">兼职标题</label>
+                <input type="text" class="form-control" id="jobTitle" name="jobTitle" placeholder="请输入兼职标题" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="salary">薪资范围</label>
+                    <input type="text" class="form-control" id="salary" name="salary" placeholder="例如：¥180/小时" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="location">工作地点</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="请输入工作地点" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="payType">结算方式</label>
+                    <select class="form-control" id="payType" name="payType" required>
+                        <option value="">请选择结算方式</option>
+                        <option value="日结">日结</option>
+                        <option value="周结">周结</option>
+                        <option value="月结">月结</option>
+                        <option value="按单结">按单结</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="status">发布状态</label>
+                    <select class="form-control" id="status" name="status" required>
+                        <option value="1">已发布</option>
+                        <option value="0">已下架</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="workTime">工作时间</label>
+                <input type="text" class="form-control" id="workTime" name="workTime" placeholder="例如：周末9:00-12:00" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">兼职描述</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="请详细描述兼职内容" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">发布兼职</button>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑兼职弹窗 -->
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">编辑兼职信息</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <form id="editJobForm" onsubmit="return submitEditForm()">
+            <input type="hidden" id="editJobId" value="">
+            <div class="form-group">
+                <label class="form-label" for="editJobTitle">兼职标题</label>
+                <input type="text" class="form-control" id="editJobTitle" name="editJobTitle" placeholder="请输入兼职标题" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="editSalary">薪资范围</label>
+                    <input type="text" class="form-control" id="editSalary" name="editSalary" placeholder="例如：¥180/小时" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editLocation">工作地点</label>
+                    <input type="text" class="form-control" id="editLocation" name="editLocation" placeholder="请输入工作地点" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="editPayType">结算方式</label>
+                    <select class="form-control" id="editPayType" name="editPayType" required>
+                        <option value="">请选择结算方式</option>
+                        <option value="日结">日结</option>
+                        <option value="周结">周结</option>
+                        <option value="月结">月结</option>
+                        <option value="按单结">按单结</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editStatus">发布状态</label>
+                    <select class="form-control" id="editStatus" name="editStatus" required>
+                        <option value="1">已发布</option>
+                        <option value="0">已下架</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="editWorkTime">工作时间</label>
+                <input type="text" class="form-control" id="editWorkTime" name="editWorkTime" placeholder="例如：周末9:00-12:00" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="editDescription">兼职描述</label>
+                <textarea class="form-control" id="editDescription" name="editDescription" rows="4" placeholder="请详细描述兼职内容" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">保存修改</button>
+        </form>
+    </div>
+</div>
+
+<!-- JS交互逻辑 -->
+<script>
+    // 全局变量
+    let currentPage = 1;
+    const totalPages = 3;
+
+    // 退出登录
+    function logout() {
+        if (confirm('确定要退出登录吗？')) {
+            window.location.href = 'login.html';
+        }
+    }
+
+    // 打开发布弹窗
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'flex';
+        // 重置表单
+        document.getElementById('addJobForm').reset();
+        // 隐藏提示信息
+        hideMessages();
+    }
+
+    // 关闭弹窗
+    function closeModal() {
+        document.getElementById('addModal').style.display = 'none';
+        document.getElementById('editModal').style.display = 'none';
+        hideMessages();
+    }
+
+    // 打开编辑弹窗
+    function openEditModal(id) {
+        hideMessages();
+        // 模拟从后端获取数据
+        const jobData = {
+            1: {
+                title: '小学家教辅导（数学/英语）',
+                salary: '¥180/小时',
+                location: '朝阳区亚运村',
+                payType: '日结',
+                status: '1',
+                workTime: '周末9:00-12:00',
+                description: '辅导小学3-6年级学生的数学和英语作业，讲解知识点，培养学习习惯。'
+            },
+            2: {
+                title: '短视频剪辑兼职',
+                salary: '¥400/条',
+                location: '远程办公',
+                payType: '按单结',
+                status: '1',
+                workTime: '不限时间，每周完成5条以上',
+                description: '根据提供的素材剪辑短视频，要求会使用剪映/PR，有创意，能把控视频节奏。'
+            },
+            3: {
+                title: '奶茶店店员（兼职）',
+                salary: '¥28/小时',
+                location: '海淀区中关村',
+                payType: '日结',
+                status: '0',
+                workTime: '工作日18:00-22:00',
+                description: '负责奶茶制作、收银、清洁等工作，要求有健康证，服务态度好。'
+            },
+            4: {
+                title: '活动现场协助人员',
+                salary: '¥150/天',
+                location: '东城区王府井',
+                payType: '日结',
+                status: '1',
+                workTime: '5月10日-5月12日 9:00-18:00',
+                description: '协助活动现场布置、引导嘉宾、物料管理等工作，要求吃苦耐劳，有责任心。'
+            },
+            5: {
+                title: '校园推广兼职',
+                salary: '¥100/单',
+                location: '海淀区五道口',
+                payType: '按单结',
+                status: '0',
+                workTime: '课余时间',
+                description: '在校园内推广APP下载，完成注册任务，按单结算，多劳多得。'
+            }
+        };
+
+        // 填充表单数据
+        const data = jobData[id] || {
+            title: '',
+            salary: '',
+            location: '',
+            payType: '',
+            status: '1',
+            workTime: '',
+            description: ''
+        };
+
+        document.getElementById('editJobId').value = id;
+        document.getElementById('editJobTitle').value = data.title;
+        document.getElementById('editSalary').value = data.salary;
+        document.getElementById('editLocation').value = data.location;
+        document.getElementById('editPayType').value = data.payType;
+        document.getElementById('editStatus').value = data.status;
+        document.getElementById('editWorkTime').value = data.workTime;
+        document.getElementById('editDescription').value = data.description;
+
+        // 显示编辑弹窗
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    // 删除兼职
+    function deleteJob(id) {
+        if (confirm('确定要删除该兼职吗？删除后不可恢复！')) {
+            // 模拟删除操作
+            const row = document.querySelector(`.job-table tr td:first-child:contains(${id})`).closest('tr');
+            if (row) {
+                row.remove();
+                // 显示成功提示
+                showSuccessMessage('兼职删除成功！');
+
+                // 如果没有数据了，显示空提示
+                const tableBody = document.getElementById('jobTableBody');
+                if (tableBody.children.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">暂无兼职数据</td></tr>';
+                }
+            } else {
+                showErrorMessage('删除失败，未找到该兼职！');
+            }
+        }
+    }
+
+    // 搜索兼职
+    function searchJob() {
+        hideMessages();
+        const searchKey = document.getElementById('searchKey').value.trim().toLowerCase();
+        const status = document.getElementById('statusSelect').value;
+
+        // 模拟搜索
+        const rows = document.querySelectorAll('#jobTableBody tr');
+        let hasResults = false;
+
+        rows.forEach(row => {
+            const title = row.cells[1].textContent.toLowerCase();
+            const location = row.cells[3].textContent.toLowerCase();
+            const rowStatus = row.querySelector('.status-tag').classList.contains('status-online') ? '1' : '0';
+
+            // 搜索条件判断
+            const matchSearch = !searchKey || title.includes(searchKey) || location.includes(searchKey);
+            const matchStatus = !status || rowStatus === status;
+
+            if (matchSearch && matchStatus) {
+                row.style.display = '';
+                hasResults = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // 处理无结果情况
+        const tableBody = document.getElementById('jobTableBody');
+        if (!hasResults) {
+            // 检查是否已有空提示
+            const emptyRow = tableBody.querySelector('tr td[colspan="7"]');
+            if (!emptyRow) {
+                tableBody.innerHTML += '<tr id="emptyRow"><td colspan="7" style="text-align: center; color: #999;">未找到符合条件的兼职</td></tr>';
+            }
+        } else {
+            // 移除空提示
+            const emptyRow = document.getElementById('emptyRow');
+            emptyRow && emptyRow.remove();
+        }
+
+        // 重置分页
+        currentPage = 1;
+        updatePagination();
+    }
+
+    // 提交发布表单
+    function submitAddForm() {
+        const jobTitle = document.getElementById('jobTitle').value.trim();
+        const salary = document.getElementById('salary').value.trim();
+        const location = document.getElementById('location').value.trim();
+
+        if (!jobTitle || !salary || !location) {
+            alert('请填写必填字段！');
+            return false;
+        }
+
+        // 模拟表单提交
+        const status = document.getElementById('status').value;
+        const statusClass = status === '1' ? 'status-online' : 'status-offline';
+        const statusText = status === '1' ? '已发布' : '已下架';
+
+        // 生成当前时间
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        // 生成新ID
+        const rows = document.querySelectorAll('#jobTableBody tr');
+        const newId = rows.length > 0 ? parseInt(rows[rows.length-1].cells[0].textContent) + 1 : 1;
+
+        // 创建新行
+        const newRow = `
+                <tr>
+                    <td>${newId}</td>
+                    <td>${jobTitle}</td>
+                    <td>${salary}</td>
+                    <td>${location}</td>
+                    <td>${timeStr}</td>
+                    <td>
+                        <span class="status-tag ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(${newId})">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(${newId})">删除</button>
+                    </td>
+                </tr>
+            `;
+
+        // 移除空提示并添加新行
+        const tableBody = document.getElementById('jobTableBody');
+        const emptyRow = document.getElementById('emptyRow');
+        emptyRow && emptyRow.remove();
+        tableBody.insertAdjacentHTML('beforeend', newRow);
+
+        // 关闭弹窗并显示成功提示
+        closeModal();
+        showSuccessMessage('兼职发布成功！');
+
+        return false; // 阻止表单默认提交
+    }
+
+    // 提交编辑表单
+    function submitEditForm() {
+        const id = document.getElementById('editJobId').value;
+        const title = document.getElementById('editJobTitle').value.trim();
+        const salary = document.getElementById('editSalary').value.trim();
+        const location = document.getElementById('editLocation').value.trim();
+
+        if (!title || !salary || !location) {
+            alert('请填写必填字段！');
+            return false;
+        }
+
+        // 模拟更新数据
+        const status = document.getElementById('editStatus').value;
+        const statusClass = status === '1' ? 'status-online' : 'status-offline';
+        const statusText = status === '1' ? '已发布' : '已下架';
+
+        // 查找并更新行数据
+        const rows = document.querySelectorAll('#jobTableBody tr');
+        let updated = false;
+
+        rows.forEach(row => {
+            if (row.cells[0].textContent === id) {
+                row.cells[1].textContent = title;
+                row.cells[2].textContent = salary;
+                row.cells[3].textContent = document.getElementById('editLocation').value;
+
+                // 更新状态
+                const statusTag = row.querySelector('.status-tag');
+                statusTag.className = `status-tag ${statusClass}`;
+                statusTag.textContent = statusText;
+
+                updated = true;
+            }
+        });
+
+        // 关闭弹窗并显示提示
+        closeModal();
+        if (updated) {
+            showSuccessMessage('兼职信息修改成功！');
+        } else {
+            showErrorMessage('修改失败，未找到该兼职！');
+        }
+
+        return false; // 阻止表单默认提交
+    }
+
+    // 切换分页
+    function changePage(page) {
+        hideMessages();
+
+        // 计算新页码
+        if (page === 'prev') {
+            currentPage = Math.max(1, currentPage - 1);
+        } else if (page === 'next') {
+            currentPage = Math.min(totalPages, currentPage + 1);
+        } else {
+            currentPage = parseInt(page);
+        }
+
+        // 更新分页按钮状态
+        updatePagination();
+
+        // 模拟加载分页数据
+        loadPageData(currentPage);
+    }
+
+    // 更新分页按钮样式
+    function updatePagination() {
+        const pageButtons = document.querySelectorAll('.pagination .page-btn');
+
+        pageButtons.forEach(btn => {
+            const pageNum = btn.textContent.trim();
+            if (pageNum === '«' || pageNum === '»') {
+                // 禁用/启用上一页/下一页
+                btn.style.opacity = (pageNum === '«' && currentPage === 1) || (pageNum === '»' && currentPage === totalPages) ? '0.5' : '1';
+                btn.style.pointerEvents = (pageNum === '«' && currentPage === 1) || (pageNum === '»' && currentPage === totalPages) ? 'none' : 'auto';
+            } else {
+                // 激活当前页
+                if (parseInt(pageNum) === currentPage) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
+        });
+    }
+
+    // 加载分页数据（模拟）
+    function loadPageData(page) {
+        // 模拟不同页码的数据集
+        const pageData = {
+            1: [
+                [1, '小学家教辅导（数学/英语）', '¥180/小时', '朝阳区亚运村', '2025-05-01 10:30', '1'],
+                [2, '短视频剪辑兼职', '¥400/条', '远程办公', '2025-05-03 14:20', '1'],
+                [3, '奶茶店店员（兼职）', '¥28/小时', '海淀区中关村', '2025-04-28 09:15', '0'],
+                [4, '活动现场协助人员', '¥150/天', '东城区王府井', '2025-05-05 16:40', '1'],
+                [5, '校园推广兼职', '¥100/单', '海淀区五道口', '2025-05-02 11:00', '0']
+            ],
+            2: [
+                [6, '外卖配送员（兼职）', '¥8/单', '全北京', '2025-05-04 08:30', '1'],
+                [7, '图文排版兼职', '¥200/篇', '远程办公', '2025-05-06 13:15', '1'],
+                [8, '宠物寄养照顾', '¥100/天', '丰台区方庄', '2025-04-30 15:20', '0'],
+                [9, '展会翻译兼职', '¥500/天', '顺义区新国展', '2025-05-07 10:00', '1'],
+                [10, '数据录入兼职', '¥15/小时', '远程办公', '2025-05-08 11:40', '1']
+            ],
+            3: [
+                [11, '健身房前台兼职', '¥25/小时', '西城区金融街', '2025-05-09 09:30', '1'],
+                [12, '摄影助理兼职', '¥200/天', '朝阳区798', '2025-05-10 14:00', '0'],
+                [13, '市场调研兼职', '¥150/天', '全北京', '2025-05-11 16:20', '1'],
+                [14, '家教助教兼职', '¥100/小时', '海淀区清华园', '2025-05-12 08:45', '1'],
+                [15, '仓库分拣兼职', '¥22/小时', '通州区马驹桥', '2025-05-13 10:15', '0']
+            ]
+        };
+
+        // 生成表格行
+        const data = pageData[page] || [];
+        let html = '';
+
+        if (data.length === 0) {
+            html = '<tr><td colspan="7" style="text-align: center; color: #999;">暂无兼职数据</td></tr>';
+        } else {
+            data.forEach(item => {
+                const statusClass = item[5] === '1' ? 'status-online' : 'status-offline';
+                const statusText = item[5] === '1' ? '已发布' : '已下架';
+
+                html += `
+                        <tr>
+                            <td>${item[0]}</td>
+                            <td>${item[1]}</td>
+                            <td>${item[2]}</td>
+                            <td>${item[3]}</td>
+                            <td>${item[4]}</td>
+                            <td>
+                                <span class="status-tag ${statusClass}">${statusText}</span>
+                            </td>
+                            <td class="btn-group">
+                                <button class="edit-btn" onclick="openEditModal(${item[0]})">编辑</button>
+                                <button class="delete-btn" onclick="deleteJob(${item[0]})">删除</button>
+                            </td>
+                        </tr>
+                    `;
+            });
+        }
+
+        // 更新表格内容
+        document.getElementById('jobTableBody').innerHTML = html;
+    }
+
+    // 显示成功提示
+    function showSuccessMessage(text) {
+        const msg = document.getElementById('successMsg');
+        msg.textContent = text || '操作成功！';
+        msg.style.display = 'block';
+
+        // 3秒后隐藏
+        setTimeout(() => {
+            msg.style.display = 'none';
+        }, 3000);
+    }
+
+    // 显示错误提示
+    function showErrorMessage(text) {
+        const msg = document.getElementById('errorMsg');
+        msg.textContent = text || '操作失败！';
+        msg.style.display = 'block';
+
+        // 3秒后隐藏
+        setTimeout(() => {
+            msg.style.display = 'none';
+        }, 3000);
+    }
+
+    // 隐藏所有提示
+    function hideMessages() {
+        document.getElementById('successMsg').style.display = 'none';
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    // 点击空白处关闭弹窗
+    window.onclick = function(event) {
+        const addModal = document.getElementById('addModal');
+        const editModal = document.getElementById('editModal');
+
+        if (event.target === addModal) {
+            closeModal();
+        }
+        if (event.target === editModal) {
+            closeModal();
+        }
+    }
+
+    // 初始化
+    window.onload = function() {
+        updatePagination();
+        // 为contains选择器添加polyfill
+        if (!CSS.supports('selector(:contains())')) {
+            Element.prototype.matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
+        }
+    }
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员后台 - 兼职管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 20px 0;
+            height: calc(100vh - 70px);
+            position: fixed;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-title {
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 25px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #f5f7fa;
+            color: #667eea;
+        }
+
+        .sidebar-menu li a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .menu-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* 内容区 */
+        .content {
+            flex: 1;
+            margin-left: 220px;
+            padding: 30px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* 表格样式 */
+        .job-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .job-table th {
+            background: #f5f7fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e1e1e1;
+        }
+
+        .job-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e1e1e1;
+            color: #666;
+        }
+
+        .job-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        /* 状态标签 */
+        .status-tag {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-offline {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* 操作按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background: #1976d2;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid #e1e1e1;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .page-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* 提示信息 */
+        .msg-box {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success-msg {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: none;
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            display: none;
+        }
+
+        /* 发布兼职弹窗 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            display: none;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 编辑兼职弹窗 */
+        #editModal {
+            display: none;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .sidebar-menu li a span {
+                display: none;
+            }
+
+            .content {
+                margin-left: 80px;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .job-table th:nth-child(4),
+            .job-table td:nth-child(4),
+            .job-table th:nth-child(5),
+            .job-table td:nth-child(5) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航 -->
+<header class="header">
+    <div class="header-logo">兼职管理系统 - 管理员后台</div>
+    <div class="header-user">
+        <span>欢迎, 管理员</span>
+        <button class="logout-btn" onclick="logout()">退出登录</button>
+    </div>
+</header>
+
+<!-- 主容器 -->
+<div class="main-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="menu-title">主菜单</li>
+            <li>
+                <a href="admin.html" class="active">
+                    <span class="menu-icon">💼</span>
+                    <span>兼职管理</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)">
+                    <span class="menu-icon">👥</span>
+                    <span>用户管理</span>
+                </a>
+            </li>
+            <li class="menu-title">系统管理</li>
+            <li>
+                <a href="javascript:void(0)">
+                    <span class="menu-icon">⚙️</span>
+                    <span>系统设置</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)">
+                    <span class="menu-icon">📝</span>
+                    <span>操作日志</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- 内容区 -->
+    <div class="content">
+        <!-- 提示信息 -->
+        <div class="msg-box success-msg" id="successMsg">操作成功！</div>
+        <div class="msg-box error-msg" id="errorMsg">操作失败，请重试！</div>
+
+        <!-- 内容头部 -->
+        <div class="content-header">
+            <h1 class="page-title">兼职管理</h1>
+            <button class="add-btn" onclick="openAddModal()">
+                <span>+</span> 发布新兼职
+            </button>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="card">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索兼职标题/地点" id="searchKey">
+                <select class="search-input" id="statusSelect">
+                    <option value="">全部状态</option>
+                    <option value="1">已发布</option>
+                    <option value="0">已下架</option>
+                </select>
+                <button class="search-btn" onclick="searchJob()">搜索</button>
+            </div>
+
+            <!-- 兼职列表表格 -->
+            <table class="job-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>兼职标题</th>
+                    <th>薪资</th>
+                    <th>工作地点</th>
+                    <th>发布时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="jobTableBody">
+                <!-- 静态示例数据 -->
+                <tr>
+                    <td>1</td>
+                    <td>小学家教辅导（数学/英语）</td>
+                    <td>¥180/小时</td>
+                    <td>朝阳区亚运村</td>
+                    <td>2025-05-01 10:30</td>
+                    <td>
+                        <span class="status-tag status-online">已发布</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(1)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(1)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>短视频剪辑兼职</td>
+                    <td>¥400/条</td>
+                    <td>远程办公</td>
+                    <td>2025-05-03 14:20</td>
+                    <td>
+                        <span class="status-tag status-online">已发布</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(2)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(2)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>奶茶店店员（兼职）</td>
+                    <td>¥28/小时</td>
+                    <td>海淀区中关村</td>
+                    <td>2025-04-28 09:15</td>
+                    <td>
+                        <span class="status-tag status-offline">已下架</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(3)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(3)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>活动现场协助人员</td>
+                    <td>¥150/天</td>
+                    <td>东城区王府井</td>
+                    <td>2025-05-05 16:40</td>
+                    <td>
+                        <span class="status-tag status-online">已发布</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(4)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(4)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>校园推广兼职</td>
+                    <td>¥100/单</td>
+                    <td>海淀区五道口</td>
+                    <td>2025-05-02 11:00</td>
+                    <td>
+                        <span class="status-tag status-offline">已下架</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(5)">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(5)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            <div class="pagination">
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev')">«</a>
+                <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1)">1</a>
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage(2)">2</a>
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage(3)">3</a>
+                <a href="javascript:void(0)" class="page-btn" onclick="changePage('next')">»</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 发布兼职弹窗 -->
+<div class="modal" id="addModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">发布新兼职</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <form id="addJobForm" onsubmit="return submitAddForm()">
+            <div class="form-group">
+                <label class="form-label" for="jobTitle">兼职标题</label>
+                <input type="text" class="form-control" id="jobTitle" name="jobTitle" placeholder="请输入兼职标题" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="salary">薪资范围</label>
+                    <input type="text" class="form-control" id="salary" name="salary" placeholder="例如：¥180/小时" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="location">工作地点</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="请输入工作地点" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="payType">结算方式</label>
+                    <select class="form-control" id="payType" name="payType" required>
+                        <option value="">请选择结算方式</option>
+                        <option value="日结">日结</option>
+                        <option value="周结">周结</option>
+                        <option value="月结">月结</option>
+                        <option value="按单结">按单结</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="status">发布状态</label>
+                    <select class="form-control" id="status" name="status" required>
+                        <option value="1">已发布</option>
+                        <option value="0">已下架</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="workTime">工作时间</label>
+                <input type="text" class="form-control" id="workTime" name="workTime" placeholder="例如：周末9:00-12:00" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">兼职描述</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="请详细描述兼职内容" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">发布兼职</button>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑兼职弹窗 -->
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">编辑兼职信息</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <form id="editJobForm" onsubmit="return submitEditForm()">
+            <input type="hidden" id="editJobId" value="">
+            <div class="form-group">
+                <label class="form-label" for="editJobTitle">兼职标题</label>
+                <input type="text" class="form-control" id="editJobTitle" name="editJobTitle" placeholder="请输入兼职标题" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="editSalary">薪资范围</label>
+                    <input type="text" class="form-control" id="editSalary" name="editSalary" placeholder="例如：¥180/小时" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editLocation">工作地点</label>
+                    <input type="text" class="form-control" id="editLocation" name="editLocation" placeholder="请输入工作地点" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="editPayType">结算方式</label>
+                    <select class="form-control" id="editPayType" name="editPayType" required>
+                        <option value="">请选择结算方式</option>
+                        <option value="日结">日结</option>
+                        <option value="周结">周结</option>
+                        <option value="月结">月结</option>
+                        <option value="按单结">按单结</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editStatus">发布状态</label>
+                    <select class="form-control" id="editStatus" name="editStatus" required>
+                        <option value="1">已发布</option>
+                        <option value="0">已下架</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="editWorkTime">工作时间</label>
+                <input type="text" class="form-control" id="editWorkTime" name="editWorkTime" placeholder="例如：周末9:00-12:00" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="editDescription">兼职描述</label>
+                <textarea class="form-control" id="editDescription" name="editDescription" rows="4" placeholder="请详细描述兼职内容" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">保存修改</button>
+        </form>
+    </div>
+</div>
+
+<!-- JS交互逻辑 -->
+<script>
+    // 全局变量
+    let currentPage = 1;
+    const totalPages = 3;
+
+    // 退出登录
+    function logout() {
+        if (confirm('确定要退出登录吗？')) {
+            window.location.href = 'login.html';
+        }
+    }
+
+    // 打开发布弹窗
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'flex';
+        // 重置表单
+        document.getElementById('addJobForm').reset();
+        // 隐藏提示信息
+        hideMessages();
+    }
+
+    // 关闭弹窗
+    function closeModal() {
+        document.getElementById('addModal').style.display = 'none';
+        document.getElementById('editModal').style.display = 'none';
+        hideMessages();
+    }
+
+    // 打开编辑弹窗
+    function openEditModal(id) {
+        hideMessages();
+        // 模拟从后端获取数据
+        const jobData = {
+            1: {
+                title: '小学家教辅导（数学/英语）',
+                salary: '¥180/小时',
+                location: '朝阳区亚运村',
+                payType: '日结',
+                status: '1',
+                workTime: '周末9:00-12:00',
+                description: '辅导小学3-6年级学生的数学和英语作业，讲解知识点，培养学习习惯。'
+            },
+            2: {
+                title: '短视频剪辑兼职',
+                salary: '¥400/条',
+                location: '远程办公',
+                payType: '按单结',
+                status: '1',
+                workTime: '不限时间，每周完成5条以上',
+                description: '根据提供的素材剪辑短视频，要求会使用剪映/PR，有创意，能把控视频节奏。'
+            },
+            3: {
+                title: '奶茶店店员（兼职）',
+                salary: '¥28/小时',
+                location: '海淀区中关村',
+                payType: '日结',
+                status: '0',
+                workTime: '工作日18:00-22:00',
+                description: '负责奶茶制作、收银、清洁等工作，要求有健康证，服务态度好。'
+            },
+            4: {
+                title: '活动现场协助人员',
+                salary: '¥150/天',
+                location: '东城区王府井',
+                payType: '日结',
+                status: '1',
+                workTime: '5月10日-5月12日 9:00-18:00',
+                description: '协助活动现场布置、引导嘉宾、物料管理等工作，要求吃苦耐劳，有责任心。'
+            },
+            5: {
+                title: '校园推广兼职',
+                salary: '¥100/单',
+                location: '海淀区五道口',
+                payType: '按单结',
+                status: '0',
+                workTime: '课余时间',
+                description: '在校园内推广APP下载，完成注册任务，按单结算，多劳多得。'
+            }
+        };
+
+        // 填充表单数据
+        const data = jobData[id] || {
+            title: '',
+            salary: '',
+            location: '',
+            payType: '',
+            status: '1',
+            workTime: '',
+            description: ''
+        };
+
+        document.getElementById('editJobId').value = id;
+        document.getElementById('editJobTitle').value = data.title;
+        document.getElementById('editSalary').value = data.salary;
+        document.getElementById('editLocation').value = data.location;
+        document.getElementById('editPayType').value = data.payType;
+        document.getElementById('editStatus').value = data.status;
+        document.getElementById('editWorkTime').value = data.workTime;
+        document.getElementById('editDescription').value = data.description;
+
+        // 显示编辑弹窗
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    // 删除兼职
+    function deleteJob(id) {
+        if (confirm('确定要删除该兼职吗？删除后不可恢复！')) {
+            // 模拟删除操作
+            const row = document.querySelector(`.job-table tr td:first-child:contains(${id})`).closest('tr');
+            if (row) {
+                row.remove();
+                // 显示成功提示
+                showSuccessMessage('兼职删除成功！');
+
+                // 如果没有数据了，显示空提示
+                const tableBody = document.getElementById('jobTableBody');
+                if (tableBody.children.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">暂无兼职数据</td></tr>';
+                }
+            } else {
+                showErrorMessage('删除失败，未找到该兼职！');
+            }
+        }
+    }
+
+    // 搜索兼职
+    function searchJob() {
+        hideMessages();
+        const searchKey = document.getElementById('searchKey').value.trim().toLowerCase();
+        const status = document.getElementById('statusSelect').value;
+
+        // 模拟搜索
+        const rows = document.querySelectorAll('#jobTableBody tr');
+        let hasResults = false;
+
+        rows.forEach(row => {
+            const title = row.cells[1].textContent.toLowerCase();
+            const location = row.cells[3].textContent.toLowerCase();
+            const rowStatus = row.querySelector('.status-tag').classList.contains('status-online') ? '1' : '0';
+
+            // 搜索条件判断
+            const matchSearch = !searchKey || title.includes(searchKey) || location.includes(searchKey);
+            const matchStatus = !status || rowStatus === status;
+
+            if (matchSearch && matchStatus) {
+                row.style.display = '';
+                hasResults = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // 处理无结果情况
+        const tableBody = document.getElementById('jobTableBody');
+        if (!hasResults) {
+            // 检查是否已有空提示
+            const emptyRow = tableBody.querySelector('tr td[colspan="7"]');
+            if (!emptyRow) {
+                tableBody.innerHTML += '<tr id="emptyRow"><td colspan="7" style="text-align: center; color: #999;">未找到符合条件的兼职</td></tr>';
+            }
+        } else {
+            // 移除空提示
+            const emptyRow = document.getElementById('emptyRow');
+            emptyRow && emptyRow.remove();
+        }
+
+        // 重置分页
+        currentPage = 1;
+        updatePagination();
+    }
+
+    // 提交发布表单
+    function submitAddForm() {
+        const jobTitle = document.getElementById('jobTitle').value.trim();
+        const salary = document.getElementById('salary').value.trim();
+        const location = document.getElementById('location').value.trim();
+
+        if (!jobTitle || !salary || !location) {
+            alert('请填写必填字段！');
+            return false;
+        }
+
+        // 模拟表单提交
+        const status = document.getElementById('status').value;
+        const statusClass = status === '1' ? 'status-online' : 'status-offline';
+        const statusText = status === '1' ? '已发布' : '已下架';
+
+        // 生成当前时间
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        // 生成新ID
+        const rows = document.querySelectorAll('#jobTableBody tr');
+        const newId = rows.length > 0 ? parseInt(rows[rows.length-1].cells[0].textContent) + 1 : 1;
+
+        // 创建新行
+        const newRow = `
+                <tr>
+                    <td>${newId}</td>
+                    <td>${jobTitle}</td>
+                    <td>${salary}</td>
+                    <td>${location}</td>
+                    <td>${timeStr}</td>
+                    <td>
+                        <span class="status-tag ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="btn-group">
+                        <button class="edit-btn" onclick="openEditModal(${newId})">编辑</button>
+                        <button class="delete-btn" onclick="deleteJob(${newId})">删除</button>
+                    </td>
+                </tr>
+            `;
+
+        // 移除空提示并添加新行
+        const tableBody = document.getElementById('jobTableBody');
+        const emptyRow = document.getElementById('emptyRow');
+        emptyRow && emptyRow.remove();
+        tableBody.insertAdjacentHTML('beforeend', newRow);
+
+        // 关闭弹窗并显示成功提示
+        closeModal();
+        showSuccessMessage('兼职发布成功！');
+
+        return false; // 阻止表单默认提交
+    }
+
+    // 提交编辑表单
+    function submitEditForm() {
+        const id = document.getElementById('editJobId').value;
+        const title = document.getElementById('editJobTitle').value.trim();
+        const salary = document.getElementById('editSalary').value.trim();
+        const location = document.getElementById('editLocation').value.trim();
+
+        if (!title || !salary || !location) {
+            alert('请填写必填字段！');
+            return false;
+        }
+
+        // 模拟更新数据
+        const status = document.getElementById('editStatus').value;
+        const statusClass = status === '1' ? 'status-online' : 'status-offline';
+        const statusText = status === '1' ? '已发布' : '已下架';
+
+        // 查找并更新行数据
+        const rows = document.querySelectorAll('#jobTableBody tr');
+        let updated = false;
+
+        rows.forEach(row => {
+            if (row.cells[0].textContent === id) {
+                row.cells[1].textContent = title;
+                row.cells[2].textContent = salary;
+                row.cells[3].textContent = document.getElementById('editLocation').value;
+
+                // 更新状态
+                const statusTag = row.querySelector('.status-tag');
+                statusTag.className = `status-tag ${statusClass}`;
+                statusTag.textContent = statusText;
+
+                updated = true;
+            }
+        });
+
+        // 关闭弹窗并显示提示
+        closeModal();
+        if (updated) {
+            showSuccessMessage('兼职信息修改成功！');
+        } else {
+            showErrorMessage('修改失败，未找到该兼职！');
+        }
+
+        return false; // 阻止表单默认提交
+    }
+
+    // 切换分页
+    function changePage(page) {
+        hideMessages();
+
+        // 计算新页码
+        if (page === 'prev') {
+            currentPage = Math.max(1, currentPage - 1);
+        } else if (page === 'next') {
+            currentPage = Math.min(totalPages, currentPage + 1);
+        } else {
+            currentPage = parseInt(page);
+        }
+
+        // 更新分页按钮状态
+        updatePagination();
+
+        // 模拟加载分页数据
+        loadPageData(currentPage);
+    }
+
+    // 更新分页按钮样式
+    function updatePagination() {
+        const pageButtons = document.querySelectorAll('.pagination .page-btn');
+
+        pageButtons.forEach(btn => {
+            const pageNum = btn.textContent.trim();
+            if (pageNum === '«' || pageNum === '»') {
+                // 禁用/启用上一页/下一页
+                btn.style.opacity = (pageNum === '«' && currentPage === 1) || (pageNum === '»' && currentPage === totalPages) ? '0.5' : '1';
+                btn.style.pointerEvents = (pageNum === '«' && currentPage === 1) || (pageNum === '»' && currentPage === totalPages) ? 'none' : 'auto';
+            } else {
+                // 激活当前页
+                if (parseInt(pageNum) === currentPage) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
+        });
+    }
+
+    // 加载分页数据（模拟）
+    function loadPageData(page) {
+        // 模拟不同页码的数据集
+        const pageData = {
+            1: [
+                [1, '小学家教辅导（数学/英语）', '¥180/小时', '朝阳区亚运村', '2025-05-01 10:30', '1'],
+                [2, '短视频剪辑兼职', '¥400/条', '远程办公', '2025-05-03 14:20', '1'],
+                [3, '奶茶店店员（兼职）', '¥28/小时', '海淀区中关村', '2025-04-28 09:15', '0'],
+                [4, '活动现场协助人员', '¥150/天', '东城区王府井', '2025-05-05 16:40', '1'],
+                [5, '校园推广兼职', '¥100/单', '海淀区五道口', '2025-05-02 11:00', '0']
+            ],
+            2: [
+                [6, '外卖配送员（兼职）', '¥8/单', '全北京', '2025-05-04 08:30', '1'],
+                [7, '图文排版兼职', '¥200/篇', '远程办公', '2025-05-06 13:15', '1'],
+                [8, '宠物寄养照顾', '¥100/天', '丰台区方庄', '2025-04-30 15:20', '0'],
+                [9, '展会翻译兼职', '¥500/天', '顺义区新国展', '2025-05-07 10:00', '1'],
+                [10, '数据录入兼职', '¥15/小时', '远程办公', '2025-05-08 11:40', '1']
+            ],
+            3: [
+                [11, '健身房前台兼职', '¥25/小时', '西城区金融街', '2025-05-09 09:30', '1'],
+                [12, '摄影助理兼职', '¥200/天', '朝阳区798', '2025-05-10 14:00', '0'],
+                [13, '市场调研兼职', '¥150/天', '全北京', '2025-05-11 16:20', '1'],
+                [14, '家教助教兼职', '¥100/小时', '海淀区清华园', '2025-05-12 08:45', '1'],
+                [15, '仓库分拣兼职', '¥22/小时', '通州区马驹桥', '2025-05-13 10:15', '0']
+            ]
+        };
+
+        // 生成表格行
+        const data = pageData[page] || [];
+        let html = '';
+
+        if (data.length === 0) {
+            html = '<tr><td colspan="7" style="text-align: center; color: #999;">暂无兼职数据</td></tr>';
+        } else {
+            data.forEach(item => {
+                const statusClass = item[5] === '1' ? 'status-online' : 'status-offline';
+                const statusText = item[5] === '1' ? '已发布' : '已下架';
+
+                html += `
+                        <tr>
+                            <td>${item[0]}</td>
+                            <td>${item[1]}</td>
+                            <td>${item[2]}</td>
+                            <td>${item[3]}</td>
+                            <td>${item[4]}</td>
+                            <td>
+                                <span class="status-tag ${statusClass}">${statusText}</span>
+                            </td>
+                            <td class="btn-group">
+                                <button class="edit-btn" onclick="openEditModal(${item[0]})">编辑</button>
+                                <button class="delete-btn" onclick="deleteJob(${item[0]})">删除</button>
+                            </td>
+                        </tr>
+                    `;
+            });
+        }
+
+        // 更新表格内容
+        document.getElementById('jobTableBody').innerHTML = html;
+    }
+
+    // 显示成功提示
+    function showSuccessMessage(text) {
+        const msg = document.getElementById('successMsg');
+        msg.textContent = text || '操作成功！';
+        msg.style.display = 'block';
+
+        // 3秒后隐藏
+        setTimeout(() => {
+            msg.style.display = 'none';
+        }, 3000);
+    }
+
+    // 显示错误提示
+    function showErrorMessage(text) {
+        const msg = document.getElementById('errorMsg');
+        msg.textContent = text || '操作失败！';
+        msg.style.display = 'block';
+
+        // 3秒后隐藏
+        setTimeout(() => {
+            msg.style.display = 'none';
+        }, 3000);
+    }
+
+    // 隐藏所有提示
+    function hideMessages() {
+        document.getElementById('successMsg').style.display = 'none';
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    // 点击空白处关闭弹窗
+    window.onclick = function(event) {
+        const addModal = document.getElementById('addModal');
+        const editModal = document.getElementById('editModal');
+
+        if (event.target === addModal) {
+            closeModal();
+        }
+        if (event.target === editModal) {
+            closeModal();
+        }
+    }
+
+    // 初始化
+    window.onload = function() {
+        updatePagination();
+        // 为contains选择器添加polyfill
+        if (!CSS.supports('selector(:contains())')) {
+            Element.prototype.matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
+        }
+    }
+</script>
+</body>
+</html>

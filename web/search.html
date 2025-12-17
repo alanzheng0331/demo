@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 兼职检索</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.home {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 主内容区 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 50px;
+        }
+
+        /* 高级搜索栏 */
+        .search-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-title span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* 筛选条件区 */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .filter-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .search-input, .filter-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            height: 46px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 筛选标签 */
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .filter-tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tag.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .filter-tag:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        /* 检索结果区 */
+        .result-section {
+            margin-bottom: 50px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .result-count {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .result-count strong {
+            color: #764ba2;
+        }
+
+        .sort-select {
+            padding: 8px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* 兼职列表 */
+        .job-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .job-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .job-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .job-left {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .job-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        .job-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .job-info-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .job-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .job-right {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-end;
+            min-width: 120px;
+        }
+
+        .job-salary {
+            font-size: 20px;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .job-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        .job-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 2px solid #e1e1e1;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .page-btn:hover:not(.active) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        /* 底部 */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            margin-top: 80px;
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 20px;
+            }
+
+            .main-container {
+                padding-top: 150px;
+            }
+
+            .search-title {
+                font-size: 22px;
+            }
+
+            .job-right {
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .job-salary {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航栏 -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="index.html" class="logo">
+            <h1>易兼职</h1>
+        </a>
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn home">返回首页</a>
+            <a href="login.html" class="nav-btn">登录/注册</a>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<main class="main-container">
+    <!-- 高级搜索栏 -->
+    <div class="search-section">
+        <h2 class="search-title">精准<span>检索</span>合适的兼职</h2>
+
+        <!-- 筛选条件 -->
+        <div class="filter-row">
+            <div class="filter-item">
+                <label for="keyword">兼职关键词</label>
+                <input type="text" id="keyword" class="search-input"
+                       placeholder="家教、服务员、剪辑等">
+            </div>
+            <div class="filter-item">
+                <label for="location">工作地点</label>
+                <input type="text" id="location" class="search-input"
+                       placeholder="城市/区域/街道">
+            </div>
+            <div class="filter-item">
+                <label for="salary">薪资范围</label>
+                <select id="salary" class="filter-select">
+                    <option value="">不限</option>
+                    <option value="0-100">100元以下/天</option>
+                    <option value="100-200">100-200元/天</option>
+                    <option value="200-300">200-300元/天</option>
+                    <option value="300+">300元以上/天</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="type">结算方式</label>
+                <select id="type" class="filter-select">
+                    <option value="">不限</option>
+                    <option value="day">日结</option>
+                    <option value="week">周结</option>
+                    <option value="month">月结</option>
+                    <option value="project">按单结</option>
+                </select>
+            </div>
+            <div class="filter-item" style="min-width: 120px;">
+                <label>&nbsp;</label>
+                <button type="button" class="search-btn" onclick="searchJobs()">立即检索</button>
+            </div>
+        </div>
+
+        <!-- 快捷筛选标签 -->
+        <div class="filter-tags">
+            <div class="filter-tag active" onclick="setTag('all')">全部兼职</div>
+            <div class="filter-tag" onclick="setTag('urgent')">急聘</div>
+            <div class="filter-tag" onclick="setTag('day')">日结</div>
+            <div class="filter-tag" onclick="setTag('remote')">远程</div>
+            <div class="filter-tag" onclick="setTag('student')">学生可做</div>
+            <div class="filter-tag" onclick="setTag('noexp')">无需经验</div>
+            <div class="filter-tag" onclick="setTag('weekend')">周末兼职</div>
+            <div class="filter-tag" onclick="setTag('night')">晚班兼职</div>
+        </div>
+    </div>
+
+    <!-- 检索结果区 -->
+    <section class="result-section">
+        <div class="result-header">
+            <div class="result-count">找到 <strong>18</strong> 个符合条件的兼职</div>
+            <select class="sort-select" id="sortSelect" onchange="sortJobs(this.value)">
+                <option value="salary-desc" selected>薪资从高到低</option>
+                <option value="salary-asc">薪资从低到高</option>
+                <option value="time-desc">最新发布</option>
+                <option value="hot">热度优先</option>
+            </select>
+        </div>
+
+        <!-- 兼职列表 - 静态数据 -->
+        <div class="job-list">
+            <!-- 兼职1 -->
+            <div class="job-item">
+                <div class="job-left">
+                    <div class="job-title">
+                        小学家教辅导（数学/英语）
+                        <span class="job-tag">急聘</span>
+                    </div>
+                    <div class="job-info">
+                        <div class="job-info-item">📍 朝阳区亚运村</div>
+                        <div class="job-info-item">🕒 周末9:00-12:00</div>
+                        <div class="job-info-item">💴 日结</div>
+                        <div class="job-info-item">👨‍🎓 本科及以上</div>
+                    </div>
+                    <div class="job-desc">辅导小学3-6年级数学/英语，要求有相关家教经验，耐心负责，有教师资格证优先。工作时间灵活，可协商。</div>
+                </div>
+                <div class="job-right">
+                    <div class="job-salary">¥180/小时</div>
+                    <a href="login.html" class="job-btn">立即应聘</a>
+                </div>
+            </div>
+
+            <!-- 兼职2 -->
+            <div class="job-item">
+                <div class="job-left">
+                    <div class="job-title">
+                        奶茶店店员（兼职）
+                        <span class="job-tag">日结</span>
+                    </div>
+                    <div class="job-info">
+                        <div class="job-info-item">📍 海淀区中关村</div>
+                        <div class="job-info-item">🕒 晚班18-22点</div>
+                        <div class="job-info-item">💴 日结</div>
+                        <div class="job-info-item">💪 经验不限</div>
+                    </div>
+                    <div class="job-desc">负责奶茶制作、顾客接待、店面清洁，要求形象良好，沟通能力强，能吃苦耐劳，有餐饮经验优先。</div>
+                </div>
+                <div class="job-right">
+                    <div class="job-salary">¥28/小时</div>
+                    <a href="login.html" class="job-btn">立即应聘</a>
+                </div>
+            </div>
+
+            <!-- 兼职3 -->
+            <div class="job-item">
+                <div class="job-left">
+                    <div class="job-title">
+                        短视频剪辑兼职
+                        <span class="job-tag">远程</span>
+                    </div>
+                    <div class="job-info">
+                        <div class="job-info-item">📍 远程办公</div>
+                        <div class="job-info-item">🕒 时间灵活</div>
+                        <div class="job-info-item">💴 按单结</div>
+                        <div class="job-info-item">🎬 会PR/剪映</div>
+                    </div>
+                    <div class="job-desc">负责短视频剪辑、字幕制作、简单特效，要求会使用PR或剪映，有网感，能按时交稿。新手可教，按视频条数结算。</div>
+                </div>
+                <div class="job-right">
+                    <div class="job-salary">¥50-200/条</div>
+                    <a href="login.html" class="job-btn">立即应聘</a>
+                </div>
+            </div>
+
+            <!-- 兼职4 -->
+            <div class="job-item">
+                <div class="job-left">
+                    <div class="job-title">
+                        超市理货员（周末兼职）
+                        <span class="job-tag">周末</span>
+                    </div>
+                    <div class="job-info">
+                        <div class="job-info-item">📍 丰台区方庄</div>
+                        <div class="job-info-item">🕒 周六日8:00-18:00</div>
+                        <div class="job-info-item">💴 日结</div>
+                        <div class="job-info-item">💪 无需经验</div>
+                    </div>
+                    <div class="job-desc">负责超市货架整理、商品补货、临期商品检查，要求能吃苦耐劳，工作认真负责，每周能稳定出勤。</div>
+                </div>
+                <div class="job-right">
+                    <div class="job-salary">¥180/天</div>
+                    <a href="login.html" class="job-btn">立即应聘</a>
+                </div>
+            </div>
+
+            <!-- 兼职5 -->
+            <div class="job-item">
+                <div class="job-left">
+                    <div class="job-title">
+                        校园推广员（学生优先）
+                        <span class="job-tag">学生可做</span>
+                    </div>
+                    <div class="job-info">
+                        <div class="job-info-item">📍 各大高校</div>
+                        <div class="job-info-item">🕒 课余时间</div>
+                        <div class="job-info-item">💴 日结</div>
+                        <div class="job-info-item">👨‍🎓 在校学生</div>
+                    </div>
+                    <div class="job-desc">负责校园内产品推广、扫码注册、发放传单，要求沟通能力强，有校园资源优先，按完成量结算，多劳多得。</div>
+                </div>
+                <div class="job-right">
+                    <div class="job-salary">¥100-300/天</div>
+                    <a href="login.html" class="job-btn">立即应聘</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination">
+            <a href="javascript:void(0)" class="page-btn">«</a>
+            <a href="javascript:void(0)" class="page-btn active">1</a>
+            <a href="javascript:void(0)" class="page-btn">2</a>
+            <a href="javascript:void(0)" class="page-btn">3</a>
+            <a href="javascript:void(0)" class="page-btn">4</a>
+            <a href="javascript:void(0)" class="page-btn">5</a>
+            <a href="javascript:void(0)" class="page-btn">»</a>
+        </div>
+    </section>
+</main>
+
+<!-- 底部 -->
+<footer class="footer">
+    © 2025 易兼职 - 精准检索靠谱兼职
+</footer>
+
+<script>
+    // 全局变量存储当前筛选状态
+    let currentTag = 'all';
+
+    // 搜索兼职（模拟）
+    function searchJobs() {
+        const keyword = document.getElementById('keyword').value.trim();
+        const location = document.getElementById('location').value.trim();
+        const salary = document.getElementById('salary').value;
+        const type = document.getElementById('type').value;
+
+        // 模拟搜索提示
+        alert(`已执行搜索：
+关键词：${keyword || '不限'}
+地点：${location || '不限'}
+薪资：${salary ? (salary === '0-100' ? '100元以下/天' :
+            salary === '100-200' ? '100-200元/天' :
+                salary === '200-300' ? '200-300元/天' : '300元以上/天') : '不限'}
+结算方式：${type ? (type === 'day' ? '日结' :
+            type === 'week' ? '周结' :
+                type === 'month' ? '月结' : '按单结') : '不限'}
+标签：${currentTag === 'all' ? '全部' :
+            currentTag === 'urgent' ? '急聘' :
+                currentTag === 'day' ? '日结' :
+                    currentTag === 'remote' ? '远程' :
+                        currentTag === 'student' ? '学生可做' :
+                            currentTag === 'noexp' ? '无需经验' :
+                                currentTag === 'weekend' ? '周末兼职' : '晚班兼职'}`);
+    }
+
+    // 设置筛选标签
+    function setTag(tag) {
+        // 移除所有标签的active类
+        document.querySelectorAll('.filter-tag').forEach(el => {
+            el.classList.remove('active');
+        });
+        // 给当前标签添加active类
+        event.target.classList.add('active');
+        // 更新当前标签
+        currentTag = tag;
+
+        // 模拟筛选
+        console.log(`筛选标签已切换为：${tag}`);
+    }
+
+    // 排序兼职（模拟）
+    function sortJobs(sortType) {
+        alert(`已切换排序方式：${
+            sortType === 'salary-desc' ? '薪资从高到低' :
+                sortType === 'salary-asc' ? '薪资从低到高' :
+                    sortType === 'time-desc' ? '最新发布' : '热度优先'
+        }`);
+    }
+
+    // 回车键触发检索
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && (e.target.id === 'keyword' || e.target.id === 'location')) {
+            searchJobs();
+        }
+    });
+
+    // 分页按钮点击事件
+    document.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // 移除所有分页按钮的active类
+            document.querySelectorAll('.page-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+            // 给当前按钮添加active类（除了箭头）
+            if (this.textContent !== '«' && this.textContent !== '»') {
+                this.classList.add('active');
+            }
+            // 模拟分页
+            console.log(`切换到第${this.textContent}页`);
+        });
+    });
+</script>
+</body>
+</html>
