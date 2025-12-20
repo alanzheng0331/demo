@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 靠谱的兼职平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.login {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        }
+
+        }
+
+        .section-title {
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+            display: grid;
+        }
+
+            background: white;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        }
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+        }
+
+        }
+
+        }
+
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        }
+
+            font-weight: 600;
+        }
+
+        /* 底部 */
+        .footer {
+            color: white;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            border-radius: 1px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: white;
+            margin-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 20px;
+            }
+
+            }
+
+            }
+
+            }
+
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航栏 -->
+<nav class="navbar">
+    <div class="navbar-container">
+            <h1>易兼职</h1>
+        </a>
+        <div class="nav-buttons">
+            <a href="login.html" class="nav-btn login">登录/注册</a>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<main class="main-container">
+
+        </div>
+    </section>
+
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- 底部 -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h3>关于我们</h3>
+            <ul>
+                <li><a href="#">平台介绍</a></li>
+                <li><a href="#">联系方式</a></li>
+                <li><a href="#">加入我们</a></li>
+                <li><a href="#">企业合作</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>用户服务</h3>
+            <ul>
+                <li><a href="#">帮助中心</a></li>
+                <li><a href="#">安全保障</a></li>
+                <li><a href="#">投诉建议</a></li>
+                <li><a href="#">兼职防骗</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>商家服务</h3>
+            <ul>
+                <li><a href="#">商家入驻</a></li>
+                <li><a href="#">发布兼职</a></li>
+                <li><a href="#">招聘管理</a></li>
+                <li><a href="#">商家认证</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>法律条款</h3>
+            <ul>
+                <li><a href="#">用户协议</a></li>
+                <li><a href="#">隐私政策</a></li>
+                <li><a href="#">版权声明</a></li>
+                <li><a href="#">免责条款</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="copyright">
+        © 2025 易兼职 All Rights Reserved. 京ICP备12345678号
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+                    e.preventDefault();
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
