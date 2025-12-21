@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 意见反馈</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏（和其他页面完全一致） */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.login {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 返回首页按钮 */
+        .back-home-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .back-home-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+
+        .back-home-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        /* 主内容区 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .page-desc {
+            text-align: center;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* 反馈表单区域 */
+        .feedback-form-section {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .form-title {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #333;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .form-group label.required::after {
+            content: '*';
+            color: #ff4444;
+            margin-left: 4px;
+        }
+
+        .form-control {
+            padding: 14px 18px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #333;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #999;
+        }
+
+        textarea.form-control {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        /* 反馈类型选项 */
+        .feedback-type-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .type-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .type-option input {
+            display: none;
+        }
+
+        .type-option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* 提交按钮 */
+        .submit-btn-wrapper {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 反馈须知 */
+        .feedback-notice {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .notice-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .notice-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notice-list li {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .notice-list li::before {
+            content: '•';
+            color: #667eea;
+            font-size: 18px;
+            margin-top: 4px;
+        }
+
+        /* 底部（和其他页面一致） */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 60px 20px 30px;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: #667eea;
+            border-radius: 1px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: white;
+            margin-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 20px;
+            }
+
+            .main-container {
+                padding-top: 120px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .feedback-form-section {
+                padding: 30px 20px;
+            }
+
+            .back-home-btn {
+                padding: 8px 25px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .feedback-notice {
+                padding: 20px 15px;
+            }
+
+            .submit-btn {
+                padding: 12px 30px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <h1>易兼职</h1>
+            </a>
+            <div class="nav-buttons">
+                <a href="index.html"class="nav-btn login" >返回首页</a>
+                <a href="login.html" class="nav-btn home">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+        
+        <h2 class="page-title">意见反馈</h2>
+        <p class="page-desc">
+            如果你对易兼职平台有任何建议、问题或投诉，欢迎填写以下表单反馈给我们。
+            我们会在1-3个工作日内回复，感谢你的支持与监督！
+        </p>
+
+        <!-- 反馈表单 -->
+        <section class="feedback-form-section">
+            <h3 class="form-title">提交反馈</h3>
+            <form class="feedback-form" id="feedbackForm">
+                <!-- 反馈类型 -->
+                <div class="form-group">
+                    <label class="required">反馈类型</label>
+                    <div class="feedback-type-group">
+                        <label class="type-option" for="type-suggest">
+                            <input type="radio" name="feedbackType" id="type-suggest" value="功能建议"> 功能建议
+                        </label>
+                        <label class="type-option" for="type-complaint">
+                            <input type="radio" name="feedbackType" id="type-complaint" value="违规投诉"> 违规投诉
+                        </label>
+                        <label class="type-option" for="type-bug">
+                            <input type="radio" name="feedbackType" id="type-bug" value="问题反馈"> 问题反馈
+                        </label>
+                        <label class="type-option" for="type-other">
+                            <input type="radio" name="feedbackType" id="type-other" value="其他问题"> 其他问题
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 反馈标题 -->
+                <div class="form-group">
+                    <label for="feedbackTitle" class="required">反馈标题</label>
+                    <input type="text" class="form-control" id="feedbackTitle" placeholder="请简要描述反馈的问题/建议（如：兼职检索结果不准确）">
+                </div>
+
+                <!-- 反馈内容 -->
+                <div class="form-group">
+                    <label for="feedbackContent" class="required">反馈内容</label>
+                    <textarea class="form-control" id="feedbackContent" placeholder="请详细描述你的问题或建议，尽可能提供相关信息（如时间、截图、兼职ID等），便于我们快速处理..."></textarea>
+                </div>
+
+                <!-- 联系方式 -->
+                <div class="form-group">
+                    <label for="contactInfo">联系方式（选填）</label>
+                    <input type="text" class="form-control" id="contactInfo" placeholder="请填写手机号/微信号/QQ号，方便我们回复你">
+                </div>
+
+                <!-- 提交按钮 -->
+                <div class="submit-btn-wrapper">
+                    <button type="submit" class="submit-btn" id="submitBtn">提交反馈</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 反馈须知 -->
+        <section class="feedback-notice">
+            <h3 class="notice-title">反馈须知</h3>
+            <ul class="notice-list">
+                <li>请如实填写反馈内容，恶意提交虚假信息将被限制使用平台功能；</li>
+                <li>涉及兼职诈骗、薪资拖欠等紧急问题，建议优先拨打12333劳动保障热线；</li>
+                <li>我们会严格保护你的隐私，联系方式仅用于回复反馈，不会泄露给第三方；</li>
+                <li>常规反馈将在1-3个工作日内回复，紧急问题会在24小时内处理；</li>
+                <li>提交反馈后可保留反馈截图，如需跟进可通过底部联系方式联系客服。</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">联系方式</a></li>
+                    <li><a href="#">加入我们</a></li>
+                    <li><a href="#">企业合作</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>用户服务</h3>
+                <ul>
+                    <li><a href="guide.html">兼职指南</a></li>
+                    <li><a href="salary-query.html">薪资查询</a></li>
+                    <li><a href="feedback.html">意见反馈</a></li>
+                    <li><a href="#">安全保障</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>商家服务</h3>
+                <ul>
+                    <li><a href="#">商家入驻</a></li>
+                    <li><a href="#">发布兼职</a></li>
+                    <li><a href="#">招聘管理</a></li>
+                    <li><a href="#">商家认证</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">版权声明</a></li>
+                    <li><a href="#">免责条款</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2025 易兼职 All Rights Reserved. 京ICP备12345678号
+        </div>
+    </footer>
+<script src="theme-control.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 反馈类型选项交互
+            const typeOptions = document.querySelectorAll('.type-option');
+            typeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    typeOptions.forEach(opt => opt.classList.remove('selected'));
+                    // 添加当前选中状态
+                    this.classList.add('selected');
+                    // 选中对应的radio
+                    const radio = this.querySelector('input');
+                    radio.checked = true;
+                });
+            });
+
+            // 2. 表单提交验证
+            const feedbackForm = document.getElementById('feedbackForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const feedbackTypeRadios = document.getElementsByName('feedbackType');
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const feedbackContent = document.getElementById('feedbackContent');
+
+            feedbackForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // 阻止默认提交
+
+                // 验证反馈类型
+                let typeSelected = false;
+                feedbackTypeRadios.forEach(radio => {
+                    if (radio.checked) typeSelected = true;
+                });
+                if (!typeSelected) {
+                    alert('请选择反馈类型！');
+                    return;
+                }
+
+                // 验证标题
+                if (!feedbackTitle.value.trim()) {
+                    alert('请填写反馈标题！');
+                    feedbackTitle.focus();
+                    return;
+                }
+                if (feedbackTitle.value.length > 50) {
+                    alert('反馈标题不能超过50个字！');
+                    feedbackTitle.focus();
+                    return;
+                }
+
+                // 验证内容
+                if (!feedbackContent.value.trim()) {
+                    alert('请填写反馈内容！');
+                    feedbackContent.focus();
+                    return;
+                }
+                if (feedbackContent.value.length > 1000) {
+                    alert('反馈内容不能超过1000个字！');
+                    feedbackContent.focus();
+                    return;
+                }
+
+                // 模拟提交
+                submitBtn.disabled = true;
+                submitBtn.textContent = '提交中...';
+
+                // 模拟接口请求（500ms延迟）
+                setTimeout(() => {
+                    // 重置表单
+                    feedbackForm.reset();
+                    typeOptions.forEach(opt => opt.classList.remove('selected'));
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '提交反馈';
+
+                    // 提交成功提示
+                    alert('反馈提交成功！我们会在1-3个工作日内处理并回复，感谢你的反馈～');
+                }, 800);
+            });
+
+            // 3. 未完成功能提示（和其他页面逻辑一致）
+            const links = document.querySelectorAll('a');
+            links.forEach(link => {
+                if (link.href === '#' || !link.href.includes('.html')) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert(`【${this.textContent.trim()}】功能正在建设中，敬请期待！`);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
