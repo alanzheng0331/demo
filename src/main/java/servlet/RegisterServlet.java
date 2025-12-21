@@ -1,4 +1,4 @@
-package ALL_20252160A0925.D1_Servlet;
+package servlet;
 
 import javax.servlet.*;
 import javax.servlet.http.*;

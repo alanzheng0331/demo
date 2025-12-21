@@ -21,7 +21,7 @@ public class TestClass_DAO_FOR_User_register extends TestClass_DAO_SQL_MOD {
      *
      *
      */
-    public List<Map<String,Object>> Test_RUNNING(String PASSWORD, String USERNAME, String PHONE) throws Exception
+    public String Test_RUNNING(String PASSWORD, String USERNAME, String PHONE) throws Exception
     {
         // 获取数据模板
         List<Map<String, Object>> dataList = TestClass_DAO_SQL_PUBLIC.getTestUserInsertTemplate();
@@ -34,9 +34,7 @@ public class TestClass_DAO_FOR_User_register extends TestClass_DAO_SQL_MOD {
 
         //System.out.println(dataList);
 
-        TestInterface_DAO_SQL_INSERT(dataList);
-
         //直接插入
-        return dataList;
+        return TestInterface_DAO_SQL_INSERT(dataList);
     }
 }

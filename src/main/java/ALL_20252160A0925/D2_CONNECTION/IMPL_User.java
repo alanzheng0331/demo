@@ -18,7 +18,7 @@ public class IMPL_User implements IMPI_User {
     }
 
     @Override
-    public List<Map<String, Object>> Register(String PASSWORD, String USERNAME, String PHONE) throws Exception {
+    public String Register(String PASSWORD, String USERNAME, String PHONE) throws Exception {
         return testClass_dao_for_user_register.Test_RUNNING(PASSWORD, USERNAME, PHONE);
     }
 }
