@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 薪资查询</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏（和其他页面完全一致） */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.login {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 返回首页按钮 */
+        .back-home-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .back-home-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+
+        .back-home-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        /* 主内容区 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .page-desc {
+            text-align: center;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* 筛选区域 */
+        .filter-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .filter-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-item select {
+            padding: 12px 15px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #333;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .filter-item select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .query-btn-wrapper {
+            text-align: center;
+        }
+
+        .query-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .query-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        /* 薪资结果展示 */
+        .salary-result {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-title span {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .salary-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .salary-table th,
+        .salary-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .salary-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .salary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .salary-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .salary-range {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        /* 薪资说明区域 */
+        .salary-explain {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .explain-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .explain-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .explain-item {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .explain-item h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .explain-item p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* 底部（和其他页面一致） */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 60px 20px 30px;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: #667eea;
+            border-radius: 1px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: white;
+            margin-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 20px;
+            }
+
+            .main-container {
+                padding-top: 120px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .back-home-btn {
+                padding: 8px 25px;
+                font-size: 14px;
+            }
+
+            .salary-table th,
+            .salary-table td {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .filter-section {
+                padding: 20px 15px;
+            }
+
+            .salary-result,
+            .salary-explain {
+                padding: 20px 15px;
+            }
+
+            .explain-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航栏 -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="index.html" class="logo">
+            <h1>易兼职</h1>
+        </a>
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn login" >返回首页</a>
+            <a href="login.html" class="nav-btn home">登录/注册</a>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<main class="main-container">
+
+    <h2 class="page-title">兼职薪资查询</h2>
+    <p class="page-desc">
+        精准查询各行业、各城市兼职薪资标准，避免被低薪坑，让你的劳动价值得到合理回报。
+        数据来源于平台真实交易和市场调研，每月更新，具备高参考价值。
+    </p>
+
+    <!-- 筛选区域 -->
+    <section class="filter-section">
+        <h3 class="filter-title">筛选条件</h3>
+        <div class="filter-grid">
+            <div class="filter-item">
+                <label for="industry">兼职行业</label>
+                <select id="industry">
+                    <option value="all">全部行业</option>
+                    <option value="education">家教辅导</option>
+                    <option value="catering">餐饮服务</option>
+                    <option value="customer-service">电商客服</option>
+                    <option value="writing">文字创作</option>
+                    <option value="design">设计美工</option>
+                    <option value="development">技术开发</option>
+                    <option value="delivery">跑腿配送</option>
+                    <option value="photography">摄影摄像</option>
+                    <option value="event">活动执行</option>
+                    <option value="translation">翻译口译</option>
+                    <option value="marketing">市场推广</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="city">工作城市</label>
+                <select id="city">
+                    <option value="all">全部城市</option>
+                    <option value="beijing">北京</option>
+                    <option value="shanghai">上海</option>
+                    <option value="guangzhou">广州</option>
+                    <option value="shenzhen">深圳</option>
+                    <option value="hangzhou">杭州</option>
+                    <option value="chengdu">成都</option>
+                    <option value="chongqing">重庆</option>
+                    <option value="wuhan">武汉</option>
+                    <option value="nanjing">南京</option>
+                    <option value="zhengzhou">郑州</option>
+                    <option value="other">其他城市</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="payment">结算方式</label>
+                <select id="payment">
+                    <option value="all">全部方式</option>
+                    <option value="hourly">按小时结算</option>
+                    <option value="daily">按天结算</option>
+                    <option value="piece">按件结算</option>
+                    <option value="project">按项目结算</option>
+                </select>
+            </div>
+        </div>
+        <div class="query-btn-wrapper">
+            <button class="query-btn" id="queryBtn">查询薪资</button>
+        </div>
+    </section>
+
+    <!-- 薪资结果展示 -->
+    <section class="salary-result">
+        <h3 class="result-title">薪资参考（<span id="resultDesc">全国·全部行业·全部结算方式</span>）</h3>
+        <table class="salary-table">
+            <thead>
+            <tr>
+                <th>兼职类型</th>
+                <th>薪资范围</th>
+                <th>平均薪资</th>
+                <th>结算周期</th>
+                <th>备注</th>
+            </tr>
+            </thead>
+            <tbody id="salaryTableBody">
+            <tr>
+                <td>家教辅导（小学）</td>
+                <td class="salary-range">30-50元/小时</td>
+                <td>40元/小时</td>
+                <td>按次/周结</td>
+                <td>一线城市50-80元/小时</td>
+            </tr>
+            <tr>
+                <td>餐饮服务</td>
+                <td class="salary-range">15-25元/小时</td>
+                <td>20元/小时</td>
+                <td>日结/周结</td>
+                <td>含加班费，节假日1.5-2倍</td>
+            </tr>
+            <tr>
+                <td>电商客服</td>
+                <td class="salary-range">18-25元/小时</td>
+                <td>22元/小时</td>
+                <td>周结/月结</td>
+                <td>晚班/夜班有补贴</td>
+            </tr>
+            <tr>
+                <td>文字创作（基础）</td>
+                <td class="salary-range">50-100元/千字</td>
+                <td>70元/千字</td>
+                <td>按篇/项目结</td>
+                <td>优质稿件价格上浮50%-100%</td>
+            </tr>
+            <tr>
+                <td>设计美工（简单）</td>
+                <td class="salary-range">50-100元/张</td>
+                <td>75元/张</td>
+                <td>按单/项目结</td>
+                <td>复杂设计200-500元/单</td>
+            </tr>
+            <tr>
+                <td>跑腿配送</td>
+                <td class="salary-range">5-15元/单</td>
+                <td>8元/单</td>
+                <td>日结</td>
+                <td>距离/重量加价，高峰期补贴</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 薪资说明区域 -->
+    <section class="salary-explain">
+        <h3 class="explain-title">薪资说明</h3>
+        <div class="explain-list">
+            <div class="explain-item">
+                <h4>薪资差异原因</h4>
+                <p>1. 城市差异：一线城市薪资比二三线高30%-50%；2. 技能要求：高技能兼职薪资翻倍；3. 工作时长：长期稳定兼职薪资略高</p>
+            </div>
+            <div class="explain-item">
+                <h4>薪资谈判参考</h4>
+                <p>可参考平均薪资上浮10%-20%谈判，突出自身经验/技能/稳定性优势，避免低于最低薪资标准</p>
+            </div>
+            <div class="explain-item">
+                <h4>薪资保障提示</h4>
+                <p>所有薪资约定尽量书面化，保留沟通记录，拖欠薪资可拨打12333劳动保障热线投诉</p>
+            </div>
+            <div class="explain-item">
+                <h4>数据更新说明</h4>
+                <p>本平台薪资数据每月更新，基于真实兼职交易和市场调研，仅供参考，具体以实际约定为准</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- 底部 -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h3>关于我们</h3>
+            <ul>
+                <li><a href="#">平台介绍</a></li>
+                <li><a href="#">联系方式</a></li>
+                <li><a href="#">加入我们</a></li>
+                <li><a href="#">企业合作</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>用户服务</h3>
+            <ul>
+                <li><a href="guide.html">兼职指南</a></li>
+                <li><a href="salary-query.html">薪资查询</a></li>
+                <li><a href="#">安全保障</a></li>
+                <li><a href="#">投诉建议</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>商家服务</h3>
+            <ul>
+                <li><a href="#">商家入驻</a></li>
+                <li><a href="#">发布兼职</a></li>
+                <li><a href="#">招聘管理</a></li>
+                <li><a href="#">商家认证</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>法律条款</h3>
+            <ul>
+                <li><a href="#">用户协议</a></li>
+                <li><a href="#">隐私政策</a></li>
+                <li><a href="#">版权声明</a></li>
+                <li><a href="#">免责条款</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="copyright">
+        © 2025 易兼职 All Rights Reserved. 京ICP备12345678号
+    </div>
+</footer>
+<script src="theme-control.js"></script>
+<script>
+    // 薪资查询交互逻辑
+    document.addEventListener('DOMContentLoaded', function() {
+        // 薪资数据（模拟真实数据）
+        const salaryData = {
+            // 全部行业-全部城市-全部结算
+            all: [
+                { type: '家教辅导（小学）', range: '30-50元/小时', avg: '40元/小时', cycle: '按次/周结', note: '一线城市50-80元/小时' },
+                { type: '餐饮服务', range: '15-25元/小时', avg: '20元/小时', cycle: '日结/周结', note: '含加班费，节假日1.5-2倍' },
+                { type: '电商客服', range: '18-25元/小时', avg: '22元/小时', cycle: '周结/月结', note: '晚班/夜班有补贴' },
+                { type: '文字创作（基础）', range: '50-100元/千字', avg: '70元/千字', cycle: '按篇/项目结', note: '优质稿件价格上浮50%-100%' },
+                { type: '设计美工（简单）', range: '50-100元/张', avg: '75元/张', cycle: '按单/项目结', note: '复杂设计200-500元/单' },
+                { type: '跑腿配送', range: '5-15元/单', avg: '8元/单', cycle: '日结', note: '距离/重量加价，高峰期补贴' }
+            ],
+            // 家教辅导-北京-按小时
+            education_beijing_hourly: [
+                { type: '家教辅导（小学）', range: '50-80元/小时', avg: '65元/小时', cycle: '按次/周结', note: '重点小学辅导80-100元/小时' },
+                { type: '家教辅导（初中）', range: '70-100元/小时', avg: '85元/小时', cycle: '按次/周结', note: '数理化单科100-120元/小时' },
+                { type: '家教辅导（高中）', range: '90-120元/小时', avg: '105元/小时', cycle: '按次/周结', note: '艺考/竞赛150-200元/小时' }
+            ],
+            // 餐饮服务-上海-按天
+            catering_shanghai_daily: [
+                { type: '餐饮服务（正餐）', range: '180-240元/天', avg: '210元/天', cycle: '日结', note: '工作8小时，加班25元/小时' },
+                { type: '餐饮服务（快餐）', range: '160-200元/天', avg: '180元/天', cycle: '日结', note: '高峰期额外补贴20-50元/天' },
+                { type: '餐饮服务（夜宵）', range: '200-260元/天', avg: '230元/天', cycle: '日结', note: '夜班补贴50元/天' }
+            ],
+            // 设计美工-深圳-按项目
+            design_shenzhen_project: [
+                { type: '海报设计', range: '100-200元/张', avg: '150元/张', cycle: '按单结', note: '套系设计500-1000元' },
+                { type: '详情页设计', range: '300-500元/个', avg: '400元/个', cycle: '按单结', note: '整店装修2000-5000元' },
+                { type: 'LOGO设计', range: '500-2000元/个', avg: '1200元/个', cycle: '按项目结', note: '品牌全案5000-20000元' }
+            ]
+        };
+
+        // 查询按钮点击事件
+        const queryBtn = document.getElementById('queryBtn');
+        const industrySelect = document.getElementById('industry');
+        const citySelect = document.getElementById('city');
+        const paymentSelect = document.getElementById('payment');
+        const resultDesc = document.getElementById('resultDesc');
+        const salaryTableBody = document.getElementById('salaryTableBody');
+
+        queryBtn.addEventListener('click', function() {
+            // 获取选中值
+            const industry = industrySelect.value;
+            const city = citySelect.value;
+            const payment = paymentSelect.value;
+
+            // 构建结果描述
+            let industryText = industrySelect.options[industrySelect.selectedIndex].text;
+            let cityText = citySelect.options[citySelect.selectedIndex].text;
+            let paymentText = paymentSelect.options[paymentSelect.selectedIndex].text;
+            resultDesc.textContent = `${cityText}·${industryText}·${paymentText}`;
+
+            // 构建数据key
+            const dataKey = `${industry}_${city}_${payment}`;
+            // 获取对应数据（无匹配则用全部数据）
+            const showData = salaryData[dataKey] || salaryData.all;
+
+            // 清空表格
+            salaryTableBody.innerHTML = '';
+
+            // 渲染表格数据
+            showData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${item.type}</td>
+                        <td class="salary-range">${item.range}</td>
+                        <td>${item.avg}</td>
+                        <td>${item.cycle}</td>
+                        <td>${item.note}</td>
+                    `;
+                salaryTableBody.appendChild(tr);
+            });
+
+            // 提示（模拟加载效果）
+            this.textContent = '查询中...';
+            setTimeout(() => {
+                this.textContent = '查询薪资';
+                alert('薪资数据已更新，以上为参考范围，请结合实际情况谈判！');
+            }, 500);
+        });
+
+        // 未完成功能提示
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            if (link.href === '#' || !link.href.includes('.html')) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert(`【${this.textContent.trim()}】功能正在建设中，敬请期待！`);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
