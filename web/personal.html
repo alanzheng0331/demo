@@ -315,6 +315,54 @@
                 // 实际项目中可跳转到登录页
             }
         }
+        // 页面加载时验证登录状态并获取用户信息
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 检查是否登录
+            if (!localStorage.getItem('token')) {
+                alert('请先登录');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // 调用用户信息接口
+                const userInfo = await request('/api/user/info', 'GET');
+
+                // 填充页面数据（替换静态的“张三”等）
+                document.querySelector('.profile-name').textContent = userInfo.name || userInfo.username;
+                document.querySelector('.credit-score').textContent = `信用分：${userInfo.creditScore}（优秀）`;
+                document.getElementById('phone').value = userInfo.phone || ''; // 假设电话输入框ID为phone
+
+            } catch (error) {
+                // 错误已在request工具中提示
+            }
+        });
+
+        // 保存个人信息（绑定到“保存”按钮）
+        document.getElementById('saveInfoBtn').addEventListener('click', async () => {
+            const newPhone = document.getElementById('phone').value.trim();
+            try {
+                await request('/api/user/info', 'PUT', { phone: newPhone });
+                alert('信息修改成功');
+            } catch (error) {
+                // 错误已在request工具中提示
+            }
+        });
+
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                window.location.href = 'login.html';
+            }
+        }
+        <!-- 在login.html中引入请求工具 -->
+        <script src="js/request.js"></script>
+    <!-- 然后再引入页面自身的脚本 -->
+    <script>
+        // 登录页面的脚本代码（如上面的登录逻辑）
+    </script>
     </script>
 </body>
 </html>

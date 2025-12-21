@@ -266,6 +266,43 @@
             return false;
         }
     });
+    // 绑定登录表单提交事件
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // 阻止页面刷新
+
+        // 获取表单数据
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        // 简单验证
+        if (!username || !password) {
+            alert('请输入用户名和密码');
+            return;
+        }
+
+        try {
+            // 调用登录接口
+            const data = await request('/api/user/login', 'POST', {
+                username: username,
+                password: password
+            });
+
+            // 登录成功：保存令牌和用户名，跳转首页
+            localStorage.setItem('token', data.token); // 存储令牌
+            localStorage.setItem('username', username); // 存储用户名（可选）
+            alert('登录成功');
+            window.location.href = 'index.html'; // 跳转到首页
+
+        } catch (error) {
+            // 错误已在request工具中提示，此处无需重复
+        }
+    });
+    <!-- 在login.html中引入请求工具 -->
+    <script src="js/request.js"></script>
+<!-- 然后再引入页面自身的脚本 -->
+<script>
+    // 登录页面的脚本代码（如上面的登录逻辑）
+</script>
 </script>
 </body>
 </html>

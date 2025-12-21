@@ -721,6 +721,48 @@
                 console.log(`切换到第${this.textContent}页`);
             });
         });
+        // 页面加载完成后获取兼职列表
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 调用兼职列表接口（支持分页和筛选，这里简化为获取第一页）
+                const jobList = await request('/api/jobs?page=1&size=10', 'GET');
+
+                // 渲染到页面（找到列表容器）
+                const jobContainer = document.querySelector('.job-list'); // 假设列表容器类名为job-list
+                jobContainer.innerHTML = ''; // 清空现有内容
+
+                // 遍历数据生成列表项
+                jobList.forEach(job => {
+                    const jobItem = document.createElement('div');
+                    jobItem.className = 'job-item'; // 使用现有样式类
+                    jobItem.innerHTML = `
+                <div class="job-left">
+                    <h3 class="job-title">${job.title} <span class="job-tag">${job.type}</span></h3>
+                    <div class="job-info">
+                        <span>薪资：${job.salary}</span>
+                        <span>地点：${job.location}</span>
+                        <span>时间：${job.time}</span>
+                    </div>
+                    <p class="job-desc">${job.description}</p>
+                </div>
+                <div class="job-right">
+                    <span class="job-salary">${job.salary}</span>
+                    <a href="job-detail.html?id=${job.id}" class="job-btn">查看详情</a>
+                </div>
+            `;
+                    jobContainer.appendChild(jobItem);
+                });
+
+            } catch (error) {
+                // 错误已在request工具中提示
+            }
+        });
+        <!-- 在login.html中引入请求工具 -->
+        <script src="js/request.js"></script>
+    <!-- 然后再引入页面自身的脚本 -->
+    <script>
+        // 登录页面的脚本代码（如上面的登录逻辑）
+    </script>
     </script>
 </body>
 </html>
