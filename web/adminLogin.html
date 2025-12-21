@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>系统管理员登录 - 易兼职</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin-login-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .admin-login-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .admin-login-header h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .admin-login-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .admin-login-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 50px;
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .admin-login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2d3e50 0%, #4a6583 100%); /* 管理员专属深色渐变，区分用户/企业 */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .admin-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(45, 62, 80, 0.3);
+        }
+
+        .admin-login-links {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .admin-login-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .admin-login-links a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .admin-login-container {
+                padding: 20px;
+            }
+
+            .admin-login-box {
+                padding: 30px;
+            }
+
+            .admin-login-header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="admin-login-container">
+    <div class="admin-login-header">
+        <h1>系统管理员登录</h1>
+        <p>仅限系统管理员访问，请勿随意操作</p>
+    </div>
+
+    <!-- 管理员登录表单：仅账号+密码，无注册入口 -->
+    <form id="adminLoginForm" class="admin-login-box" action="superAdminLoginProcess.jsp" method="POST">
+        <div class="form-group">
+            <label for="adminAccount">管理员账号</label>
+            <input type="text" id="adminAccount" name="adminAccount" class="form-control" placeholder="请输入管理员账号" required>
+        </div>
+
+        <div class="form-group">
+            <label for="adminPwd">管理员密码</label>
+            <input type="password" id="adminPwd" name="adminPwd" class="form-control" placeholder="请输入管理员密码" required>
+        </div>
+
+        <button type="submit" class="admin-login-btn">管理员登录</button>
+
+        <!-- 仅返回登录页链接，无注册入口 -->
+        <div class="admin-login-links">
+            <a href="login.html">返回普通登录页面</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 管理员登录表单验证
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+        const adminAccount = document.getElementById('adminAccount').value.trim();
+        const adminPwd = document.getElementById('adminPwd').value.trim();
+
+        // 验证账号和密码是否为空
+        if (!adminAccount || !adminPwd) {
+            e.preventDefault();
+            alert('请填写完整的管理员登录信息！');
+            return false;
+        }
+
+        // 可选：管理员密码长度要求更高（比如至少8位）
+        if (adminPwd.length < 8) {
+            e.preventDefault();
+            alert('管理员密码长度至少8位！');
+            return false;
+        }
+    });
+</script>
+</body>
+</html>

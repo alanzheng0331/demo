@@ -82,80 +82,176 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
+        /* 横幅区 */
+        .banner {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-top: 70px;
+            padding: 60px 20px;
             color: white;
+            text-align: center;
+        }
+
+        .banner-title {
+            font-size: 40px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .banner-subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .banner-btn {
+            background: white;
+            color: #764ba2;
             border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
+        .banner-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
+        /* 主内容区 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* 功能入口区 */
+        .function-section {
+            margin-bottom: 80px;
         }
 
         .section-title {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 40px;
             position: relative;
+            padding-bottom: 15px;
         }
 
         .section-title::after {
             content: '';
             position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             bottom: 0;
+            width: 80px;
             height: 4px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 2px;
         }
 
+        .function-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
         }
 
+        .function-card {
             background: white;
+            border-radius: 20px;
+            padding: 40px 20px;
             text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
             cursor: pointer;
+            text-decoration: none;
+            color: #333;
         }
 
+        .function-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(102, 126, 234, 0.15);
         }
 
+        .function-icon {
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 0 auto 20px;
             color: white;
+            font-size: 32px;
         }
 
+        .function-title {
+            font-size: 20px;
             font-weight: bold;
             margin-bottom: 10px;
         }
 
+        .function-desc {
             font-size: 14px;
             color: #666;
             line-height: 1.6;
         }
 
+        /* 快捷导航区 */
+        .quick-nav-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 80px;
+            color: white;
         }
 
+        .quick-nav-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
         }
 
+        .quick-nav-item {
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 20px;
+            text-align: center;
             transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
         }
 
+        .quick-nav-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
         }
 
+        .quick-nav-name {
+            font-size: 16px;
             font-weight: 600;
         }
 
         /* 底部 */
         .footer {
+            background: #333;
             color: white;
+            padding: 60px 20px 30px;
         }
 
         .footer-container {
@@ -164,6 +260,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 40px;
+            margin-bottom: 40px;
         }
 
         .footer-col h3 {
@@ -180,6 +277,7 @@
             bottom: 0;
             width: 40px;
             height: 2px;
+            background: #667eea;
             border-radius: 1px;
         }
 
@@ -204,6 +302,7 @@
 
         .copyright {
             text-align: center;
+            padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             font-size: 14px;
             color: rgba(255, 255, 255, 0.7);
@@ -220,12 +319,21 @@
                 font-size: 20px;
             }
 
+            .banner {
+                margin-top: 120px;
+                padding: 40px 20px;
             }
 
+            .banner-title {
+                font-size: 30px;
             }
 
+            .function-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
 
+            .quick-nav-section {
+                padding: 30px 20px;
             }
         }
 
@@ -240,6 +348,15 @@
                 text-align: center;
             }
 
+            .banner-title {
+                font-size: 24px;
+            }
+
+            .function-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-nav-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -249,31 +366,105 @@
 <!-- 顶部导航栏 -->
 <nav class="navbar">
     <div class="navbar-container">
+        <a href="index.html" class="logo">
             <h1>易兼职</h1>
         </a>
         <div class="nav-buttons">
+            <a href="search.html" class="nav-btn">兼职检索</a>
             <a href="login.html" class="nav-btn login">登录/注册</a>
         </div>
     </div>
 </nav>
 
+<!-- 横幅区 -->
+<div class="banner">
+    <h2 class="banner-title">找靠谱兼职，上易兼职</h2>
+    <p class="banner-subtitle">海量优质兼职岗位，日结/周结/月结多种结算方式，学生、宝妈、上班族都能找到合适的兼职</p>
+    <a href="search.html" class="banner-btn">立即找兼职</a>
+</div>
+
 <!-- 主内容区 -->
 <main class="main-container">
+    <!-- 核心功能入口 -->
+    <section class="function-section">
+        <h2 class="section-title">核心功能</h2>
+        <div class="function-grid">
+            <!-- 兼职检索 -->
+            <a href="search.html" class="function-card">
+                <div class="function-icon">🔍</div>
+                <h3 class="function-title">兼职检索</h3>
+                <p class="function-desc">按关键词、地点、薪资、结算方式精准检索，找到最适合你的兼职</p>
+            </a>
 
+            <!-- 兼职指南 -->
+            <a href="guide.html" class="function-card">
+                <div class="function-icon">📚</div>
+                <h3 class="function-title">兼职指南</h3>
+                <p class="function-desc">兼职防骗、面试技巧、薪资谈判，全方位指导你的兼职之路</p>
+            </a>
+
+            <!-- 薪资查询 -->
+            <a href="salary-query.html" class="function-card">
+                <div class="function-icon">💰</div>
+                <h3 class="function-title">薪资查询</h3>
+                <p class="function-desc">查询各行业兼职薪资标准，避免被低薪坑，保障自身权益</p>
+            </a>
+
+            <!-- 我的兼职 -->
+            <a href="personal.html" class="function-card">
+                <div class="function-icon">📝</div>
+                <h3 class="function-title">我的兼职</h3>
+                <p class="function-desc">查看已应聘、已接单、已完成的兼职，管理你的兼职记录</p>
+            </a>
+
+            <!-- 意见反馈 -->
+            <a href="feedback.html" class="function-card">
+                <div class="function-icon">💬</div>
+                <h3 class="function-title">意见反馈</h3>
+                <p class="function-desc">对平台有任何建议或问题，随时反馈，我们会尽快处理</p>
+            </a>
         </div>
     </section>
 
+    <!-- 快捷导航 -->
+    <section class="quick-nav-section">
+        <h2 class="quick-nav-title">热门兼职分类</h2>
+        <div class="quick-nav-grid">
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">家教辅导</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">餐饮服务</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">电商客服</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">文字创作</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">设计美工</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">技术开发</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">跑腿配送</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">摄影摄像</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">活动执行</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">翻译口译</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">市场推广</div>
             </div>
+            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+                <div class="quick-nav-name">其他兼职</div>
             </div>
         </div>
     </section>
@@ -325,8 +516,15 @@
 </footer>
 
 <script>
+    // 所有跳转都是静态的，仅做页面跳转提示
     document.addEventListener('DOMContentLoaded', function() {
+        // 非检索/登录的跳转链接提示
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            if (link.href === '#' || !link.href.includes('.html')) {
+                link.addEventListener('click', function(e) {
                     e.preventDefault();
+                    alert(`【${this.textContent.trim()}】功能正在建设中，敬请期待！`);
                 });
             }
         });
