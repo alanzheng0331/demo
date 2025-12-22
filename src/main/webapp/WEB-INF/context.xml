@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 整个文件只能有一个<Context>根节点 -->
+<Context>
+    <!-- 仅保留一个<Resource>配置（数据源） -->
+    <Resource
+            name="jdbc/part_job"
+            auth="Container"
+            type="javax.sql.DataSource"
+            factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
+            driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+            url="jdbc:sqlserver://localhost:1433;databaseName=c;encrypt=false;characterEncoding=UTF-8"
+            username="sa"
+            password="123456"
+            maxTotal="100"
+            maxIdle="30"
+            maxWaitMillis="10000"
+    />
+
+        <JarScanner>
+            <JarScanFilter defaultJarScanTypes="" jarScanTypes=""/>
+        </JarScanner>
+
+</Context>
