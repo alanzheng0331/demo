@@ -5,57 +5,28 @@
          http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
-    <!-- 欢迎页面配置 -->
+    <!-- 显示名称 -->
+    <display-name>学生兼职系统</display-name>
+
+    <!-- 字符编码过滤器 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 默认首页 -->
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+
     </welcome-file-list>
 
-    <!-- 错误页面配置 -->
-    <error-page>
-        <error-code>404</error-code>
-        <location>/404.html</location>
-    </error-page>
-    <error-page>
-        <error-code>500</error-code>
-        <location>/500.html</location>
-    </error-page>
-
-    <!-- 会话配置 -->
-    <session-config>
-        <session-timeout>30</session-timeout> <!-- 会话超时时间30分钟 -->
-    </session-config>
-
-    <!-- 用户注册Servlet -->
-    <servlet>
-        <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>servlet.RegisterServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/registerProcess.jsp</url-pattern>
-    </servlet-mapping>
-
-    <!-- 用户登录Servlet -->
-    <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>servlet.LoginServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/loginProcess.jsp</url-pattern>
-    </servlet-mapping>
-
-    <!--    -->
-
-    <!-- 兼职管理Servlet（含敏感词拦截、兼职CRUD） -->
-    <servlet>
-        <servlet-name>JobServlet</servlet-name>
-        <servlet-class>servlet.JobServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>JobServlet</servlet-name>
-        <url-pattern>/jobManage</url-pattern>
-    </servlet-mapping>
 </web-app>
