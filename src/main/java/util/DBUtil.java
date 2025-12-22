@@ -1,54 +1,82 @@
 package util;
 
+import org.apache.commons.dbutils.DbUtils;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * 数据库连接工具类：负责获取连接、关闭资源
+ * 数据库连接工具类
  */
 public class DBUtil {
-    // 数据库连接参数（请替换为你的SQL Server配置）
-    private static final String URL = "jdbc:sqlserver://localhost:1433;DatabaseName=StudentPartTimeJobDB;encrypt=false";
-    private static final String USER = "sa";  // 你的数据库用户名
-    private static final String PASSWORD = "123456";  // 你的数据库密码
-
-    // 静态代码块：加载SQL Server驱动（程序启动时执行一次）
-    static {
+    /**
+     * 获取数据库连接
+     */
+    public static Connection getConnection() {
+        Connection conn = null;
         try {
-            // 加载驱动类（SQL Server JDBC驱动的全类名）
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            System.out.println("✅ SQL Server驱动加载成功");
-        } catch (ClassNotFoundException e) {
-            System.err.println("❌ 驱动加载失败：" + e.getMessage());
-            // 驱动加载失败会导致后续无法连接数据库，直接退出程序
-            System.exit(1);
+            Context ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/part_job");
+            conn = ds.getConnection();
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return conn;
+    }
+
+    /**
+     * 关闭资源
+     */
+    public static void close(Connection conn, PreparedStatement pstmt, ResultSet rs) throws SQLException {
+        DbUtils.close(conn);
+    }
+
+    public static void close(Connection conn, PreparedStatement pstmt) throws SQLException {
+        DbUtils.close(conn);
+    }
+
+    /**
+     * 开启事务
+     */
+    public static void beginTransaction(Connection conn) {
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.setAutoCommit(false);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     /**
-     * 获取数据库连接
-     *
-     * @return 数据库连接对象（Connection）
+     * 提交事务
      */
-    public static Connection getConnection() {
+    public static void commit(Connection conn) {
         try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
+            if (conn != null && !conn.isClosed()) {
+                conn.commit();
+            }
         } catch (SQLException e) {
-            System.err.println("❌ 连接失败：" + e.getMessage());
-            return null;
+            e.printStackTrace();
         }
     }
 
-    public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
+    /**
+     * 回滚事务
+     */
+    public static void rollback(Connection conn) {
         try {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
+            if (conn != null && !conn.isClosed()) {
+                conn.rollback();
+            }
         } catch (SQLException e) {
-            System.err.println("❌ 资源关闭失败：" + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

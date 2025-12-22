@@ -26,6 +26,11 @@
     <!-- 默认首页 -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
+<<<<<<<< HEAD:src/main/webapp/WEB-INF/web.xml
         <welcome-file>index.html</welcome-file>
+========
+
+>>>>>>>> ffd4e35 (后端):src/main/web/WEB-INF/web.xml
     </welcome-file-list>
+
 </web-app>
