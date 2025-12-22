@@ -1,6 +1,4 @@
-package service.mypocket;
-
-import service.model.UserModel;
+package servlet.mypocket;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

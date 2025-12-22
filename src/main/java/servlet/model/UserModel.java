@@ -1,4 +1,4 @@
-package service.model;
+package servlet.model;
 
 public interface UserModel {
 }
