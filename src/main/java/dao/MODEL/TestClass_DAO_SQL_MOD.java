@@ -400,49 +400,65 @@ public class TestClass_DAO_SQL_MOD implements TestClass_DAO_SQL, TestInterface_D
 
     /**
      * 多条件灵活查询（支持模糊查询），返回结果集
-     * @param MY_WAY 查询条件（key=列名，value=列值，值包含%则为模糊查询）
+     * @param MY_WAY 查询条件列表（单个Map内键值对为AND连接，多个Map之间为OR连接；key=列名，value=列值，值包含%则为模糊查询）
      * @return 符合条件的结果集
      * @throws Exception 查询执行失败时抛出异常
      */
     @Override
-    public List<Map<String, Object>> TestInterface_DAO_SQL_SELECT_3(Map<String, Object> MY_WAY) throws Exception {
-        // 1. 校验输入条件是否为空
+    public List<Map<String, Object>> TestInterface_DAO_SQL_SELECT_3(List<Map<String, Object>> MY_WAY) throws Exception {
+        // 1. 校验输入条件是否为空（List本身或内部无有效Map均需校验）
         if (MY_WAY == null || MY_WAY.isEmpty()) {
             throw new IllegalArgumentException("查询条件MY_WAY不能为空");
         }
 
-        // 2. 过滤条件数据，确保无非法内容
-        List<Map<String, Object>> filterList = TestInterface_DAO_SQL_Filter(Collections.singletonList(MY_WAY));
+        // 2. 过滤条件数据，确保无非法内容（直接传入List，无需包装）
+        List<Map<String, Object>> filterList = TestInterface_DAO_SQL_Filter(MY_WAY);
         if (filterList.isEmpty()) {
             throw new IllegalArgumentException("查询条件包含非法内容，无法拼装SELECT语句");
         }
-        Map<String, Object> validWay = filterList.get(0);
 
         // 3. 拼装WHERE条件语句（支持模糊查询：值包含%则用LIKE）
+        // 外层：多个Map之间用OR连接（加括号）；内层：单个Map内键值对用AND连接
         StringBuilder conditionSb = new StringBuilder();
-        for (Map.Entry<String, Object> entry : validWay.entrySet()) {
-            //如果Value 为空 则不管他
-            if(entry.getValue()==null || entry.getValue().toString().trim().isEmpty()) {
+        for (Map<String, Object> validWay : filterList) {
+            // 单个Map的条件拼装容器
+            StringBuilder singleConditionSb = new StringBuilder();
+            for (Map.Entry<String, Object> entry : validWay.entrySet()) {
+                // 跳过空值（null或空字符串）
+                if (entry.getValue() == null || entry.getValue().toString().trim().isEmpty()) {
+                    continue;
+                }
+
+                String colName = entry.getKey().trim();
+                Object valueObj = entry.getValue();
+                String colValue = escapeValue(valueObj);
+
+                // 处理模糊查询：字符串且包含%则用LIKE（保留原逻辑）
+                String operator = "=";
+                if (valueObj instanceof String && ((String) valueObj).contains("%")) {
+                    operator = "LIKE";
+                }
+
+                // 单个Map内的键值对用AND连接
+                if (singleConditionSb.length() > 0) {
+                    singleConditionSb.append(" AND ");
+                }
+                singleConditionSb.append(colName).append(" ").append(operator).append(" ").append(colValue);
+            }
+
+            // 跳过空的单个Map条件（所有键值对都是空值的情况）
+            if (singleConditionSb.length() == 0) {
                 continue;
             }
 
-            //其他你随意
-            String colName = entry.getKey().trim();
-            Object valueObj = entry.getValue();
-            String colValue = escapeValue(valueObj);
-
-            // 处理模糊查询：字符串且包含%则用LIKE
-            String operator = "=";
-            if (valueObj instanceof String && ((String) valueObj).contains("%")) {
-                operator = "LIKE";
-            }
-
+            // 多个Map之间用OR连接，并用括号包裹单个Map的条件（避免优先级问题）
             if (conditionSb.length() > 0) {
-                conditionSb.append(" AND ");
+                conditionSb.append(" OR ");
             }
-            conditionSb.append(colName).append(" ").append(operator).append(" ").append(colValue);
+            conditionSb.append("(").append(singleConditionSb).append(")");
         }
 
+        // 校验最终条件是否为空（所有Map都无有效键值对）
         if (conditionSb.length() == 0) {
             throw new IllegalArgumentException("查询条件无效，无法拼装SELECT语句");
         }

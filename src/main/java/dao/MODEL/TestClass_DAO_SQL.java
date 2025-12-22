@@ -82,7 +82,7 @@ public interface TestClass_DAO_SQL {
      *输出：List Map/抛出异常【失败】
      *内容：输入-》SELECT *FROM XXXXX where Map_key=Map_value ->Util ->返回 ——》return
      */
-    public List<Map<String,Object>> TestInterface_DAO_SQL_SELECT_3(Map<String, Object> MY_WAY) throws Exception;
+    public List<Map<String,Object>> TestInterface_DAO_SQL_SELECT_3(List<Map<String, Object>> MY_WAY) throws Exception;
 }
 
 

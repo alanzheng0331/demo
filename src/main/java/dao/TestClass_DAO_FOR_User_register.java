@@ -2,13 +2,16 @@ package ALL_20252160A0925.D3_DAO;
 
 import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_MOD;
 import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_PUBLIC;
+import ALL_20252160A0925.D3_DAO.MODEL.Test_TABLE_NAME_MODEL;
 
 import java.util.List;
 import java.util.Map;
 
 public class TestClass_DAO_FOR_User_register extends TestClass_DAO_SQL_MOD {
     public TestClass_DAO_FOR_User_register() {
-        super("test_user");
+        super(
+                new Test_TABLE_NAME_MODEL().getTableNameTestUser()
+        );
     }
 
     /**

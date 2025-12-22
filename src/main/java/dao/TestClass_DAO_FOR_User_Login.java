@@ -2,6 +2,7 @@ package ALL_20252160A0925.D3_DAO;
 
 import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_MOD;
 import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_PUBLIC;
+import ALL_20252160A0925.D3_DAO.MODEL.Test_TABLE_NAME_MODEL;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,9 @@ import java.util.Scanner;
 
 public class TestClass_DAO_FOR_User_Login extends TestClass_DAO_SQL_MOD {
     public TestClass_DAO_FOR_User_Login() {
-        super("test_user");
+        super(
+                new Test_TABLE_NAME_MODEL().getTableNameTestUser()
+        );
     }
 
     /**
@@ -37,7 +40,7 @@ public class TestClass_DAO_FOR_User_Login extends TestClass_DAO_SQL_MOD {
                 dataList.get(0).put("PHONE", PHONE); // 修改
         //System.out.println(dataList);
         //直接插入
-        return TestInterface_DAO_SQL_SELECT_3(dataList.get(0));
+        return TestInterface_DAO_SQL_SELECT_3(dataList);
     }
 
 }
