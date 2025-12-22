@@ -28,8 +28,8 @@ public class Test extends HttpServlet {
             //    <artifactId>mssql-jdbc</artifactId>
             //    <version>12.4.0.jre11</version>   <!-- 或 12.4.0.jre8 如果你坚持 JDK 8 -->
             //</dependency>
-        //然后 把你的用户名 改好 权限打开
-        //推荐网站https://blog.csdn.net/dongmuxg/article/details/118963669
+        //然后 把你的用户名 改好 权限打开 没有权限 经不去
+            //推荐网站https://blog.csdn.net/dongmuxg/article/details/118963669
         String url =
                 "jdbc:sqlserver://localhost:1433;databaseName=TestSQL;"//databaseName=TestSQL 一定要存在
                         + "encrypt=true;trustServerCertificate=true;"; // 开发/内网快速通过

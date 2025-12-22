@@ -1,0 +1,29 @@
+那就把话说到最干：
+“你本地高版本，编译出的 class 必须能在小组的 Java8 + Tomcat7 + SQL2008 跑起来。”
+因此 DAO / Util 写的时候只做 “向下兼容” 三件事，其他一律当 JDK8 用。
+语言级别
+IDE 里把 Project bytecode version 强制设成 1.8（Maven 里 <release>8</release> 或 <source>1.8</source><target>1.8</target>）。
+绝对不要用 Java9+ 任何语法：var、switch 表达式、文本块、List.of()、try-with-resources 引用外部 final 变量等。
+不要引任何 java.time 包，时间全用 java.util.Date / java.sql.Timestamp，否则小组 JDK8 里没有这些类。
+驱动 & SQL 写法
+你本地照样用 mssql-jdbc 7.x.jre8（兼容 SQL2008 的最后一代），
+这样打出来的 war 里 jar 版本跟小组一致，部署时不用换。
+URL 写成 2008 能认的最小集：
+jdbc:sqlserver://ip:1433;databaseName=xxx
+不要加 encrypt=true 这些 2016 才认的开关，否则 2008 引擎直接拒连。
+SQL 关键字只写 2008 支持的语法，
+比如分页继续用 ROW_NUMBER() OVER 而不是 2012+ 的 OFFSET/FETCH，
+日期函数只用 GETDATE() 而不是 SYSDATETIME()。
+Util 实现
+连接获取：
+继续 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+DriverManager.getConnection(url,user,pwd)，
+不要出现 DataSource、不要出现 JNDI，Tomcat7 的老配置直接认。
+关闭：
+老写法 finally { if (rs != null) rs.close(); … } 即可，
+不要用 “try-with-resources 外部变量” 这种 JDK9+ 才允许的写法。
+异常：
+只抛 SQLException，不要带 java.lang.Exception 的 multi-catch（JDK7 才支持）。
+一句话总结：
+“把 JDK8 当成最高标准写，高版本只当编译器用；DAO/Util 里不出现任何 9+ 语法、不出现 2012+ SQL、不出现新驱动参数。”
+这样你本地能跑，打包回小组也能跑，零回改。
