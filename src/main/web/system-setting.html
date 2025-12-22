@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>系统设置 - 兼职管理系统</title>
+    <style>
+        /* 复用原有样式 + 新增系统设置专属样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏（复用） */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 主容器（复用） */
+        .main-container {
+            display: flex;
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏（复用） */
+        .sidebar {
+            width: 220px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 20px 0;
+            height: calc(100vh - 70px);
+            position: fixed;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-title {
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+
+        .sidebar-menu li a {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 25px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #f5f7fa;
+            color: #667eea;
+        }
+
+        .sidebar-menu li a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .menu-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* 内容区（复用） */
+        .content {
+            flex: 1;
+            margin-left: 220px;
+            padding: 30px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 卡片样式（复用+新增） */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* 系统设置专属样式 */
+        .setting-tab {
+            display: flex;
+            border-bottom: 1px solid #e1e1e1;
+            margin-bottom: 20px;
+            gap: 2px;
+        }
+
+        .setting-tab-item {
+            padding: 10px 20px;
+            background: #f5f7fa;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .setting-tab-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .setting-content {
+            display: none;
+        }
+
+        .setting-content.active {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-reset {
+            background: #f5f7fa;
+            color: #666;
+            border: 1px solid #e1e1e1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            background: #eee;
+        }
+
+        .config-desc {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* 数据管理样式 */
+        .data-btn-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .data-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-backup {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-clean {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-export {
+            background: #2196f3;
+            color: white;
+        }
+
+        .data-log {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .log-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f7fa;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        /* 响应式适配（复用+调整） */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .sidebar-menu li a span {
+                display: none;
+            }
+
+            .content {
+                margin-left: 80px;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .setting-tab {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航（复用） -->
+    <header class="header">
+        <div class="header-logo">易兼职—管理员后台</div>
+        <div class="header-user">
+            <span>欢迎, 管理员</span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </header>
+
+    <!-- 主容器（复用） -->
+    <div class="main-container">
+        <!-- 侧边栏（优化跳转逻辑：传递module参数+本地存储） -->
+        <aside class="sidebar">
+    <ul class="sidebar-menu">
+        <li class="menu-title">主菜单</li>
+        <li>
+            <a href="admin.html?module=job" onclick="saveActiveModule('job')">
+                <span class="menu-icon">💼</span>
+                <span>兼职管理</span>
+            </a>
+        </li>
+        <li>
+            <a href="admin.html?module=resume" onclick="saveActiveModule('resume')">
+                <span class="menu-icon">📄</span>
+                <span>简历审核</span>
+            </a>
+        </li>
+        <li>
+            <a href="admin.html?module=user" onclick="saveActiveModule('user')">
+                <span class="menu-icon">👥</span>
+                <span>用户管理</span>
+            </a>
+        </li>
+        <li class="menu-title">系统管理</li>
+        <li>
+            <a href="system-setting.html" class="active">
+                <span class="menu-icon">⚙️</span>
+                <span>系统设置</span>
+            </a>
+        </li>
+        <li>
+            <a href="operation-log.html" onclick="saveActiveModule('log')">
+                <span class="menu-icon">📝</span>
+                <span>操作日志</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+
+        <!-- 系统设置内容区 -->
+        <div class="content">
+            <div class="content-header">
+                <h1 class="page-title">系统设置</h1>
+            </div>
+
+            <!-- 系统设置卡片 -->
+            <div class="card">
+                <!-- 选项卡 -->
+                <div class="setting-tab">
+                    <button class="setting-tab-item active" onclick="switchSettingTab('basic')">基础配置</button>
+                    <button class="setting-tab-item" onclick="switchSettingTab('business')">业务规则</button>
+                    <button class="setting-tab-item" onclick="switchSettingTab('message')">消息通知</button>
+                    <button class="setting-tab-item" onclick="switchSettingTab('data')">数据管理</button>
+                    <button class="setting-tab-item" onclick="switchSettingTab('security')">安全设置</button>
+                </div>
+
+                <!-- 基础配置 -->
+                <div class="setting-content active" id="setting-basic">
+                    <form id="basicForm">
+                        <div class="form-group">
+                            <label class="form-label">平台基础信息</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="platformName">平台名称</label>
+                                    <input type="text" class="form-control" id="platformName" value="XX兼职招聘平台">
+                                </div>
+                                <div>
+                                    <label class="form-label" for="servicePhone">客服电话</label>
+                                    <input type="text" class="form-control" id="servicePhone" value="400-123-4567">
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-top: 20px;">
+                                <div>
+                                    <label class="form-label" for="serviceEmail">客服邮箱</label>
+                                    <input type="email" class="form-control" id="serviceEmail" value="service@parttime.com">
+                                </div>
+                                <div>
+                                    <label class="form-label" for="icpCode">ICP备案号</label>
+                                    <input type="text" class="form-control" id="icpCode" value="京ICP备XXXXXXXX号">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">全局公告设置</label>
+                            <div class="form-switch">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="noticeSwitch">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>开启全局公告</span>
+                            </div>
+                            <textarea class="form-control" id="noticeContent" rows="4" style="margin-top: 10px;">欢迎使用XX兼职招聘平台，所有兼职信息均经过审核，请放心应聘！</textarea>
+                            <div class="config-desc">公告将在用户端首页展示</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">图片存储配置</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="imgSize">图片大小限制(MB)</label>
+                                    <input type="number" class="form-control" id="imgSize" value="2" min="1" max="10">
+                                    <div class="config-desc">限制用户上传头像/兼职图片的大小</div>
+                                </div>
+                                <div>
+                                    <label class="form-label">允许上传格式</label>
+                                    <div class="form-switch" style="margin-top: 8px;">
+                                        <label class="switch">
+                                            <input type="checkbox" checked id="jpgSwitch">
+                                            <span class="slider"></span>
+                                        </label>
+                                        <span>JPG</span>
+                                    </div>
+                                    <div class="form-switch" style="margin-top: 8px;">
+                                        <label class="switch">
+                                            <input type="checkbox" checked id="pngSwitch">
+                                            <span class="slider"></span>
+                                        </label>
+                                        <span>PNG</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-save" onclick="saveBasicConfig()">保存基础配置</button>
+                        <button type="button" class="btn-reset" onclick="resetBasicConfig()">恢复默认值</button>
+                    </form>
+                </div>
+
+                <!-- 业务规则 -->
+                <div class="setting-content" id="setting-business">
+                    <form id="businessForm">
+                        <!-- 兼职规则 -->
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 16px; margin-bottom: 15px;">兼职规则</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="jobTitleLimit">标题字符限制</label>
+                                    <input type="number" class="form-control" id="jobTitleLimit" value="50" min="10" max="100">
+                                    <div class="config-desc">兼职标题最大字符数</div>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="jobDescLimit">描述字符限制</label>
+                                    <input type="number" class="form-control" id="jobDescLimit" value="2000" min="100" max="5000">
+                                    <div class="config-desc">兼职描述最大字符数</div>
+                                </div>
+                            </div>
+                            <div class="form-switch" style="margin-top: 15px;">
+                                <label class="switch">
+                                    <input type="checkbox" id="jobAuditSwitch">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>兼职发布后需审核（当前单管理员默认发布即生效）</span>
+                            </div>
+                            <div class="form-switch" style="margin-top: 10px;">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="jobSensitiveSwitch">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>开启敏感词拦截</span>
+                            </div>
+                            <textarea class="form-control" id="sensitiveWords" rows="3" style="margin-top: 10px;">兼职,刷单,诈骗,赌博,色情,暴力</textarea>
+                            <div class="config-desc">敏感词列表，逗号分隔，发布兼职时自动拦截</div>
+                        </div>
+
+                        <!-- 简历规则 -->
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label" style="font-size: 16px; margin-bottom: 15px;">简历规则</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="deliveryLimit">单日投递上限</label>
+                                    <input type="number" class="form-control" id="deliveryLimit" value="10" min="1" max="50">
+                                    <div class="config-desc">单用户单日最多投递简历数</div>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="repeatDeliveryLimit">重复投递限制(天)</label>
+                                    <input type="number" class="form-control" id="repeatDeliveryLimit" value="7" min="1" max="30">
+                                    <div class="config-desc">同一兼职重复投递间隔天数</div>
+                                </div>
+                            </div>
+                            <div class="form-switch" style="margin-top: 15px;">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="resumePhoneRequired">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>简历手机号为必填项</span>
+                            </div>
+                            <div class="form-switch" style="margin-top: 10px;">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="resumeEducationRequired">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>简历学历为必填项</span>
+                            </div>
+                        </div>
+
+                        <!-- 评价规则 -->
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label" style="font-size: 16px; margin-bottom: 15px;">评价规则</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="goodScore">好评加分</label>
+                                    <input type="number" class="form-control" id="goodScore" value="2" min="1" max="10">
+                                    <div class="config-desc">用户获得好评时的信用分加分</div>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="badScore">差评扣分</label>
+                                    <input type="number" class="form-control" id="badScore" value="-5" min="-20" max="0">
+                                    <div class="config-desc">用户获得差评时的信用分扣分</div>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-top: 15px;">
+                                <div>
+                                    <label class="form-label" for="excellentScore">优秀信用分阈值</label>
+                                    <input type="number" class="form-control" id="excellentScore" value="90" min="80" max="100">
+                                    <div class="config-desc">信用分≥该值为优秀等级</div>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="goodScoreLimit">良好信用分阈值</label>
+                                    <input type="number" class="form-control" id="goodScoreLimit" value="70" min="60" max="89">
+                                    <div class="config-desc">信用分≥该值为良好等级</div>
+                                </div>
+                            </div>
+                            <div class="form-switch" style="margin-top: 15px;">
+                                <label class="switch">
+                                    <input type="checkbox" id="badReviewAuditSwitch">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>差评需管理员审核后展示</span>
+                            </div>
+                        </div>
+
+                        <!-- 注册规则 -->
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label" style="font-size: 16px; margin-bottom: 15px;">注册规则</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="codeExpire">验证码有效期(分钟)</label>
+                                    <input type="number" class="form-control" id="codeExpire" value="5" min="1" max="30">
+                                    <div class="config-desc">注册验证码有效时长</div>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="pwdLength">密码最小长度</label>
+                                    <input type="number" class="form-control" id="pwdLength" value="8" min="6" max="20">
+                                    <div class="config-desc">用户密码最小长度要求</div>
+                                </div>
+                            </div>
+                            <div class="form-switch" style="margin-top: 15px;">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="pwdComplexSwitch">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>密码需包含字母+数字</span>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-save" onclick="saveBusinessConfig()">保存业务规则</button>
+                        <button type="button" class="btn-reset" onclick="resetBusinessConfig()">恢复默认值</button>
+                    </form>
+                </div>
+
+                <!-- 消息通知 -->
+                <div class="setting-content" id="setting-message">
+                    <form id="messageForm">
+                        <div class="form-group">
+                            <label class="form-label">通知开关设置</label>
+                            <div class="form-switch">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="jobAuditMsg">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>兼职审核结果通知</span>
+                            </div>
+                            <div class="form-switch" style="margin-top: 10px;">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="deliveryStatusMsg">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>简历投递状态变更通知</span>
+                            </div>
+                            <div class="form-switch" style="margin-top: 10px;">
+                                <label class="switch">
+                                    <input type="checkbox" checked id="reviewMsg">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>评价提醒通知</span>
+                            </div>
+                            <div class="config-desc" style="margin-top: 10px;">当前仅开启站内信通知，短信通知需配置第三方接口</div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label">通知模板管理</label>
+                            <div style="margin-bottom: 15px;">
+                                <select class="form-control" id="msgTemplateSelect" onchange="loadMsgTemplate()">
+                                    <option value="jobAuditPass">兼职审核通过</option>
+                                    <option value="jobAuditReject">兼职审核拒绝</option>
+                                    <option value="deliveryAccept">简历投递通过</option>
+                                    <option value="deliveryReject">简历投递拒绝</option>
+                                    <option value="reviewRemind">评价提醒</option>
+                                </select>
+                            </div>
+                            <label class="form-label" for="templateTitle">模板标题</label>
+                            <input type="text" class="form-control" id="templateTitle" value="【兼职审核通过通知】">
+                            <label class="form-label" for="templateContent" style="margin-top: 15px;">模板内容</label>
+                            <textarea class="form-control" id="templateContent" rows="4">您发布的兼职「{{jobTitle}}」已审核通过，可在平台展示！</textarea>
+                            <div class="config-desc">支持变量：{{jobTitle}}-兼职标题、{{userName}}-用户名、{{time}}-操作时间</div>
+                        </div>
+
+                        <button type="button" class="btn-save" onclick="saveMessageConfig()">保存消息配置</button>
+                        <button type="button" class="btn-reset" onclick="resetMessageConfig()">恢复默认模板</button>
+                    </form>
+                </div>
+
+                <!-- 数据管理 -->
+                <div class="setting-content" id="setting-data">
+                    <div class="data-btn-group">
+                        <button class="data-btn btn-backup" onclick="backupData()">📤 立即备份数据</button>
+                        <button class="data-btn btn-clean" onclick="cleanData()">🧹 清理过期数据</button>
+                        <button class="data-btn btn-export" onclick="exportData()">📥 导出统计报表</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">数据备份记录</label>
+                        <div class="data-log" id="backupLog">
+                            <div class="log-item">2025-05-15 10:30:25 - 全库备份成功（文件大小：2.5MB）</div>
+                            <div class="log-item">2025-05-10 00:00:12 - 自动备份成功（文件大小：2.3MB）</div>
+                            <div class="log-item">2025-05-05 14:20:36 - 全库备份成功（文件大小：2.1MB）</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">数据清理选项</label>
+                        <div class="form-switch">
+                            <label class="switch">
+                                <input type="checkbox" checked id="cleanExpireJob">
+                                <span class="slider"></span>
+                            </label>
+                            <span>清理下架超3个月的兼职数据</span>
+                        </div>
+                        <div class="form-switch" style="margin-top: 10px;">
+                            <label class="switch">
+                                <input type="checkbox" checked id="cleanReadMsg">
+                                <span class="slider"></span>
+                            </label>
+                            <span>清理已读超90天的消息数据</span>
+                        </div>
+                        <div class="form-switch" style="margin-top: 10px;">
+                            <label class="switch">
+                                <input type="checkbox" id="cleanInvalidResume">
+                                <span class="slider"></span>
+                            </label>
+                            <span>清理用户注销后30天的简历数据</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">数据统计（近30天）</label>
+                        <div style="display: flex; gap: 20px; margin-top: 10px;">
+                            <div style="flex: 1; background: #f5f7fa; padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #667eea;">128</div>
+                                <div style="font-size: 14px; color: #666; margin-top: 5px;">新增兼职数</div>
+                            </div>
+                            <div style="flex: 1; background: #f5f7fa; padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #4caf50;">856</div>
+                                <div style="font-size: 14px; color: #666; margin-top: 5px;">简历投递数</div>
+                            </div>
+                            <div style="flex: 1; background: #f5f7fa; padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #ff9800;">236</div>
+                                <div style="font-size: 14px; color: #666; margin-top: 5px;">新增用户数</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 安全设置 -->
+                <div class="setting-content" id="setting-security">
+                    <form id="securityForm">
+                        <div class="form-group">
+                            <label class="form-label">管理员密码修改</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="oldPwd">原密码</label>
+                                    <input type="password" class="form-control" id="oldPwd" placeholder="请输入原密码">
+                                </div>
+                                <div>
+                                    <label class="form-label" for="newPwd">新密码</label>
+                                    <input type="password" class="form-control" id="newPwd" placeholder="请输入新密码">
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <label class="form-label" for="confirmPwd">确认新密码</label>
+                                <input type="password" class="form-control" id="confirmPwd" placeholder="请再次输入新密码">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label">登录安全配置</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" for="loginFailLimit">登录失败次数限制</label>
+                                    <input type="number" class="form-control" id="loginFailLimit" value="5" min="3" max="10">
+                                    <div class="config-desc">超过次数将锁定账号</div>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="lockTime">锁定时长(小时)</label>
+                                    <input type="number" class="form-control" id="lockTime" value="1" min="1" max="24">
+                                    <div class="config-desc">账号锁定时长</div>
+                                </div>
+                            </div>
+                            <div class="form-switch" style="margin-top: 15px;">
+                                <label class="switch">
+                                    <input type="checkbox" id="ipWhitelistSwitch">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>开启IP白名单（需配置IP列表）</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label" for="logKeepTime">操作日志保留时长(天)</label>
+                            <input type="number" class="form-control" id="logKeepTime" value="90" min="30" max="365">
+                            <div class="config-desc">超过时长自动删除操作日志</div>
+                        </div>
+
+                        <button type="button" class="btn-save" onclick="saveSecurityConfig()">保存安全配置</button>
+                        <button type="button" class="btn-reset" onclick="resetSecurityConfig()">恢复默认值</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="theme-control.js"></script>
+    <script>
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 保存要激活的模块到本地存储（关键：配合admin.html的URL参数）
+        function saveActiveModule(module) {
+            localStorage.setItem('adminActiveModule', module);
+        }
+
+        // 切换系统设置选项卡
+        function switchSettingTab(tabName) {
+            // 切换选项卡样式
+            const tabItems = document.querySelectorAll('.setting-tab-item');
+            tabItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.onclick.toString().includes(tabName)) {
+                    item.classList.add('active');
+                }
+            });
+
+            // 切换内容
+            const contentItems = document.querySelectorAll('.setting-content');
+            contentItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.id === `setting-${tabName}`) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // 加载消息模板
+        function loadMsgTemplate() {
+            const templateMap = {
+                'jobAuditPass': {
+                    title: '【兼职审核通过通知】',
+                    content: '您发布的兼职「{{jobTitle}}」已审核通过，可在平台展示！'
+                },
+                'jobAuditReject': {
+                    title: '【兼职审核拒绝通知】',
+                    content: '您发布的兼职「{{jobTitle}}」审核未通过，原因：{{reason}}'
+                },
+                'deliveryAccept': {
+                    title: '【简历投递通过通知】',
+                    content: '您投递的「{{jobTitle}}」简历已通过审核，请保持电话畅通！'
+                },
+                'deliveryReject': {
+                    title: '【简历投递拒绝通知】',
+                    content: '您投递的「{{jobTitle}}」简历未通过审核，原因：{{reason}}'
+                },
+                'reviewRemind': {
+                    title: '【评价提醒】',
+                    content: '您应聘的「{{jobTitle}}」兼职已完成，可对该兼职进行评价！'
+                }
+            };
+
+            const selectVal = document.getElementById('msgTemplateSelect').value;
+            const template = templateMap[selectVal];
+            document.getElementById('templateTitle').value = template.title;
+            document.getElementById('templateContent').value = template.content;
+        }
+
+        // 保存配置（模拟）
+        function saveBasicConfig() {
+            alert('基础配置保存成功！');
+        }
+
+        function saveBusinessConfig() {
+            alert('业务规则保存成功！');
+        }
+
+        function saveMessageConfig() {
+            alert('消息配置保存成功！');
+        }
+
+        function saveSecurityConfig() {
+            const oldPwd = document.getElementById('oldPwd').value;
+            const newPwd = document.getElementById('newPwd').value;
+            const confirmPwd = document.getElementById('confirmPwd').value;
+
+            if (oldPwd && newPwd) {
+                if (newPwd !== confirmPwd) {
+                    alert('两次输入的新密码不一致！');
+                    return;
+                }
+                if (newPwd.length < 8) {
+                    alert('密码长度不能少于8位！');
+                    return;
+                }
+            }
+
+            alert('安全配置保存成功！');
+        }
+
+        // 恢复默认值（模拟）
+        function resetBasicConfig() {
+            if (confirm('确定要恢复基础配置默认值吗？')) {
+                document.getElementById('platformName').value = 'XX兼职招聘平台';
+                document.getElementById('servicePhone').value = '400-123-4567';
+                document.getElementById('serviceEmail').value = 'service@parttime.com';
+                document.getElementById('icpCode').value = '京ICP备XXXXXXXX号';
+                document.getElementById('noticeContent').value = '欢迎使用XX兼职招聘平台，所有兼职信息均经过审核，请放心应聘！';
+                document.getElementById('imgSize').value = 2;
+                document.getElementById('jpgSwitch').checked = true;
+                document.getElementById('pngSwitch').checked = true;
+                alert('基础配置已恢复默认值！');
+            }
+        }
+
+        function resetBusinessConfig() {
+            if (confirm('确定要恢复业务规则默认值吗？')) {
+                document.getElementById('jobTitleLimit').value = 50;
+                document.getElementById('jobDescLimit').value = 2000;
+                document.getElementById('deliveryLimit').value = 10;
+                document.getElementById('repeatDeliveryLimit').value = 7;
+                document.getElementById('goodScore').value = 2;
+                document.getElementById('badScore').value = -5;
+                document.getElementById('excellentScore').value = 90;
+                document.getElementById('goodScoreLimit').value = 70;
+                document.getElementById('codeExpire').value = 5;
+                document.getElementById('pwdLength').value = 8;
+                alert('业务规则已恢复默认值！');
+            }
+        }
+
+        function resetMessageConfig() {
+            if (confirm('确定要恢复消息模板默认值吗？')) {
+                document.getElementById('msgTemplateSelect').value = 'jobAuditPass';
+                loadMsgTemplate();
+                alert('消息模板已恢复默认值！');
+            }
+        }
+
+        function resetSecurityConfig() {
+            if (confirm('确定要恢复安全配置默认值吗？')) {
+                document.getElementById('loginFailLimit').value = 5;
+                document.getElementById('lockTime').value = 1;
+                document.getElementById('logKeepTime').value = 90;
+                document.getElementById('oldPwd').value = '';
+                document.getElementById('newPwd').value = '';
+                document.getElementById('confirmPwd').value = '';
+                alert('安全配置已恢复默认值！');
+            }
+        }
+
+        // 数据管理操作（模拟）
+        function backupData() {
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            const logItem = `<div class="log-item">${timeStr} - 全库备份成功（文件大小：2.6MB）</div>`;
+            document.getElementById('backupLog').insertAdjacentHTML('afterbegin', logItem);
+            alert('数据备份成功！');
+        }
+
+        function cleanData() {
+            if (confirm('确定要清理过期数据吗？此操作不可恢复！')) {
+                alert('已清理以下数据：\n1. 下架超3个月的兼职数据（共12条）\n2. 已读超90天的消息数据（共86条）');
+            }
+        }
+
+        function exportData() {
+            alert('统计报表导出成功！文件将自动下载。');
+        }
+
+        // 页面加载初始化
+        window.onload = function() {
+            // 默认加载第一个模板
+            loadMsgTemplate();
+            // 标记当前菜单为active（防止样式丢失）
+            document.querySelector('.sidebar-menu a[href="system-setting.html"]').classList.add('active');
+        };
+    </script>
+</body>
+</html>

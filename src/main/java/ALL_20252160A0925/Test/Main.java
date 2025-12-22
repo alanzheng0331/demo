@@ -12,5 +12,7 @@ public class Main {
         //mainX();
         new Test_User().Test_Login();
         new Test_User().Test_Register();
+        //gitee 令牌：4abaf9534790728771b50d3a44256aff
+        //System.out.println("gitee 密码 :NPC.88=55+tt%tt+j**j.Class");
     }
 }

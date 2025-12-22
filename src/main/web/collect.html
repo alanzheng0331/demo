@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 我的收藏</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 简历选择弹窗样式 */
+        .modal-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal-mask.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-container {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover {
+            color: #333;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-default {
+            background: #f5f5f5;
+            color: #333;
+        }
+        /* 简历选择列表样式 */
+        .resume-select-list {
+            margin-top: 10px;
+        }
+        .resume-select-item {
+            padding: 12px 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .resume-select-item:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .resume-select-item.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .resume-select-info {
+            flex: 1;
+        }
+        .resume-select-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .resume-select-type {
+            font-size: 12px;
+            color: #999;
+        }
+        .resume-select-check {
+            color: #667eea;
+            font-size: 18px;
+            display: none;
+        }
+        .resume-select-item.selected .resume-select-check {
+            display: block;
+        }
+        .no-resume-tip {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        .no-resume-tip .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <h1>易兼职</h1>
+            </a>
+            <div class="user-info">
+                <div class="avatar">
+                    <img src="https://picsum.photos/200/200?random=1" alt="用户头像" onerror="this.src='https://via.placeholder.com/40/667eea/ffffff?text=张'">
+                </div>
+                <span class="username">张三</span>
+                <button class="logout-btn" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="https://picsum.photos/200/200?random=1" alt="个人头像" onerror="this.src='https://via.placeholder.com/100/667eea/ffffff?text=张'">
+                </div>
+                <h3 class="profile-name">张三</h3>
+                <p class="profile-role">兼职求职者</p>
+                <div class="credit-score">信用分：85（优秀）</div>
+                <button class="edit-profile-btn" onclick="window.location.href='personal.html'">编辑资料</button>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="personal.html" class="nav-link" data-module="profile">
+                        <span class="nav-icon">👤</span>
+                        <span>个人信息</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resume.html" class="nav-link" data-module="resume">
+                        <span class="nav-icon">📝</span>
+                        <span>我的简历</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="apply.html" class="nav-link" data-module="apply">
+                        <span class="nav-icon">📬</span>
+                        <span>投递记录</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="message.html" class="nav-link" data-module="message">
+                        <span class="nav-icon">💬</span>
+                        <span>消息中心</span>
+                        <span class="badge">2</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="collect.html" class="nav-link active" data-module="collect">
+                        <span class="nav-icon">⭐</span>
+                        <span>我的收藏</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setting.html" class="nav-link" data-module="setting">
+                        <span class="nav-icon">⚙️</span>
+                        <span>账户设置</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="help.html" class="nav-link" data-module="help">
+                        <span class="nav-icon">❓</span>
+                        <span>帮助中心</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <div class="content-wrapper">
+            <div class="content-panel">
+                <h3 class="panel-title">我的收藏</h3>
+                <div class="collect-list">
+                    <!-- 收藏项1 -->
+                    <div class="collect-item">
+                        <div class="collect-info">
+                            <div class="collect-job">线上文案编辑兼职</div>
+                            <div class="collect-desc">
+                                <span>薪资：¥150/篇</span>
+                                <span>地点：远程办公</span>
+                                <span>收藏时间：2025-05-09</span>
+                            </div>
+                        </div>
+                        <div class="collect-actions">
+                            <button class="resume-btn btn-primary" onclick="applyCollect('线上文案编辑兼职')">立即投递</button>
+                            <button class="resume-btn btn-default" onclick="cancelCollect(this, '线上文案编辑兼职')">取消收藏</button>
+                        </div>
+                    </div>
+                    <!-- 收藏项2 -->
+                    <div class="collect-item">
+                        <div class="collect-info">
+                            <div class="collect-job">校园推广兼职</div>
+                            <div class="collect-desc">
+                                <span>薪资：¥120/天</span>
+                                <span>地点：北京科技大学</span>
+                                <span>收藏时间：2025-05-05</span>
+                            </div>
+                        </div>
+                        <div class="collect-actions">
+                            <button class="resume-btn btn-primary" onclick="applyCollect('校园推广兼职')">立即投递</button>
+                            <button class="resume-btn btn-default" onclick="cancelCollect(this, '校园推广兼职')">取消收藏</button>
+                        </div>
+                    </div>
+                    <!-- 收藏项3 -->
+                    <div class="collect-item">
+                        <div class="collect-info">
+                            <div class="collect-job">UI设计兼职</div>
+                            <div class="collect-desc">
+                                <span>薪资：¥500/单</span>
+                                <span>地点：远程办公</span>
+                                <span>收藏时间：2025-04-30</span>
+                            </div>
+                        </div>
+                        <div class="collect-actions">
+                            <button class="resume-btn btn-primary" onclick="applyCollect('UI设计兼职')">立即投递</button>
+                            <button class="resume-btn btn-default" onclick="cancelCollect(this, 'UI设计兼职')">取消收藏</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 简历选择弹窗 -->
+    <div class="modal-mask" id="resumeSelectModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="resumeModalTitle">选择简历投递</h2>
+                <button class="modal-close" onclick="closeModal('resumeSelectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>请选择要投递的简历（建议选择与职位匹配的简历）：</p>
+                <div class="resume-select-list" id="resumeSelectList">
+                    <!-- 简历列表动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-default" onclick="closeModal('resumeSelectModal')">取消</button>
+                <button class="modal-btn btn-primary" onclick="confirmResumeSelection()">确认投递</button>
+            </div>
+        </div>
+    </div>
+<script src="theme-control.js"></script>
+    <script>
+        // 简历数据（与resume.html保持一致）
+        let resumeData = [
+            {
+                id: 1,
+                name: "通用简历",
+                type: "通用简历",
+                updateTime: "2025-04-20",
+                complete: "基本信息、技能特长、工作经历",
+                skills: "Python编程,小学数学辅导,短视频剪辑,文案写作",
+                experience: "1. 2024.09-2025.01 家教兼职（小学数学/英语）：负责3-6年级学生课后辅导，平均提分15分；\n2. 2024.07-2024.08 短视频剪辑兼职：完成15条短视频剪辑，播放量均超1万；\n3. 2024.03-2024.06 Python编程兼职：完成2个小型爬虫项目，数据采集效率提升50%。",
+                selfEval: "本人是北京科技大学计算机专业大三学生，学习能力强，有丰富的兼职经验。做事认真负责，时间灵活，擅长沟通，能够快速适应不同工作需求，期待找到合适的兼职机会。",
+                isDefault: true
+            },
+            {
+                id: 2,
+                name: "家教专项简历",
+                type: "家教专项简历",
+                updateTime: "2025-04-25",
+                complete: "教育背景、家教经验、擅长科目",
+                skills: "小学数学辅导,小学英语辅导,初中数学辅导,作业辅导",
+                experience: "1. 2024.09-至今 小学数学/英语家教：辅导2名小学4年级学生，数学平均分从75提升至90，英语从80提升至92；\n2. 2024.03-2024.08 初中数学家教：辅导1名初二学生，期末成绩提升20分；\n3. 2023.09-2024.02 作业辅导老师：负责小学生全科作业辅导，累计服务30+学生。",
+                selfEval: "擅长小学/初中数学、英语辅导，熟悉各版本教材，能够制定个性化辅导方案。有耐心、有爱心，善于引导学生思考，帮助学生建立学习信心，提升学习成绩。",
+                isDefault: false
+            }
+        ];
+
+        // 当前选中的职位和简历ID
+        let currentJobName = '';
+        let selectedResumeId = 0;
+
+        // 弹窗控制
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // 重置选择状态
+            selectedResumeId = 0;
+        }
+
+        // 投递收藏的职位 - 改造版
+        function applyCollect(jobName) {
+            currentJobName = jobName;
+            
+            // 更新弹窗标题
+            document.getElementById('resumeModalTitle').textContent = `选择简历投递【${jobName}】`;
+            
+            // 渲染简历选择列表
+            renderResumeSelectList();
+            
+            // 打开简历选择弹窗
+            openModal('resumeSelectModal');
+        }
+
+        // 渲染简历选择列表
+        function renderResumeSelectList() {
+            const resumeSelectList = document.getElementById('resumeSelectList');
+            
+            // 清空列表
+            resumeSelectList.innerHTML = '';
+
+            // 检查是否有简历
+            if (resumeData.length === 0) {
+                resumeSelectList.innerHTML = `
+                    <div class="no-resume-tip">
+                        <div class="icon">📝</div>
+                        <div>暂无可用简历</div>
+                        <button class="modal-btn btn-primary" style="margin-top: 20px;" onclick="window.location.href='resume.html'">立即创建简历</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // 生成简历选择项
+            resumeData.forEach(resume => {
+                const isSelected = resume.isDefault ? 'selected' : '';
+                if (isSelected) {
+                    selectedResumeId = resume.id; // 默认选中默认简历
+                }
+
+                const resumeItem = document.createElement('div');
+                resumeItem.className = `resume-select-item ${isSelected}`;
+                resumeItem.setAttribute('data-resume-id', resume.id);
+                resumeItem.onclick = function() {
+                    // 取消其他选中状态
+                    document.querySelectorAll('.resume-select-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    // 设置当前选中状态
+                    this.classList.add('selected');
+                    selectedResumeId = parseInt(this.getAttribute('data-resume-id'));
+                };
+
+                resumeItem.innerHTML = `
+                    <div class="resume-select-info">
+                        <div class="resume-select-name">${resume.name} ${resume.isDefault ? '(默认)' : ''}</div>
+                        <div class="resume-select-type">类型：${resume.type} | 更新时间：${resume.updateTime}</div>
+                    </div>
+                    <div class="resume-select-check">✓</div>
+                `;
+
+                resumeSelectList.appendChild(resumeItem);
+            });
+        }
+
+        // 确认简历选择并投递
+        function confirmResumeSelection() {
+            // 检查是否选择了简历
+            if (selectedResumeId === 0) {
+                alert('请选择要投递的简历！');
+                return;
+            }
+
+            // 获取选中的简历信息
+            const selectedResume = resumeData.find(item => item.id === selectedResumeId);
+            
+            // 确认投递
+            if (confirm(`确定使用【${selectedResume.name}】投递【${currentJobName}】吗？`)) {
+                // 模拟投递成功
+                alert(`已使用【${selectedResume.name}】成功投递【${currentJobName}】！\n\n投递时间：${new Date().toLocaleString()}\n简历类型：${selectedResume.type}\n请前往「投递记录」查看进度。`);
+                
+                // 关闭弹窗
+                closeModal('resumeSelectModal');
+                
+                // 跳转到投递记录页面
+                setTimeout(() => {
+                    window.location.href = 'apply.html';
+                }, 1000);
+            }
+        }
+
+        // 取消收藏
+        function cancelCollect(btn, jobName) {
+            if (confirm(`确定要取消收藏【${jobName}】吗？`)) {
+                const collectItem = btn.closest('.collect-item');
+                collectItem.style.opacity = '0.5';
+                collectItem.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    collectItem.remove();
+                    // 检查是否还有收藏项
+                    const collectList = document.querySelector('.collect-list');
+                    if (collectList.children.length === 0) {
+                        collectList.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">⭐</div>
+                                <div class="empty-text">暂无收藏的职位</div>
+                                <button class="empty-btn" onclick="window.location.href='apply.html'">去看看兼职</button>
+                            </div>
+                        `;
+                    }
+                }, 300);
+                alert(`已取消收藏【${jobName}】`);
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                alert('退出成功！');
+                window.location.href = 'profile.html';
+            }
+        }
+    </script>
+</body>
+</html>
