@@ -1,4 +1,4 @@
-package service;
+package servlet;
 
 import com.google.code.kaptcha.Constants;
 import dao.CollectDao;
