@@ -1,17 +1,18 @@
-package ALL_20252160A0925.D3_DAO;
+package dao.mypocket;
 
-import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_MOD;
-import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_PUBLIC;
-import ALL_20252160A0925.D3_DAO.MODEL.Test_TABLE_NAME_MODEL;
+
+
+import dao.model.PublicDao;
+import dao.model.ModelDao;
+import dao.model.TableNameBasis;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
-public class TestClass_DAO_FOR_User_Login extends TestClass_DAO_SQL_MOD {
-    public TestClass_DAO_FOR_User_Login() {
+public class UserLoginDao extends ModelDao {
+    public UserLoginDao() {
         super(
-                new Test_TABLE_NAME_MODEL().getTableNameTestUser()
+                new TableNameBasis().getTableNameTestUser()
         );
     }
 
@@ -32,7 +33,7 @@ public class TestClass_DAO_FOR_User_Login extends TestClass_DAO_SQL_MOD {
     //测试 手动输入：
     public List<Map<String, Object>> Test_RUNNING(String PASSWORD, String USERNAME, String PHONE) throws Exception {
         // 获取数据模板
-        List<Map<String, Object>> dataList = TestClass_DAO_SQL_PUBLIC.getTestUserInsertTemplate();
+        List<Map<String, Object>> dataList = PublicDao.getTestUserInsertTemplate();
         //System.out.println(dataList);
         // 直接修改第一个Map中的值（索引为0）
                 dataList.get(0).put("PASSWORD", PASSWORD);     // 修改USER_ID
