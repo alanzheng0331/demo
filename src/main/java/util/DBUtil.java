@@ -1,77 +1,63 @@
 package util;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * SQL Server数据库连接工具类
  */
 public class DBUtil {
     // 数据库连接参数（根据你的实际环境修改）
-    private static final String DRIVER_CLASS = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private static final String DB_URL = "jdbc:sqlserver://localhost:1433;DatabaseName=StudentPartTimeJobDB;encrypt=true;trustServerCertificate=true";
-    private static final String DB_USER = "sa";  // 你的SQL Server账号
-    private static final String DB_PASSWORD = "123456";  // 你的账号密码
+    private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private static final String URL = "jdbc:sqlserver://localhost:1433;DatabaseName=StudentPartTimeJobDB;encrypt=false";
+    private static final String USER = "sa";
+    private static final String PASSWORD = "123456";
 
-    // 加载驱动（静态代码块，仅执行一次）
+    // 加载驱动
     static {
         try {
-            Class.forName(DRIVER_CLASS);
+            Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("加载SQL Server驱动失败", e);
+            e.printStackTrace();
         }
     }
 
     /**
      * 获取数据库连接
      */
-    public static Connection getConnection() {
-        Connection conn = null;
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
+    /**
+     * 关闭资源
+     */
+    public static void close(Connection conn, PreparedStatement pstmt) {
+        close(conn, pstmt, null);
+    }
+
+    /**
+     * 关闭资源（含ResultSet）
+     */
+    public static void close(Connection conn, PreparedStatement pstmt, ResultSet rs) {
         try {
-            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
         } catch (SQLException e) {
-            throw new RuntimeException("获取数据库连接失败", e);
-        }
-        return conn;
-    }
-
-    /**
-     * 关闭数据库连接
-     */
-    public static void closeConnection(Connection conn) {
-        if (conn != null) {
-            try {
-                if (!conn.isClosed()) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 
-    /**
-     * 关闭连接+预处理语句
-     */
-    public static void close(Connection conn, java.sql.PreparedStatement pstmt) {
-        closeConnection(conn);
-        if (pstmt != null) {
-            try {
-                pstmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    public static void beginTransaction(Connection conn) {
     }
 
     public static void commit(Connection conn) {
     }
 
     public static void rollback(Connection conn) {
-    }
-
-    public static void beginTransaction(Connection conn) {
-    }
-
-    public static void close(Connection conn, PreparedStatement pstmt, ResultSet rs) {
     }
 }

@@ -79,7 +79,6 @@
             transition: border-color 0.3s ease;
         }
 
-        /* 验证码输入行样式 */
         .code-group {
             display: flex;
             gap: 10px;
@@ -113,7 +112,6 @@
             display: block;
         }
 
-        /* 新增：提交结果提示样式 */
         .submit-msg {
             text-align: center;
             padding: 10px;
@@ -171,7 +169,6 @@
             text-decoration: underline;
         }
 
-        /* 密码强度样式 - 修复进度条变色问题 */
         .password-strength {
             height: 8px;
             border-radius: 4px;
@@ -188,13 +185,12 @@
             height: 100%;
             width: 0%;
             transition: all 0.3s ease;
-            background-color: #ff4757; /* 默认红色 */
+            background-color: #ff4757;
         }
 
-        /* 满足要求时的绿色样式 */
         .strength-bar.green {
             width: 100%;
-            background-color: #2ed573 !important; /* 绿色，强制生效 */
+            background-color: #2ed573 !important;
         }
 
         .error-message {
@@ -234,9 +230,7 @@
         <p>创建企业账号，入驻易兼职管理系统</p>
     </div>
 
-    <!-- 企业注册表单：action指向Servlet，method为POST -->
     <form id="companyRegisterForm" class="register-box" action="${pageContext.request.contextPath}/companyRegisterServlet" method="POST">
-        <%-- JSP后端提示信息展示 --%>
         <%
             String msg = (String) request.getAttribute("msg");
             String msgType = (String) request.getAttribute("msgType");
@@ -247,7 +241,6 @@
             }
         %>
 
-        <!-- 1. 企业名称 -->
         <div class="form-group">
             <label for="companyName">企业名称 <span style="color: #ff4757;">*</span></label>
             <input type="text" id="companyName" name="companyName" class="form-control" placeholder="请输入企业全称（与营业执照一致）" required value="<%= request.getAttribute("companyName") != null ? request.getAttribute("companyName") : "" %>">
@@ -255,7 +248,6 @@
             <span class="form-tip">请填写与营业执照一致的企业全称，不可修改</span>
         </div>
 
-        <!-- 2. 统一社会信用代码 -->
         <div class="form-group">
             <label for="creditCode">统一社会信用代码 <span style="color: #ff4757;">*</span></label>
             <input type="text" id="creditCode" name="creditCode" class="form-control" placeholder="请输入18位统一社会信用代码" required value="<%= request.getAttribute("creditCode") != null ? request.getAttribute("creditCode") : "" %>">
@@ -263,7 +255,6 @@
             <span class="form-tip">统一社会信用代码为18位，包含字母和数字，与营业执照一致</span>
         </div>
 
-        <!-- 3. 法人姓名 -->
         <div class="form-group">
             <label for="legalPersonName">法人姓名 <span style="color: #ff4757;">*</span></label>
             <input type="text" id="legalPersonName" name="legalPersonName" class="form-control" placeholder="请输入企业法人真实姓名" required value="<%= request.getAttribute("legalPersonName") != null ? request.getAttribute("legalPersonName") : "" %>">
@@ -271,7 +262,6 @@
             <span class="form-tip">请填写与营业执照登记一致的法人真实姓名</span>
         </div>
 
-        <!-- 4. 公司详细地址 -->
         <div class="form-group">
             <label for="companyAddress">公司详细地址 <span style="color: #ff4757;">*</span></label>
             <input type="text" id="companyAddress" name="companyAddress" class="form-control" placeholder="请输入：XX市XX区XX路XX号XX大厦XX室" required value="<%= request.getAttribute("companyAddress") != null ? request.getAttribute("companyAddress") : "" %>">
@@ -279,7 +269,6 @@
             <span class="form-tip">请填写企业实际经营地址，便于用户联系</span>
         </div>
 
-        <!-- 5. 企业联系电话 -->
         <div class="form-group">
             <label for="companyPhone">企业联系电话 <span style="color: #ff4757;">*</span></label>
             <input type="tel" id="companyPhone" name="companyPhone" class="form-control" placeholder="手机号/座机（格式：010-12345678）" required value="<%= request.getAttribute("companyPhone") != null ? request.getAttribute("companyPhone") : "" %>">
@@ -287,7 +276,6 @@
             <span class="form-tip">支持手机号（11位）或座机（含区号，如：010-12345678）</span>
         </div>
 
-        <!-- 6. 登录密码 -->
         <div class="form-group">
             <label for="companyPassword">登录密码 <span style="color: #ff4757;">*</span></label>
             <input type="password" id="companyPassword" name="companyPassword" class="form-control" placeholder="请输入密码（至少6位，字母+数字更佳）" required>
@@ -298,19 +286,16 @@
             <span class="form-tip">建议使用字母、数字组合，长度不少于6位，保障账号安全</span>
         </div>
 
-        <!-- 7. 确认登录密码 -->
         <div class="form-group">
             <label for="companyConfirmPassword">确认登录密码 <span style="color: #ff4757;">*</span></label>
             <input type="password" id="companyConfirmPassword" name="companyConfirmPassword" class="form-control" placeholder="请再次输入密码" required>
             <span class="error-message" id="companyConfirmPasswordError">两次输入的密码不一致</span>
         </div>
 
-        <!-- 8. 验证码 -->
         <div class="form-group">
             <label for="companyVerifyCode">验证码 <span style="color: #ff4757;">*</span></label>
             <div class="code-group">
                 <input type="text" id="companyVerifyCode" name="companyVerifyCode" class="form-control" placeholder="请输入验证码" required>
-                <%-- 验证码图片：拼接上下文路径，防止路径错误 --%>
                 <img id="companyVerifyCodeImg" class="verify-code-img" src="${pageContext.request.contextPath}/verifyCodeServlet" alt="验证码" onclick="refreshCompanyVerifyCode()">
             </div>
             <span class="error-message" id="companyVerifyCodeError">验证码不能为空</span>
@@ -320,19 +305,17 @@
         <button type="submit" class="register-btn">企业注册</button>
 
         <div class="register-links">
-            <a href="${pageContext.request.contextPath}/login.jsp">已有企业账号？立即登录</a>
+            <a href="${pageContext.request.contextPath}/login/login.jsp">已有企业账号？立即登录</a>
         </div>
     </form>
 </div>
 
 <script>
-    // 刷新企业验证码（加时间戳防止缓存）
     function refreshCompanyVerifyCode() {
         const ctx = "${pageContext.request.contextPath}";
         document.getElementById('companyVerifyCodeImg').src = ctx + '/verifyCodeServlet?' + new Date().getTime();
     }
 
-    // 企业密码强度验证（保留原有逻辑）
     const companyPasswordInput = document.getElementById('companyPassword');
     const companyStrengthBar = document.getElementById('companyStrengthBar');
     const companyPasswordError = document.getElementById('companyPasswordError');
@@ -357,7 +340,6 @@
         }
     });
 
-    // 企业确认密码验证（保留原有逻辑）
     const companyConfirmPasswordInput = document.getElementById('companyConfirmPassword');
     companyConfirmPasswordInput.addEventListener('input', function() {
         const password = companyPasswordInput.value;
@@ -367,23 +349,20 @@
         confirmError.style.display = (confirmPassword && password !== confirmPassword) ? 'block' : 'none';
     });
 
-    // 企业名称验证（保留原有逻辑）
     const companyNameInput = document.getElementById('companyName');
     companyNameInput.addEventListener('input', function() {
         const companyName = this.value.trim();
         const companyNameError = document.getElementById('companyNameError');
-        companyNameError.style.display = companyName ? 'none' : 'none';
+        companyNameError.style.display = companyName ? 'none' : 'block';
     });
 
-    // 公司地点验证（保留原有逻辑）
     const companyAddressInput = document.getElementById('companyAddress');
     companyAddressInput.addEventListener('input', function() {
         const companyAddress = this.value.trim();
         const companyAddressError = document.getElementById('companyAddressError');
-        companyAddressError.style.display = companyAddress ? 'none' : 'none';
+        companyAddressError.style.display = companyAddress ? 'none' : 'block';
     });
 
-    // 企业联系电话验证（保留原有逻辑）
     const companyPhoneInput = document.getElementById('companyPhone');
     companyPhoneInput.addEventListener('input', function() {
         const phone = this.value.trim();
@@ -393,15 +372,13 @@
         phoneError.style.display = (phone && !phonePattern.test(phone)) ? 'block' : 'none';
     });
 
-    // 法人姓名验证（保留原有逻辑）
     const legalPersonNameInput = document.getElementById('legalPersonName');
     legalPersonNameInput.addEventListener('input', function() {
         const legalName = this.value.trim();
         const legalNameError = document.getElementById('legalPersonNameError');
-        legalNameError.style.display = legalName ? 'none' : 'none';
+        legalNameError.style.display = legalName ? 'none' : 'block';
     });
 
-    // 社会信用代码验证（保留原有逻辑）
     const creditCodeInput = document.getElementById('creditCode');
     creditCodeInput.addEventListener('input', function() {
         const creditCode = this.value.trim();
@@ -411,25 +388,21 @@
         creditCodeError.style.display = (creditCode && !creditCodePattern.test(creditCode)) ? 'block' : 'none';
     });
 
-    // 验证码验证（保留原有逻辑）
     const companyVerifyCodeInput = document.getElementById('companyVerifyCode');
     companyVerifyCodeInput.addEventListener('input', function() {
         const verifyCodeError = document.getElementById('companyVerifyCodeError');
-        verifyCodeError.style.display = this.value.trim() ? 'none' : 'none';
+        verifyCodeError.style.display = this.value.trim() ? 'none' : 'block';
     });
 
-    // 表单提交前端验证（保留原有逻辑）
     document.getElementById('companyRegisterForm').addEventListener('submit', function(e) {
         let isValid = true;
 
-        // 企业名称验证
         const companyName = companyNameInput.value.trim();
         if (!companyName) {
             document.getElementById('companyNameError').style.display = 'block';
             isValid = false;
         }
 
-        // 社会信用代码验证
         const creditCode = creditCodeInput.value.trim();
         const creditCodePattern = /^[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}$/;
         if (!creditCodePattern.test(creditCode)) {
@@ -437,21 +410,18 @@
             isValid = false;
         }
 
-        // 法人姓名验证
         const legalPersonName = legalPersonNameInput.value.trim();
         if (!legalPersonName) {
             document.getElementById('legalPersonNameError').style.display = 'block';
             isValid = false;
         }
 
-        // 公司地址验证
         const companyAddress = companyAddressInput.value.trim();
         if (!companyAddress) {
             document.getElementById('companyAddressError').style.display = 'block';
             isValid = false;
         }
 
-        // 联系电话验证
         const companyPhone = companyPhoneInput.value.trim();
         const phonePattern = /^(1[3-9]\d{9})|(\d{3,4}-\d{7,8})$/;
         if (!phonePattern.test(companyPhone)) {
@@ -459,7 +429,6 @@
             isValid = false;
         }
 
-        // 密码验证
         const companyPassword = companyPasswordInput.value.trim();
         if (companyPassword.length < 6) {
             companyPasswordError.style.display = 'block';
@@ -468,14 +437,12 @@
             isValid = false;
         }
 
-        // 确认密码验证
         const companyConfirmPassword = companyConfirmPasswordInput.value.trim();
         if (companyPassword !== companyConfirmPassword) {
             document.getElementById('companyConfirmPasswordError').style.display = 'block';
             isValid = false;
         }
 
-        // 验证码验证
         const companyVerifyCode = companyVerifyCodeInput.value.trim();
         if (!companyVerifyCode) {
             document.getElementById('companyVerifyCodeError').style.display = 'block';
@@ -483,18 +450,14 @@
         }
 
         if (!isValid) {
-            e.preventDefault(); // 阻止表单提交
+            e.preventDefault();
             return false;
         }
     });
 
-    // 初始化验证码
     window.onload = function() {
         refreshCompanyVerifyCode();
-        // 如果有后端返回的错误，前端高亮对应的错误提示
         <% if (msg != null && "error".equals(msgType)) { %>
-        // 可根据后端返回的具体错误类型，显示对应字段的错误
-        // 示例：如果是验证码错误，显示验证码错误提示
         const verifyCodeError = document.getElementById('companyVerifyCodeError');
         if (verifyCodeError) {
             verifyCodeError.style.display = '<%= msg.contains("验证码") ? "block" : "none" %>';

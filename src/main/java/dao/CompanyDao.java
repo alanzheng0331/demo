@@ -8,42 +8,45 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 /**
- * 企业DAO层（数据访问）
+ * 企业DAO层（数据访问）- 适配SQL Server
  */
 public class CompanyDao {
 
     /**
      * 企业注册（插入数据）
+     * 适配数据库的 credit_t_code 字段
      */
     public int register(Company company) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "INSERT INTO t_company (" +
-                    "company_name, credit_code, legal_person_name, company_address, " +
-                    "company_phone, company_pwd, company_avatar, status) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO test_company (" +
+                    "company_name, credit_t_code, legal_person_name, company_address, " +
+                    "company_phone, company_pwd, company_avatar, status, create_time, update_time) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, company.getCompanyName());
             pstmt.setString(2, company.getCreditCode());
             pstmt.setString(3, company.getLegalPersonName());
             pstmt.setString(4, company.getCompanyAddress());
             pstmt.setString(5, company.getCompanyPhone());
-            pstmt.setString(6, MD5Util.md5(company.getCompanyPwd())); // MD5加密密码
-            pstmt.setString(7, company.getCompanyAvatar());
-            pstmt.setInt(8, company.getStatus());
-            return pstmt.executeUpdate();
+            pstmt.setString(6, MD5Util.md5(company.getCompanyPwd()));
+            pstmt.setString(7, company.getCompanyAvatar() == null ? "default_avatar.png" : company.getCompanyAvatar());
+            pstmt.setInt(8, company.getStatus() == null ? 0 : company.getStatus());
+
+            int rows = pstmt.executeUpdate();
+            System.out.println("注册插入受影响行数：" + rows);
+            return rows;
         } finally {
             DBUtil.close(conn, pstmt);
         }
     }
 
     /**
-     * 根据手机号查询企业（登录/忘记密码用）
+     * 根据手机号查询企业
      */
     public Company findByPhone(String phone) throws SQLException {
         Connection conn = null;
@@ -51,26 +54,32 @@ public class CompanyDao {
         ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "SELECT * FROM t_company WHERE company_phone = ?";
+            String sql = "SELECT [id], [company_name], [credit_t_code], [legal_person_name], " +
+                    "[company_address], [company_phone], [company_pwd], [company_avatar], " +
+                    "[status], [create_time], [update_time], [verify_code], [code_create_time] " +
+                    "FROM test_company WHERE company_phone = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, phone);
+
             rs = pstmt.executeQuery();
+            Company company = null;
             if (rs.next()) {
-                Company company = new Company();
+                company = new Company();
                 company.setId(rs.getLong("id"));
                 company.setCompanyName(rs.getString("company_name"));
-                company.setCreditCode(rs.getString("credit_code"));
+                company.setCreditCode(rs.getString("credit_t_code"));
                 company.setLegalPersonName(rs.getString("legal_person_name"));
                 company.setCompanyAddress(rs.getString("company_address"));
                 company.setCompanyPhone(rs.getString("company_phone"));
                 company.setCompanyPwd(rs.getString("company_pwd"));
                 company.setCompanyAvatar(rs.getString("company_avatar"));
                 company.setStatus(rs.getInt("status"));
+                company.setCreateTime(rs.getDate("create_time"));
+                company.setUpdateTime(rs.getDate("update_time"));
                 company.setVerifyCode(rs.getString("verify_code"));
                 company.setCodeCreateTime(rs.getDate("code_create_time"));
-                return company;
             }
-            return null;
+            return company;
         } finally {
             DBUtil.close(conn, pstmt, rs);
         }
@@ -84,11 +93,14 @@ public class CompanyDao {
         PreparedStatement pstmt = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "UPDATE t_company SET verify_code = ?, code_create_time = GETDATE() WHERE company_phone = ?";
+            String sql = "UPDATE test_company SET [verify_code] = ?, [code_create_time] = GETDATE() WHERE [company_phone] = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, code);
             pstmt.setString(2, phone);
-            return pstmt.executeUpdate();
+
+            int rows = pstmt.executeUpdate();
+            System.out.println("保存验证码受影响行数：" + rows);
+            return rows;
         } finally {
             DBUtil.close(conn, pstmt);
         }
@@ -102,18 +114,21 @@ public class CompanyDao {
         PreparedStatement pstmt = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "UPDATE t_company SET company_pwd = ?, update_time = GETDATE() WHERE company_phone = ?";
+            String sql = "UPDATE test_company SET [company_pwd] = ?, [update_time] = GETDATE() WHERE [company_phone] = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, MD5Util.md5(newPwd)); // MD5加密新密码
+            pstmt.setString(1, MD5Util.md5(newPwd));
             pstmt.setString(2, phone);
-            return pstmt.executeUpdate();
+
+            int rows = pstmt.executeUpdate();
+            System.out.println("重置密码受影响行数：" + rows);
+            return rows;
         } finally {
             DBUtil.close(conn, pstmt);
         }
     }
 
     /**
-     * 检查信用代码是否已存在（注册去重）
+     * 检查信用代码是否已存在
      */
     public boolean isCreditCodeExist(String creditCode) throws SQLException {
         Connection conn = null;
@@ -121,11 +136,14 @@ public class CompanyDao {
         ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "SELECT 1 FROM t_company WHERE credit_code = ?";
+            String sql = "SELECT 1 FROM test_company WHERE [credit_t_code] = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, creditCode);
             rs = pstmt.executeQuery();
-            return rs.next();
+
+            boolean exists = rs.next();
+            System.out.println("信用代码" + creditCode + "是否存在：" + exists);
+            return exists;
         } finally {
             DBUtil.close(conn, pstmt, rs);
         }

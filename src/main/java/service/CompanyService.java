@@ -1,14 +1,12 @@
 package service;
 
 import entity.Company;
-
 import java.sql.SQLException;
 
 /**
- * 企业业务层接口（便于后续扩展实现类，如缓存版、分布式版）
+ * 企业业务层接口
  */
 public interface CompanyService {
-
     /**
      * 企业注册
      */
@@ -20,12 +18,12 @@ public interface CompanyService {
     String login(String phone, String pwd) throws SQLException;
 
     /**
-     * 发送忘记密码验证码
+     * 发送找回密码验证码
      */
     String sendForgetPwdCode(String phone) throws SQLException;
 
     /**
-     * 校验忘记密码验证码
+     * 校验找回密码验证码
      */
     boolean checkForgetPwdCode(String phone, String code) throws SQLException;
 
