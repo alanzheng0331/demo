@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 账户设置</title>
+    <!-- 保留原生样式文件，不修改 -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 仅新增颜色过渡效果（可选，不影响布局） */
+        body, .navbar, .sidebar, .content-panel, .modal-container, .form-input, .btn-default, .btn-primary, .btn-danger {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        /* 验证码颜色适配（仅颜色） */
+        .captcha-img {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <h1>易兼职</h1>
+            </a>
+            <div class="user-info">
+                <div class="avatar" onclick="openAvatarUpload()">
+                    <img src="https://picsum.photos/200/200?random=1" alt="用户头像" onerror="this.src='https://via.placeholder.com/40/667eea/ffffff?text=张'">
+                </div>
+                <span class="username">张三</span>
+                <button class="logout-btn" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar" onclick="openAvatarUpload()">
+                    <img src="https://picsum.photos/200/200?random=1" alt="个人头像" onerror="this.src='https://via.placeholder.com/100/667eea/ffffff?text=张'">
+                </div>
+                <h3 class="profile-name">张三</h3>
+                <p class="profile-role">兼职求职者</p>
+                <!-- 已删除信用分相关代码 -->
+                <button class="edit-profile-btn" onclick="window.location.href='personal.html'">编辑资料</button>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="personal.html" class="nav-link" data-module="profile">
+                        <span class="nav-icon">👤</span>
+                        <span>个人信息</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resume.html" class="nav-link" data-module="resume">
+                        <span class="nav-icon">📝</span>
+                        <span>我的简历</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="apply.html" class="nav-link" data-module="apply">
+                        <span class="nav-icon">📬</span>
+                        <span>投递记录</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="message.html" class="nav-link" data-module="message">
+                        <span class="nav-icon">💬</span>
+                        <span>消息中心</span>
+                        <span class="badge">2</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="collect.html" class="nav-link" data-module="collect">
+                        <span class="nav-icon">⭐</span>
+                        <span>我的收藏</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setting.html" class="nav-link active" data-module="setting">
+                        <span class="nav-icon">⚙️</span>
+                        <span>账户设置</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="help.html" class="nav-link" data-module="help">
+                        <span class="nav-icon">❓</span>
+                        <span>帮助中心</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <div class="content-wrapper">
+            <div class="content-panel">
+                <h3 class="panel-title">账户设置</h3>
+                <div class="setting-list">
+                    <div class="setting-item" onclick="openSetting('修改密码')">
+                        <div class="setting-label">
+                            <span class="setting-icon">🔒</span>
+                            <span>修改密码</span>
+                        </div>
+                        <div class="setting-action">
+                            <span>去修改</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                    <div class="setting-item" onclick="openSetting('绑定手机号')">
+                        <div class="setting-label">
+                            <span class="setting-icon">📞</span>
+                            <span>绑定手机号</span>
+                        </div>
+                        <div class="setting-action">
+                            <span>已绑定 138****1234</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                    <div class="setting-item" onclick="openSetting('绑定邮箱')">
+                        <div class="setting-label">
+                            <span class="setting-icon">📧</span>
+                            <span>绑定邮箱</span>
+                        </div>
+                        <div class="setting-action">
+                            <span>已绑定 zhangsan@example.com</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                    <div class="setting-item" onclick="openSetting('消息通知设置')">
+                        <div class="setting-label">
+                            <span class="setting-icon">🔔</span>
+                            <span>消息通知设置</span>
+                        </div>
+                        <div class="setting-action">
+                            <span>去设置</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                    <div class="setting-item" onclick="openSetting('账号注销')" style="border-bottom: none;">
+                        <div class="setting-label">
+                            <span class="setting-icon">🗑️</span>
+                            <span>账号注销</span>
+                        </div>
+                        <div class="setting-action" style="color: var(--danger-color);">
+                            <span>注销账号</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 模态框容器 -->
+    <div class="modal-mask" id="modalOverlay">
+        <div class="modal-container" id="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">设置标题</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 动态填充内容 -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <!-- 动态填充按钮 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 头像上传模态框 -->
+    <div class="modal-mask" id="avatarModalOverlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">更换头像</h3>
+                <button class="modal-close" onclick="closeAvatarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-item">
+                    <label class="form-label">选择图片</label>
+                    <input type="file" class="form-input" accept="image/*" id="avatarInput" onchange="previewAvatar()">
+                    <p class="form-tip">支持JPG、PNG格式，大小不超过2MB</p>
+                </div>
+                <div style="text-align: center; margin: 10px 0;">
+                    <img id="avatarPreview" src="https://via.placeholder.com/100/667eea/ffffff?text=张" alt="头像预览" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-default" onclick="closeAvatarModal()">取消</button>
+                <button class="modal-btn btn-primary" onclick="uploadAvatar()">确认上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 引入主题控制JS（核心：仅控制颜色） -->
+    <script src="theme-control.js"></script>
+    
+    <!-- 页面原有JS（仅修改主题设置提交逻辑） -->
+    <script>
+        // 全局变量
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+        const toast = document.getElementById('toast');
+        
+        // 图形验证码全局变量
+        let phoneCaptchaCode = ''; // 手机绑定的图形验证码
+        let emailCaptchaCode = ''; // 邮箱绑定的图形验证码
+
+        // 初始化：自动匹配侧边栏激活状态
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.href.includes(currentPath)) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+
+        // 生成随机图形验证码（4位字母数字组合）
+        function generateCaptcha() {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            let code = '';
+            for (let i = 0; i < 4; i++) {
+                code += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return code;
+        }
+
+        // 渲染图形验证码（带干扰纹模拟真实验证码）
+        function renderCaptchaImage(containerId, code) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            // 简单模拟图形验证码样式（实际项目用canvas绘制）
+            let captchaHtml = '';
+            // 根据当前主题颜色选择验证码文字颜色
+            const isDark = getComputedStyle(document.documentElement).getPropertyValue('--bg-main') === '#181818';
+            const colors = isDark ? 
+                ['#ffffff', '#7689ff', '#9c27b0', '#ff5252', '#4caf50'] : 
+                ['#333', '#667eea', '#764ba2', '#f44336', '#2e7d32'];
+                
+            const bgColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 拼接验证码字符（加干扰）
+            for (let i = 0; i < code.length; i++) {
+                // 随机旋转角度
+                const rotate = (Math.random() - 0.5) * 20;
+                captchaHtml += `<span style="display:inline-block; transform:rotate(${rotate}deg); color:${bgColor}; font-size:18px;">${code[i]}</span>`;
+            }
+            
+            container.innerHTML = captchaHtml;
+            container.style.backgroundColor = isDark ? 
+                `rgba(${Math.floor(Math.random()*100)}, ${Math.floor(Math.random()*100)}, ${Math.floor(Math.random()*100)}, 0.1)` :
+                `rgba(${Math.floor(Math.random()*50)}, ${Math.floor(Math.random()*50)}, ${Math.floor(Math.random()*50)}, 0.05)`;
+        }
+
+        // 打开设置项模态框
+        function openSetting(settingName) {
+            // 重置模态框内容
+            modalBody.innerHTML = '';
+            modalFooter.innerHTML = '';
+            modalTitle.textContent = settingName;
+
+            switch(settingName) {
+                case '修改密码':
+                    renderChangePwdForm();
+                    break;
+                case '绑定手机号':
+                    renderBindPhoneForm();
+                    break;
+                case '绑定邮箱':
+                    renderBindEmailForm();
+                    break;
+                case '消息通知设置':
+                    renderNotificationForm();
+                    break;
+                case '主题设置':
+                    renderThemeForm();
+                    break;
+                case '账号注销':
+                    renderAccountDeleteForm();
+                    break;
+                default:
+                    modalBody.innerHTML = `<p style="text-align:center; padding:20px 0;">${settingName}功能即将上线，敬请期待！</p>`;
+                    modalFooter.innerHTML = `<button class="modal-btn btn-primary" onclick="closeModal()">确 定</button>`;
+            }
+
+            // 显示模态框
+            modalOverlay.classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        // 显示提示消息
+        function showToast(message, type = 'info') {
+            toast.textContent = message;
+            toast.classList.add('active');
+            
+            // 不同类型的提示样式（适配主题颜色）
+            const isDark = getComputedStyle(document.documentElement).getPropertyValue('--bg-main') === '#181818';
+            if (type === 'success') {
+                toast.style.backgroundColor = 'rgba(76, 175, 80, 0.8)';
+                toast.style.color = 'white';
+            } else if (type === 'error') {
+                toast.style.backgroundColor = 'rgba(244, 67, 54, 0.8)';
+                toast.style.color = 'white';
+            } else {
+                toast.style.backgroundColor = isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0, 0, 0, 0.8)';
+                toast.style.color = isDark ? '#000' : '#fff';
+            }
+
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2000);
+        }
+
+        // 1. 渲染修改密码表单
+        function renderChangePwdForm() {
+            modalBody.innerHTML = `
+                <div class="form-item">
+                    <label class="form-label">原密码</label>
+                    <input type="password" class="form-input" id="oldPwd" placeholder="请输入原密码">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">新密码</label>
+                    <input type="password" class="form-input" id="newPwd" placeholder="请输入新密码（6-20位）">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">确认新密码</label>
+                    <input type="password" class="form-input" id="confirmPwd" placeholder="请再次输入新密码">
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="modal-btn btn-default" onclick="closeModal()">取 消</button>
+                <button class="modal-btn btn-primary" onclick="submitChangePwd()">保 存</button>
+            `;
+        }
+
+        // 提交修改密码
+        function submitChangePwd() {
+            const oldPwd = document.getElementById('oldPwd').value;
+            const newPwd = document.getElementById('newPwd').value;
+            const confirmPwd = document.getElementById('confirmPwd').value;
+
+            if (!oldPwd) {
+                showToast('请输入原密码', 'error');
+                return;
+            }
+
+            if (newPwd.length < 6 || newPwd.length > 20) {
+                showToast('新密码长度必须在6-20位之间', 'error');
+                return;
+            }
+
+            if (newPwd !== confirmPwd) {
+                showToast('两次输入的新密码不一致', 'error');
+                return;
+            }
+
+            // 模拟提交成功
+            showToast('密码修改成功', 'success');
+            setTimeout(closeModal, 1500);
+        }
+
+        // 2. 渲染绑定手机号表单（改为图形验证码）
+        function renderBindPhoneForm() {
+            // 生成新的图形验证码
+            phoneCaptchaCode = generateCaptcha();
+            
+            modalBody.innerHTML = `
+                <div class="form-item">
+                    <label class="form-label">当前手机号</label>
+                    <input type="text" class="form-input" value="138****1234" disabled>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">新手机号</label>
+                    <input type="text" class="form-input" id="newPhone" placeholder="请输入新手机号">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">图形验证码</label>
+                    <div class="captcha-container">
+                        <input type="text" class="form-input" id="phoneCaptcha" placeholder="请输入4位验证码（不分大小写）">
+                        <div class="captcha-img" id="phoneCaptchaImg" onclick="refreshPhoneCaptcha()">加载中...</div>
+                    </div>
+                    <p class="form-tip" style="font-size:12px; margin-top:5px;">点击验证码图片可刷新</p>
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="modal-btn btn-default" onclick="closeModal()">取 消</button>
+                <button class="modal-btn btn-primary" onclick="submitBindPhone()">保 存</button>
+            `;
+
+            // 渲染图形验证码图片
+            setTimeout(() => {
+                renderCaptchaImage('phoneCaptchaImg', phoneCaptchaCode);
+            }, 100);
+        }
+
+        // 刷新手机图形验证码
+        function refreshPhoneCaptcha() {
+            phoneCaptchaCode = generateCaptcha();
+            renderCaptchaImage('phoneCaptchaImg', phoneCaptchaCode);
+        }
+
+        // 提交绑定手机号（验证图形验证码）
+        function submitBindPhone() {
+            const newPhone = document.getElementById('newPhone').value;
+            const inputCaptcha = document.getElementById('phoneCaptcha').value.trim();
+            const phoneReg = /^1[3-9]\d{9}$/;
+
+            if (!phoneReg.test(newPhone)) {
+                showToast('请输入有效的手机号', 'error');
+                return;
+            }
+
+            if (!inputCaptcha) {
+                showToast('请输入图形验证码', 'error');
+                return;
+            }
+
+            // 验证图形验证码（忽略大小写）
+            if (inputCaptcha.toUpperCase() !== phoneCaptchaCode.toUpperCase()) {
+                showToast('图形验证码错误，请重新输入', 'error');
+                // 刷新验证码
+                refreshPhoneCaptcha();
+                // 清空输入框
+                document.getElementById('phoneCaptcha').value = '';
+                return;
+            }
+
+            // 模拟提交成功
+            showToast('手机号修改成功', 'success');
+            setTimeout(() => {
+                closeModal();
+                // 更新页面显示
+                document.querySelector('.setting-item:nth-child(2) .setting-action span:first-child').textContent = `已绑定 ${newPhone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')}`;
+            }, 1500);
+        }
+
+        // 3. 渲染绑定邮箱表单（改为图形验证码）
+        function renderBindEmailForm() {
+            // 生成新的图形验证码
+            emailCaptchaCode = generateCaptcha();
+            
+            modalBody.innerHTML = `
+                <div class="form-item">
+                    <label class="form-label">当前邮箱</label>
+                    <input type="email" class="form-input" value="zhangsan@example.com" disabled>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">新邮箱</label>
+                    <input type="email" class="form-input" id="newEmail" placeholder="请输入新邮箱">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">图形验证码</label>
+                    <div class="captcha-container">
+                        <input type="text" class="form-input" id="emailCaptcha" placeholder="请输入4位验证码（不分大小写）">
+                        <div class="captcha-img" id="emailCaptchaImg" onclick="refreshEmailCaptcha()">加载中...</div>
+                    </div>
+                    <p class="form-tip" style="font-size:12px; margin-top:5px;">点击验证码图片可刷新</p>
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="modal-btn btn-default" onclick="closeModal()">取 消</button>
+                <button class="modal-btn btn-primary" onclick="submitBindEmail()">保 存</button>
+            `;
+
+            // 渲染图形验证码图片
+            setTimeout(() => {
+                renderCaptchaImage('emailCaptchaImg', emailCaptchaCode);
+            }, 100);
+        }
+
+        // 刷新邮箱图形验证码
+        function refreshEmailCaptcha() {
+            emailCaptchaCode = generateCaptcha();
+            renderCaptchaImage('emailCaptchaImg', emailCaptchaCode);
+        }
+
+        // 提交绑定邮箱（验证图形验证码）
+        function submitBindEmail() {
+            const newEmail = document.getElementById('newEmail').value;
+            const inputCaptcha = document.getElementById('emailCaptcha').value.trim();
+            const emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!emailReg.test(newEmail)) {
+                showToast('请输入有效的邮箱地址', 'error');
+                return;
+            }
+
+            if (!inputCaptcha) {
+                showToast('请输入图形验证码', 'error');
+                return;
+            }
+
+            // 验证图形验证码（忽略大小写）
+            if (inputCaptcha.toUpperCase() !== emailCaptchaCode.toUpperCase()) {
+                showToast('图形验证码错误，请重新输入', 'error');
+                // 刷新验证码
+                refreshEmailCaptcha();
+                // 清空输入框
+                document.getElementById('emailCaptcha').value = '';
+                return;
+            }
+
+            // 模拟提交成功
+            showToast('邮箱修改成功', 'success');
+            setTimeout(() => {
+                closeModal();
+                // 更新页面显示
+                document.querySelector('.setting-item:nth-child(3) .setting-action span:first-child').textContent = `已绑定 ${newEmail}`;
+            }, 1500);
+        }
+
+        // 4. 渲染消息通知设置表单
+        function renderNotificationForm() {
+            // 从本地存储读取通知设置，没有则默认开启
+            const notificationSettings = JSON.parse(localStorage.getItem('notificationSettings')) || {
+                delivery: true,  // 投递进度
+                system: true,    // 系统通知
+                recommend: false // 兼职推荐
+            };
+
+            modalBody.innerHTML = `
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="deliveryNotify" ${notificationSettings.delivery ? 'checked' : ''}>
+                    <label class="form-check-label" for="deliveryNotify">投递进度通知</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="systemNotify" ${notificationSettings.system ? 'checked' : ''}>
+                    <label class="form-check-label" for="systemNotify">系统通知</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="recommendNotify" ${notificationSettings.recommend ? 'checked' : ''}>
+                    <label class="form-check-label" for="recommendNotify">兼职推荐通知</label>
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="modal-btn btn-default" onclick="closeModal()">取 消</button>
+                <button class="modal-btn btn-primary" onclick="submitNotificationSettings()">保 存</button>
+            `;
+        }
+
+        // 提交通知设置
+        function submitNotificationSettings() {
+            const delivery = document.getElementById('deliveryNotify').checked;
+            const system = document.getElementById('systemNotify').checked;
+            const recommend = document.getElementById('recommendNotify').checked;
+
+            // 保存到本地存储
+            const settings = { delivery, system, recommend };
+            localStorage.setItem('notificationSettings', JSON.stringify(settings));
+
+            showToast('通知设置保存成功', 'success');
+            setTimeout(() => {
+                closeModal();
+            }, 1000);
+        }
+
+        // 5. 渲染主题设置表单
+        function renderThemeForm() {
+            const savedTheme = ThemeController.getCurrent() || 'light';
+
+            modalBody.innerHTML = `
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="theme" id="lightTheme" ${savedTheme === 'light' ? 'checked' : ''}>
+                    <label class="form-check-label" for="lightTheme">浅色模式</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="theme" id="darkTheme" ${savedTheme === 'dark' ? 'checked' : ''}>
+                    <label class="form-check-label" for="darkTheme">深色模式</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="theme" id="autoTheme" ${savedTheme === 'auto' ? 'checked' : ''}>
+                    <label class="form-check-label" for="autoTheme">跟随系统</label>
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="modal-btn btn-default" onclick="closeModal()">取 消</button>
+                <button class="modal-btn btn-primary" onclick="submitThemeSettings()">保 存</button>
+            `;
+        }
+
+        // 提交主题设置（核心修改：调用ThemeController）
+        function submitThemeSettings() {
+            let selectedTheme;
+            if (document.getElementById('lightTheme').checked) {
+                selectedTheme = 'light';
+            } else if (document.getElementById('darkTheme').checked) {
+                selectedTheme = 'dark';
+            } else {
+                selectedTheme = 'auto';
+            }
+
+            // 调用全局主题控制器应用颜色
+            ThemeController.apply(selectedTheme);
+            showToast('主题设置已保存', 'success');
+            setTimeout(closeModal, 1000);
+        }
+
+        // 6. 渲染账号注销表单
+        function renderAccountDeleteForm() {
+            modalBody.innerHTML = `
+                <div style="padding: 20px 0; text-align: center;">
+                    <div style="font-size: 48px; color: var(--danger-color); margin-bottom: 15px;">⚠️</div>
+                    <p style="margin-bottom: 10px; font-size: 16px;">确定要注销账号吗？</p>
+                    <p style="color: var(--light-text); font-size: 14px; line-height: 1.6;">
+                        账号注销后，所有数据将无法恢复，包括但不限于<br>
+                        个人信息、投递记录、收藏职位等
+                    </p>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">请输入密码确认</label>
+                    <input type="password" class="form-input" id="deletePwd" placeholder="输入密码确认注销">
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="modal-btn btn-default" onclick="closeModal()">取 消</button>
+                <button class="modal-btn btn-danger" onclick="submitAccountDelete()">确认注销</button>
+            `;
+        }
+
+        // 提交账号注销
+        function submitAccountDelete() {
+            const deletePwd = document.getElementById('deletePwd').value;
+
+            if (!deletePwd) {
+                showToast('请输入密码确认', 'error');
+                return;
+            }
+
+            // 模拟注销成功
+            showToast('账号注销成功', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1500);
+        }
+
+        // 头像上传相关
+        function openAvatarUpload() {
+            document.getElementById('avatarModalOverlay').classList.add('active');
+        }
+
+        function closeAvatarModal() {
+            document.getElementById('avatarModalOverlay').classList.remove('active');
+        }
+
+        function previewAvatar() {
+            const file = document.getElementById('avatarInput').files[0];
+            if (!file) return;
+
+            // 检查文件类型和大小
+            const isImage = file.type.startsWith('image/');
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isImage) {
+                showToast('请选择图片文件', 'error');
+                return;
+            }
+
+            if (!isLt2M) {
+                showToast('图片大小不能超过2MB', 'error');
+                return;
+            }
+
+            // 预览图片
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('avatarPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function uploadAvatar() {
+            const file = document.getElementById('avatarInput').files[0];
+            if (!file) {
+                showToast('请选择要上传的头像', 'error');
+                return;
+            }
+
+            // 模拟上传成功
+            showToast('头像上传成功', 'success');
+            setTimeout(() => {
+                closeAvatarModal();
+                // 更新页面上的头像
+                const avatarElements = document.querySelectorAll('.avatar img, .profile-avatar img');
+                avatarElements.forEach(img => {
+                    img.src = document.getElementById('avatarPreview').src;
+                });
+            }, 1000);
+        }
+
+        // 点击模态框外部关闭
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('avatarModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('avatarModalOverlay')) {
+                closeAvatarModal();
+            }
+        });
+
+        // 键盘ESC关闭模态框
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeAvatarModal();
+            }
+        });
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                showToast('退出登录成功', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

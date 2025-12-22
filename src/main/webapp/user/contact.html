@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 与雇主沟通</title>
+    <style>
+        /* 全局样式（与guide.html统一） */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏（和apply.html保持一致） */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 主内容区 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+
+        /* 聊天容器 */
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        /* 雇主信息头部 */
+        .employer-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .employer-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+        }
+
+        .employer-info h3 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .employer-info p {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* 聊天消息区域 */
+        .chat-messages {
+            height: 500px;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* 滚动条美化 */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #667eea;
+        }
+
+        /* 消息样式 */
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 雇主消息（左侧） */
+        .message.employer {
+            align-self: flex-start;
+            flex-direction: row;
+        }
+
+        .message.employer .msg-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+
+        .message.employer .msg-content {
+            background-color: white;
+            padding: 12px 16px;
+            border-radius: 0 12px 12px 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        /* 自己消息（右侧） */
+        .message.me {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+            margin-left: auto;
+        }
+
+        .message.me .msg-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            flex-shrink: 0;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .message.me .msg-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px 0 12px 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* 消息时间 */
+        .msg-time {
+            font-size: 11px;
+            margin-top: 6px;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        /* 输入区域 */
+        .chat-input-wrapper {
+            display: flex;
+            gap: 15px;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid #eee;
+            border-radius: 30px;
+            outline: none;
+            font-size: 14px;
+            resize: none;
+            height: 60px;
+            max-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        #message-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        #send-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        #send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        /* 无雇主信息提示 */
+        .empty-tip {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-tip i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .empty-tip a {
+            color: #667eea;
+            text-decoration: none;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding-top: 120px;
+            }
+            .chat-messages {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                padding: 20px 15px;
+            }
+            .chat-messages {
+                height: 300px;
+                padding: 15px;
+            }
+            #message-input {
+                height: 50px;
+                padding: 10px 15px;
+            }
+            #send-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
+            }
+        }
+        /* 返回首页按钮样式 */
+        .back-home-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏（删除重复的个人中心按钮，保留简洁布局） -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <h1>易兼职</h1>
+            </a>
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-btn login">返回首页</a>
+                <a href="personal.html" class="nav-btn">我的个人中心</a>
+                <!-- 已删除重复的个人中心按钮，布局更整洁 -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+        <div id="chatWrapper">
+            <!-- 无雇主信息提示（修改文案，调整跳转链接为个人中心） -->
+            <div class="empty-tip" id="emptyTip">
+                <i>💬</i>
+                <h3>未找到对应的雇主信息</h3>
+                <p>请先前往个人中心，从投递记录或消息中心发起沟通</p>
+                <a href="personal.html">前往我的个人中心</a>
+            </div>
+
+            <!-- 聊天容器（动态显示） -->
+            <div class="chat-container" id="chatContainer" style="display: none;">
+                <!-- 雇主信息头部 -->
+                <div class="employer-header" id="employerHeader">
+                    <!-- 动态填充雇主头像和名称 -->
+                </div>
+
+                <!-- 聊天消息区域 -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- 初始欢迎消息 -->
+                    <div class="message employer" id="welcomeMsg">
+                        <!-- 动态填充欢迎语 -->
+                    </div>
+                </div>
+
+                <!-- 输入区域 -->
+                <div class="chat-input-wrapper">
+                    <textarea id="message-input" placeholder="输入想要和雇主沟通的内容..."></textarea>
+                    <button id="send-btn">✈️</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 1. 获取URL参数
+        function getUrlParams() {
+            const params = {};
+            const search = window.location.search.substring(1);
+            const pairs = search.split('&');
+            pairs.forEach(pair => {
+                const [key, value] = pair.split('=');
+                if (key) params[key] = decodeURIComponent(value || '');
+            });
+            return params;
+        }
+
+        // 2. 初始化页面（根据参数显示对应雇主聊天界面）
+        const params = getUrlParams();
+        const employerId = params.employerId;
+        const employerName = params.employerName;
+        const employerAvatar = params.employerAvatar;
+        
+        // 雇主欢迎语配置（和投递记录一一对应）
+        const employerWelcomes = {
+            101: `你好！我是${employerName}，关于小学家教的岗位，请问你什么时候方便试讲？`,
+            102: `你好，我是${employerName}，请问你有短视频剪辑的作品集吗？可以发我看看`,
+            103: `你好，我是${employerName}，奶茶店兼职岗位已招满，感谢你的投递！`,
+            104: `你好！我是${employerName}，恭喜你通过Python兼职的面试，明天可以开始试岗`
+        };
+
+        // 初始化聊天界面
+        function initChat() {
+            if (!employerId || !employerName) {
+                // 无雇主信息，显示提示
+                document.getElementById('emptyTip').style.display = 'block';
+                return;
+            }
+
+            // 显示聊天容器，隐藏提示
+            document.getElementById('emptyTip').style.display = 'none';
+            document.getElementById('chatContainer').style.display = 'block';
+
+            // 填充雇主头部信息
+            const employerHeader = document.getElementById('employerHeader');
+            employerHeader.innerHTML = `
+                <img src="${employerAvatar}" alt="${employerName}" class="employer-avatar" onerror="this.src='https://via.placeholder.com/60/667eea/ffffff?text=雇'">
+                <div class="employer-info">
+                    <h3>${employerName}</h3>
+                    <p>职位沟通：${getJobNameById(employerId)}</p>
+                </div>
+            `;
+
+            // 填充欢迎消息
+            const welcomeMsg = document.getElementById('welcomeMsg');
+            welcomeMsg.innerHTML = `
+                <img src="${employerAvatar}" alt="${employerName}" class="msg-avatar" onerror="this.src='https://via.placeholder.com/40/667eea/ffffff?text=雇'">
+                <div class="msg-content">
+                    <div>${employerWelcomes[employerId] || `你好！我是${employerName}，请问有什么可以帮你的？`}</div>
+                    <div class="msg-time">${getFormatTime()}</div>
+                </div>
+            `;
+
+            // 滚动到底部
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+
+        // 根据雇主ID获取对应职位名称
+        function getJobNameById(employerId) {
+            const jobMap = {
+                101: '小学家教辅导（数学/英语）',
+                102: '短视频剪辑兼职',
+                103: '奶茶店店员（兼职）',
+                104: 'Python编程兼职'
+            };
+            return jobMap[employerId] || '未知职位';
+        }
+
+        // 获取格式化时间
+        function getFormatTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // 3. 发送消息功能
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        // 输入框高度自适应
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // 发送消息
+        function sendMessage() {
+            const content = messageInput.value.trim();
+            if (!content) return;
+
+            // 创建自己的消息元素
+            const myMsg = document.createElement('div');
+            myMsg.className = 'message me';
+            myMsg.innerHTML = `
+                <div class="msg-avatar">我</div>
+                <div class="msg-content">
+                    <div>${content.replace(/\n/g, '<br>')}</div>
+                    <div class="msg-time">${getFormatTime()}</div>
+                </div>
+            `;
+            chatMessages.appendChild(myMsg);
+
+            // 清空输入框
+            messageInput.value = '';
+            messageInput.style.height = '60px';
+
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // 模拟雇主回复（可选）
+            simulateEmployerReply(content);
+        }
+
+        // 模拟雇主回复（根据不同雇主设置不同回复逻辑）
+        function simulateEmployerReply(userMsg) {
+            let reply = '';
+            switch(employerId) {
+                case '101':
+                    reply = userMsg.includes('时间') ? '周末上午9点或者下午2点都可以，你方便哪个时间？' : '好的，我明白了，稍后和你详细沟通';
+                    break;
+                case '102':
+                    reply = userMsg.includes('作品集') ? '麻烦发我邮箱：li@media.com，我尽快查看' : '期待你的作品集，确认后我们可以开始试剪';
+                    break;
+                case '103':
+                    reply = '非常抱歉，岗位已招满，后续有新岗位会第一时间通知你';
+                    break;
+                case '104':
+                    reply = userMsg.includes('试岗') ? '试岗内容我会发你邮箱，主要是简单的数据处理任务' : '有任何问题都可以问，我们尽量配合你的时间';
+                    break;
+                default:
+                    reply = '收到你的消息，我会尽快回复';
+            }
+
+            // 延迟回复（模拟真实沟通）
+            setTimeout(() => {
+                const employerMsg = document.createElement('div');
+                employerMsg.className = 'message employer';
+                employerMsg.innerHTML = `
+                    <img src="${employerAvatar}" alt="${employerName}" class="msg-avatar" onerror="this.src='https://via.placeholder.com/40/667eea/ffffff?text=雇'">
+                    <div class="msg-content">
+                        <div>${reply}</div>
+                        <div class="msg-time">${getFormatTime()}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(employerMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000 + Math.random() * 2000);
+        }
+
+        // 绑定发送事件
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.ctrlKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // 页面加载初始化
+        window.onload = initChat;
+    </script>
+</body>
+</html>

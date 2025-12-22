@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>企业兼职审核 - 兼职管理系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-logo">易兼职—管理员后台</div>
+        <div class="header-user">
+            <span>欢迎, 管理员</span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </header>
+
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-title">审核管理</li>
+                <li><a href="companyReview.html">
+                    <span class="menu-icon">🏢</span><span>企业注册审查</span>
+                </a></li>
+                <li><a href="jobReview.html" class="active">
+                    <span class="menu-icon">💼</span><span>企业兼职审核</span>
+                </a></li>
+                <li class="menu-title">账号管理</li>
+                <li><a href="userManagement.html">
+                    <span class="menu-icon">👤</span><span>用户账号管理</span>
+                </a></li>
+                <li><a href="companyManagement.html">
+                    <span class="menu-icon">🏭</span><span>企业账号管理</span>
+                </a></li>
+            </ul>
+        </aside>
+
+        <!-- 内容区 -->
+        <div class="content">
+            <div class="msg-box success-msg" id="successMsg">操作成功！</div>
+            <div class="msg-box error-msg" id="errorMsg">操作失败，请重试！</div>
+
+            <div class="content-header">
+                <h1 class="page-title">企业兼职审核</h1>
+                <div>
+                    <select class="search-input" id="statusSelect" style="width: auto; margin-right: 10px;">
+                        <option value="">全部状态</option>
+                        <option value="pending">待审核</option>
+                        <option value="approved">已通过</option>
+                        <option value="rejected">已拒绝</option>
+                    </select>
+                    <button class="search-btn" onclick="searchJob()">筛选</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchKey" placeholder="搜索兼职标题/企业名称/工作地点">
+                    <button class="search-btn" onclick="searchJob()">搜索</button>
+                </div>
+
+                <table class="table-common">
+                    <thead>
+                        <tr>
+                            <th>兼职ID</th>
+                            <th>兼职标题</th>
+                            <th>发布企业</th>
+                            <th>工作地点</th>
+                            <th>薪资范围</th>
+                            <th>发布时间</th>
+                            <th>审核状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobTableBody">
+                        <tr>
+                            <td>501</td>
+                            <td>校园兼职推广员</td>
+                            <td>北京科技有限公司</td>
+                            <td>北京市海淀区</td>
+                            <td>150-200元/天</td>
+                            <td>2025-05-25 10:30</td>
+                            <td><span class="status-tag status-pending">待审核</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewJob(501)">查看</button>
+                                <button class="btn-small btn-approve" onclick="reviewJob(501, 'approved')">通过</button>
+                                <button class="btn-small btn-reject" onclick="reviewJob(501, 'rejected')">拒绝</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>502</td>
+                            <td>短视频剪辑实习生</td>
+                            <td>上海文化传媒公司</td>
+                            <td>上海市徐汇区</td>
+                            <td>120-180元/天</td>
+                            <td>2025-05-24 14:20</td>
+                            <td><span class="status-tag status-pending">待审核</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewJob(502)">查看</button>
+                                <button class="btn-small btn-approve" onclick="reviewJob(502, 'approved')">通过</button>
+                                <button class="btn-small btn-reject" onclick="reviewJob(502, 'rejected')">拒绝</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>503</td>
+                            <td>电商客服兼职</td>
+                            <td>广州贸易有限公司</td>
+                            <td>广州市天河区</td>
+                            <td>100-150元/天</td>
+                            <td>2025-05-23 09:15</td>
+                            <td><span class="status-tag status-rejected">已拒绝</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewJob(503)">查看</button>
+                                <button class="btn-small btn-approve" onclick="reviewJob(503, 'approved')">通过</button>
+                                <button class="btn-small btn-reject" disabled style="background: #ccc; cursor: not-allowed;">拒绝</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev')">«</a>
+                    <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1)">1</a>
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage(2)">2</a>
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage('next')">»</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 兼职详情弹窗 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">兼职信息详情</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="jobDetailContent"></div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="close-btn" style="background: #f1f5f9; padding: 6px 16px; border-radius: 6px; font-size: 14px; color: #475569;" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 审核处理弹窗 -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="reviewTitle">审核通过</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="reviewForm" onsubmit="return submitReview()">
+                <input type="hidden" id="reviewId" value="">
+                <input type="hidden" id="reviewAction" value="">
+                <div class="form-group">
+                    <label class="form-label" for="reviewRemark">审核备注</label>
+                    <textarea class="form-control" id="reviewRemark" rows="4" placeholder="请输入审核备注（选填）"></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="reviewSubmitBtn">确认通过</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const totalPages = 2;
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 查看兼职详情
+        function viewJob(id) {
+            hideMessages();
+            const jobData = {
+                501: {
+                    title: '校园兼职推广员',
+                    enterprise: '北京科技有限公司',
+                    location: '北京市海淀区各大高校',
+                    salary: '150-200元/天',
+                    time: '2025-05-25 10:30',
+                    workTime: '周一至周五 14:00-18:00',
+                    requirement: '1. 在校大学生优先；2. 性格开朗，善于沟通；3. 有推广经验者优先',
+                    content: '负责公司新产品在校园内的推广宣传，发放传单、引导学生注册APP，完成指定推广任务即可获得日薪，表现优异者有额外奖金。',
+                    contact: '张经理 138****1234',
+                    remark: ''
+                },
+                502: {
+                    title: '短视频剪辑实习生',
+                    enterprise: '上海文化传媒公司',
+                    location: '上海市徐汇区创意园（可远程）',
+                    salary: '120-180元/天',
+                    time: '2025-05-24 14:20',
+                    workTime: '弹性工作制，每周至少3天',
+                    requirement: '1. 熟练使用剪映、PR等剪辑软件；2. 有短视频剪辑经验；3. 会基础调色和字幕制作',
+                    content: '负责公司短视频账号的内容剪辑，根据脚本完成素材剪辑、配乐、加字幕等工作，要求剪辑风格符合账号定位，效率高、质量优者优先录用。',
+                    contact: '李总监 139****5678',
+                    remark: ''
+                },
+                503: {
+                    title: '电商客服兼职',
+                    enterprise: '广州贸易有限公司',
+                    location: '广州市天河区电商产业园',
+                    salary: '100-150元/天',
+                    time: '2025-05-23 09:15',
+                    workTime: '周末 9:00-18:00',
+                    requirement: '1. 打字速度快，沟通能力强；2. 有电商客服经验优先；3. 熟悉淘宝、拼多多平台规则',
+                    content: '负责解答客户咨询、处理订单售后、引导客户下单等工作，无销售性质，纯客服岗位。',
+                    contact: '王总 137****9012',
+                    remark: '薪资低于市场平均水平，且未明确社保等保障'
+                }
+            };
+
+            const data = jobData[id] || {};
+            let remarkHtml = data.remark ? `<p><strong>拒绝原因：</strong>${data.remark}</p>` : '';
+            
+            const html = `
+                <div style="line-height: 1.8;">
+                    <p><strong>兼职标题：</strong>${data.title || '未知'}</p>
+                    <p><strong>发布企业：</strong>${data.enterprise || '未知'}</p>
+                    <p><strong>工作地点：</strong>${data.location || '未知'}</p>
+                    <p><strong>薪资范围：</strong>${data.salary || '未知'}</p>
+                    <p><strong>发布时间：</strong>${data.time || '未知'}</p>
+                    <p><strong>工作时间：</strong>${data.workTime || '未知'}</p>
+                    <p><strong>任职要求：</strong>${data.requirement || '无'}</p>
+                    <p><strong>工作内容：</strong>${data.content || '无'}</p>
+                    <p><strong>联系方式：</strong>${data.contact || '未知'}</p>
+                    ${remarkHtml}
+                </div>
+            `;
+            document.getElementById('jobDetailContent').innerHTML = html;
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        // 打开审核弹窗
+        function reviewJob(id, action) {
+            hideMessages();
+            document.getElementById('reviewId').value = id;
+            document.getElementById('reviewAction').value = action;
+            const actionText = action === 'approved' ? '通过' : '拒绝';
+            document.getElementById('reviewTitle').textContent = `审核${actionText}`;
+            document.getElementById('reviewSubmitBtn').textContent = `确认${actionText}`;
+            document.getElementById('reviewRemark').value = '';
+            document.getElementById('reviewModal').style.display = 'flex';
+        }
+
+        // 提交审核
+        function submitReview() {
+            const id = document.getElementById('reviewId').value;
+            const action = document.getElementById('reviewAction').value;
+            const remark = document.getElementById('reviewRemark').value.trim();
+            
+            const rows = document.querySelectorAll('#jobTableBody tr');
+            let updated = false;
+            rows.forEach(row => {
+                if (row.cells[0].textContent === id) {
+                    const statusTag = row.querySelector('.status-tag');
+                    const btnGroup = row.querySelector('.btn-group');
+                    if (action === 'approved') {
+                        statusTag.className = 'status-tag status-approved';
+                        statusTag.textContent = '已通过';
+                        btnGroup.querySelector('.btn-approve').disabled = true;
+                        btnGroup.querySelector('.btn-approve').style.background = '#ccc';
+                    } else {
+                        statusTag.className = 'status-tag status-rejected';
+                        statusTag.textContent = '已拒绝';
+                        btnGroup.querySelector('.btn-reject').disabled = true;
+                        btnGroup.querySelector('.btn-reject').style.background = '#ccc';
+                    }
+                    updated = true;
+                }
+            });
+
+            closeModal();
+            if (updated) {
+                showSuccessMessage(`兼职信息审核${action === 'approved' ? '通过' : '拒绝'}成功！`);
+            } else {
+                showErrorMessage('审核操作失败！');
+            }
+            return false;
+        }
+
+        // 搜索兼职
+        function searchJob() {
+            hideMessages();
+            const key = document.getElementById('searchKey').value.trim().toLowerCase();
+            const status = document.getElementById('statusSelect').value;
+            const rows = document.querySelectorAll('#jobTableBody tr');
+            let hasResult = false;
+
+            rows.forEach(row => {
+                const title = row.cells[1].textContent.toLowerCase();
+                const enterprise = row.cells[2].textContent.toLowerCase();
+                const location = row.cells[3].textContent.toLowerCase();
+                const rowStatus = row.querySelector('.status-tag').classList.contains('status-pending') ? 'pending' : 
+                                  row.querySelector('.status-tag').classList.contains('status-approved') ? 'approved' : 'rejected';
+                
+                const matchKey = !key || title.includes(key) || enterprise.includes(key) || location.includes(key);
+                const matchStatus = !status || rowStatus === status;
+
+                if (matchKey && matchStatus) {
+                    row.style.display = '';
+                    hasResult = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (!hasResult) {
+                const tbody = document.getElementById('jobTableBody');
+                if (!tbody.querySelector('#emptyRow')) {
+                    tbody.innerHTML += '<tr id="emptyRow"><td colspan="8" style="text-align: center; color: #999;">未找到符合条件的兼职</td></tr>';
+                }
+            } else {
+                const emptyRow = document.getElementById('emptyRow');
+                emptyRow && emptyRow.remove();
+            }
+        }
+
+        // 分页切换
+        function changePage(page) {
+            if (page === 'prev') currentPage = Math.max(1, currentPage - 1);
+            else if (page === 'next') currentPage = Math.min(totalPages, currentPage + 1);
+            else currentPage = parseInt(page);
+            
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === currentPage.toString()) btn.classList.add('active');
+            });
+            showSuccessMessage(`已切换到第${currentPage}页`);
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+            document.getElementById('reviewModal').style.display = 'none';
+        }
+
+        // 提示信息
+        function showSuccessMessage(msg) {
+            const success = document.getElementById('successMsg');
+            const error = document.getElementById('errorMsg');
+            error.style.display = 'none';
+            success.textContent = msg;
+            success.style.display = 'block';
+            setTimeout(() => success.style.display = 'none', 3000);
+        }
+
+        function showErrorMessage(msg) {
+            const success = document.getElementById('successMsg');
+            const error = document.getElementById('errorMsg');
+            success.style.display = 'none';
+            error.textContent = msg;
+            error.style.display = 'block';
+            setTimeout(() => error.style.display = 'none', 3000);
+        }
+
+        function hideMessages() {
+            document.getElementById('successMsg').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

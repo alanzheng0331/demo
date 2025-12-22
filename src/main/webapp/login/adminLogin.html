@@ -165,26 +165,6 @@
     </form>
 </div>
 
-<script>
-    // 管理员登录表单验证
-    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-        const adminAccount = document.getElementById('adminAccount').value.trim();
-        const adminPwd = document.getElementById('adminPwd').value.trim();
-
-        // 验证账号和密码是否为空
-        if (!adminAccount || !adminPwd) {
-            e.preventDefault();
-            alert('请填写完整的管理员登录信息！');
-            return false;
-        }
-
-        // 可选：管理员密码长度要求更高（比如至少8位）
-        if (adminPwd.length < 8) {
-            e.preventDefault();
-            alert('管理员密码长度至少8位！');
-            return false;
-        }
-    });
-</script>
+<script src="adminLogin.js"></script>
 </body>
 </html>

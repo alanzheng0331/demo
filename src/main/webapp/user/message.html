@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 消息中心</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 消息会话样式（适配投递记录页面风格） */
+        .session-item {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .session-item:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .session-item.unread {
+            background: rgba(102, 126, 234, 0.05);
+            border-left: 3px solid #667eea;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .session-employer {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .session-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .session-last-msg {
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.4;
+        }
+
+        .session-unread {
+            background: #f44336;
+            color: white;
+            font-size: 12px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+
+        /* 空消息提示 */
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-message .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* 消息筛选栏（保持简洁，适配整体风格） */
+        .message-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #f5f5f5;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tag.active {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏（和投递记录页面完全一致） -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <h1>易兼职</h1>
+            </a>
+            <div class="user-info">
+                <div class="avatar">
+                    <img src="https://picsum.photos/200/200?random=1" alt="用户头像" onerror="this.src='https://via.placeholder.com/40/667eea/ffffff?text=张'">
+                </div>
+                <span class="username">张三</span>
+                <button class="logout-btn" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区（和投递记录页面布局一致） -->
+    <main class="main-container">
+        <!-- 侧边栏（完全复用投递记录页面的侧边栏） -->
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="https://picsum.photos/200/200?random=1" alt="个人头像" onerror="this.src='https://via.placeholder.com/100/667eea/ffffff?text=张'">
+                </div>
+                <h3 class="profile-name">张三</h3>
+                <p class="profile-role">兼职求职者</p>
+         
+                <button class="edit-profile-btn" onclick="window.location.href='personal.html'">编辑资料</button>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="personal.html" class="nav-link" data-module="profile">
+                        <span class="nav-icon">👤</span>
+                        <span>个人信息</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resume.html" class="nav-link" data-module="resume">
+                        <span class="nav-icon">📝</span>
+                        <span>我的简历</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="apply.html" class="nav-link" data-module="apply">
+                        <span class="nav-icon">📬</span>
+                        <span>投递记录</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="message.html" class="nav-link active" data-module="message">
+                        <span class="nav-icon">💬</span>
+                        <span>消息中心</span>
+                        <span class="badge" id="unreadBadge">2</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="collect.html" class="nav-link" data-module="collect">
+                        <span class="nav-icon">⭐</span>
+                        <span>我的收藏</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setting.html" class="nav-link" data-module="setting">
+                        <span class="nav-icon">⚙️</span>
+                        <span>账户设置</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="help.html" class="nav-link" data-module="help">
+                        <span class="nav-icon">❓</span>
+                        <span>帮助中心</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 右侧内容区（修改为消息会话列表） -->
+        <div class="content-wrapper">
+            <div class="content-panel">
+                <h3 class="panel-title">消息中心</h3>
+                
+                <!-- 消息筛选栏 -->
+                <div class="message-filter">
+                    <div class="filter-tag active" data-filter="all">全部会话</div>
+                    <div class="filter-tag" data-filter="unread">未读会话</div>
+                    <div class="filter-tag" data-filter="job">兼职相关</div>
+                </div>
+
+                <!-- 聊天会话列表（替换原消息列表） -->
+                <div class="record-list" id="sessionList">
+                    <!-- 会话项动态生成 -->
+                </div>
+
+                <!-- 空消息提示 -->
+                <div class="empty-message" id="emptyMsgTip" style="display: none;">
+                    <div class="empty-icon">💬</div>
+                    <div class="empty-text">暂无聊天会话</div>
+                    <div class="empty-desc" style="margin-top: 10px; font-size: 14px;">可从投递记录中发起与雇主的沟通</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<script src="theme-control.js"></script>
+    <script>
+        // 全局变量：当前筛选类型
+        let currentFilter = 'all';
+
+        // 聊天会话数据（关联投递记录的雇主信息，包含最后一条消息）
+        let chatSessionData = JSON.parse(localStorage.getItem('yjz_chat_sessions')) || [
+            {
+                sessionId: 1,
+                employerId: 101,
+                employerName: "王女士（家教雇主）",
+                employerAvatar: "https://picsum.photos/200/200?random=101",
+                jobName: "小学家教辅导（数学/英语）",
+                lastMsg: "周末上午9点或者下午2点都可以，你方便哪个时间？",
+                lastTime: "09:15",
+                unreadCount: 1,
+                isUnread: true,
+                type: "job"
+            },
+            {
+                sessionId: 2,
+                employerId: 102,
+                employerName: "李经理（传媒公司）",
+                employerAvatar: "https://picsum.photos/200/200?random=102",
+                jobName: "短视频剪辑兼职",
+                lastMsg: "麻烦发我邮箱：li@media.com，我尽快查看",
+                lastTime: "昨天 16:20",
+                unreadCount: 1,
+                isUnread: true,
+                type: "job"
+            },
+            {
+                sessionId: 3,
+                employerId: 103,
+                employerName: "张店长（奶茶店）",
+                employerAvatar: "https://picsum.photos/200/200?random=103",
+                jobName: "奶茶店店员（兼职）",
+                lastMsg: "非常抱歉，岗位已招满，后续有新岗位会第一时间通知你",
+                lastTime: "2025-05-02",
+                unreadCount: 0,
+                isUnread: false,
+                type: "job"
+            },
+            {
+                sessionId: 4,
+                employerId: 104,
+                employerName: "陈工程师（科技公司）",
+                employerAvatar: "https://picsum.photos/200/200?random=104",
+                jobName: "Python编程兼职",
+                lastMsg: "试岗内容我会发你邮箱，主要是简单的数据处理任务",
+                lastTime: "2025-04-26",
+                unreadCount: 0,
+                isUnread: false,
+                type: "job"
+            }
+        ];
+
+        // 页面初始化
+        window.onload = function() {
+            renderSessionList();
+            updateUnreadBadge();
+            bindFilterEvents();
+        };
+
+        // 绑定筛选标签事件
+        function bindFilterEvents() {
+            const filterTags = document.querySelectorAll('.filter-tag');
+            filterTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    filterTags.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    renderSessionList();
+                });
+            });
+        }
+
+        // 渲染聊天会话列表（适配投递记录的record-list样式）
+        function renderSessionList() {
+            const sessionList = document.getElementById('sessionList');
+            const emptyTip = document.getElementById('emptyMsgTip');
+            
+            // 筛选会话
+            let filteredSessions = [];
+            switch(currentFilter) {
+                case 'all':
+                    filteredSessions = chatSessionData;
+                    break;
+                case 'unread':
+                    filteredSessions = chatSessionData.filter(session => session.isUnread);
+                    break;
+                case 'job':
+                    filteredSessions = chatSessionData.filter(session => session.type === 'job');
+                    break;
+            }
+
+            // 清空列表
+            sessionList.innerHTML = '';
+
+            // 判断是否为空
+            if (filteredSessions.length === 0) {
+                emptyTip.style.display = 'block';
+                return;
+            } else {
+                emptyTip.style.display = 'none';
+            }
+
+            // 生成会话项（复用record-item的布局结构）
+            filteredSessions.forEach(session => {
+                const sessionItem = document.createElement('div');
+                sessionItem.className = `session-item ${session.isUnread ? 'unread' : ''}`;
+                
+                // 未读数量标签
+                const unreadTag = session.unreadCount > 0 ? `<span class="session-unread">${session.unreadCount}</span>` : '';
+
+                sessionItem.innerHTML = `
+                    <div class="session-header">
+                        <span class="session-employer">${session.employerName}</span>
+                        <span class="session-time">${session.lastTime}${unreadTag}</span>
+                    </div>
+                    <div class="session-last-msg">【${session.jobName}】${session.lastMsg}</div>
+                `;
+
+                // 点击会话跳转到雇主沟通页面（和投递记录的跳转参数一致）
+                sessionItem.addEventListener('click', function() {
+                    // 标记为已读
+                    if (session.isUnread) {
+                        session.isUnread = false;
+                        session.unreadCount = 0;
+                        saveSessionData();
+                        updateUnreadBadge();
+                        renderSessionList();
+                    }
+
+                    // 跳转至沟通页面（参数和投递记录保持一致）
+                    const chatUrl = `contact.html?employerId=${session.employerId}&employerName=${encodeURIComponent(session.employerName)}&employerAvatar=${encodeURIComponent(session.employerAvatar)}`;
+                    window.location.href = chatUrl;
+                });
+
+                sessionList.appendChild(sessionItem);
+            });
+        }
+
+        // 更新未读消息总数
+        function updateUnreadBadge() {
+            const totalUnread = chatSessionData.reduce((sum, session) => sum + session.unreadCount, 0);
+            const badge = document.getElementById('unreadBadge');
+            
+            if (totalUnread > 0) {
+                badge.textContent = totalUnread;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // 保存会话数据到本地存储
+        function saveSessionData() {
+            localStorage.setItem('yjz_chat_sessions', JSON.stringify(chatSessionData));
+        }
+
+        // 退出登录（和投递记录页面一致）
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                alert('退出成功！');
+                window.location.href = 'profile.html';
+            }
+        }
+    </script>
+</body>
+</html>

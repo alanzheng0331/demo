@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>登录</title>
+    
     <style>
         * {
             margin: 0;
@@ -127,10 +128,9 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        /* 修改这里：将登录链接改为居中显示 */
         .login-links {
             display: flex;
-            justify-content: center; /* 从 space-between 改为 center */
+            justify-content: space-between;
             margin-top: 25px;
             padding-top: 20px;
             border-top: 1px solid #eee;
@@ -152,6 +152,86 @@
             display: none;
         }
 
+        /* 管理员入口：浅紫色齿轮图案（比背景浅，贴合风格） */
+        .admin-entrance {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            /* 浅紫色背景：比页面背景#667eea/#764ba2浅，半透明融入 */
+            background: rgba(180, 190, 250, 0.15);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 浅紫色图标：比背景浅，隐蔽不突兀 */
+            color: rgba(160, 170, 240, 0.6);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(180, 190, 250, 0.2);
+        }
+
+        /* 齿轮图标样式（纯CSS绘制，兼容性好） */
+        .admin-entrance .gear {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: transform 0.5s ease;
+        }
+
+        .admin-entrance:hover {
+            /* hover时背景变亮，仍为浅紫色 */
+            background: rgba(180, 190, 250, 0.3);
+            /* 图标变深一点的浅紫色，更醒目 */
+            color: rgba(140, 150, 230, 1);
+            transform: scale(1.1); /* 轻微放大提示 */
+            box-shadow: 0 0 10px rgba(180, 190, 250, 0.2);
+        }
+
+        .admin-entrance:hover .gear {
+            transform: rotate(90deg); /* hover时齿轮旋转，增加交互感 */
+        }
+
+        /* 齿轮样式细节（纯CSS） */
+        .gear::before, .gear::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid currentColor;
+        }
+
+        .gear::before {
+            transform: rotate(45deg);
+        }
+
+        .gear .gear-tooth {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gear .gear-tooth::before {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 2px;
+        }
+
+        /* 齿轮齿牙布局 */
+        .gear .gear-tooth:nth-child(1)::before { top: -3px; left: 7px; }
+        .gear .gear-tooth:nth-child(2)::before { top: 7px; right: -3px; }
+        .gear .gear-tooth:nth-child(3)::before { bottom: -3px; left: 7px; }
+        .gear .gear-tooth:nth-child(4)::before { top: 7px; left: -3px; }
+
         @media (max-width: 768px) {
             .login-container {
                 padding: 20px;
@@ -169,18 +249,29 @@
             .tab-btn {
                 padding: 12px 30px;
             }
+
+            /* 移动端适配管理员入口，稍微缩小 */
+            .admin-entrance {
+                width: 32px;
+                height: 32px;
+            }
+
+            .admin-entrance .gear {
+                width: 18px;
+                height: 18px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="login-container">
     <div class="login-header">
-        <h1>欢迎登录管理系统</h1>
+        <h1>欢迎登录易兼职</h1>
     </div>
 
     <div class="login-tabs">
         <button class="tab-btn active" onclick="showUserLogin()">用户登录</button>
-        <button class="tab-btn" onclick="showAdminLogin()">管理登录</button>
+        <button class="tab-btn" onclick="showAdminLogin()">企业登录</button>
     </div>
 
     <!-- 用户登录表单 -->
@@ -195,77 +286,44 @@
             <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码" required>
         </div>
 
-        <button type="submit" class="login-btn">登录</button>
+        <button type="submit" class="login-btn">用户登录</button>
 
         <div class="login-links">
-            <a href="register.html">注册</a>
+            <a href="userRegister.html">用户注册</a>
+            <a href="userForgotPwd.html">忘记密码</a>
         </div>
     </form>
 
-    <!-- 管理登录表单 -->
+    <!-- 企业登录表单 -->
     <form id="adminLoginForm" class="login-box hidden" action="adminLoginProcess.jsp" method="POST">
         <div class="form-group">
-            <label for="adminUsername">管理员账号</label>
-            <input type="text" id="adminUsername" name="adminUsername" class="form-control" placeholder="请输入管理员账号" required>
+            <label for="adminUsername">企业名称</label>
+            <input type="text" id="adminUsername" name="adminUsername" class="form-control" placeholder="请输入企业名称" required>
         </div>
 
         <div class="form-group">
-            <label for="adminPassword">管理员密码</label>
-            <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="请输入管理员密码" required>
+            <label for="adminPassword">企业密码</label>
+            <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="请输入企业密码" required>
         </div>
-        <button type="submit" class="login-btn">管理员登录</button>
+        <button type="submit" class="login-btn">企业登录</button>
+
+        <div class="login-links">
+            <a href="companyRegister.html">企业注册</a>
+            <a href="companyForgotPwd.html">忘记密码</a>
+        </div>
     </form>
 </div>
 
-<script>
-    function showUserLogin() {
-        document.getElementById('userLoginForm').classList.remove('hidden');
-        document.getElementById('adminLoginForm').classList.add('hidden');
+<!-- 管理员入口：浅紫色齿轮小图案（纯CSS，无需图片） -->
+<a href="adminLogin.html" class="admin-entrance">
+    <div class="gear">
+        <div class="gear-tooth"></div>
+        <div class="gear-tooth"></div>
+        <div class="gear-tooth"></div>
+        <div class="gear-tooth"></div>
+    </div>
+</a>
 
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-    }
-
-    function showAdminLogin() {
-        document.getElementById('userLoginForm').classList.add('hidden');
-        document.getElementById('adminLoginForm').classList.remove('hidden');
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    }
-
-    // 表单验证
-    document.getElementById('userLoginForm').addEventListener('submit', function(e) {
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-
-        if (!username || !password) {
-            e.preventDefault();
-            alert('请填写完整的登录信息！');
-            return false;
-        }
-
-        if (password.length < 6) {
-            e.preventDefault();
-            alert('密码长度至少6位！');
-            return false;
-        }
-    });
-
-    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-        const username = document.getElementById('adminUsername').value.trim();
-        const password = document.getElementById('adminPassword').value.trim();
-        // 修复：移除了不存在的 code 验证
-        if (!username || !password) {
-            e.preventDefault();
-            alert('请填写完整的管理员登录信息！');
-            return false;
-        }
-    });
-</script>
+<script src="login.js"></script>
 </body>
 </html>

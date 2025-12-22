@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 企业帮助中心</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto; /* 外层容器整体居中 */
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-item a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item a:hover, .nav-item a.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .auth-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .register-btn {
+            background-color: #3498db;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .register-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 页面内容区域 - 优化居中 */
+        .content {
+            padding: 40px 0;
+            margin: 20px 0;
+            /* 核心：内容模块收缩居中 */
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3e50;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            margin: 10px auto 0; /* 分割线居中 */
+        }
+
+        .help-cate {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            /* 核心：帮助分类板块收缩居中 */
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cate-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cate-title i {
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        .faq-list {
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 15px;
+        }
+
+        .faq-question {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-question i {
+            color: #3498db;
+            font-size: 14px;
+        }
+
+        .faq-answer {
+            font-size: 14px;
+            color: #7f8c8d;
+            line-height: 1.7;
+            padding-left: 24px;
+        }
+
+        .contact-module {
+            background-color: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            /* 核心：联系模块收缩居中 */
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .contact-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .contact-item {
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-icon {
+            font-size: 24px;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .contact-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 8px;
+        }
+
+        .contact-info {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* 底部区域 - 优化居中 */
+        .footer {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            /* 核心：底部内容收缩居中 */
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #bdc3c7;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: #3498db;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 - 修正链接匹配统一命名 -->
+    <nav class="navbar">
+        <div class="container navbar-wrap">
+            <a href="companyIndex.html" class="logo">
+                <h1>易兼职·企业端</h1>
+            </a>
+            <div class="auth-btns">
+                <button class="login-btn" onclick="window.location.href='companyLogin.html'">企业登录</button>
+                <button class="register-btn" onclick="window.location.href='companyRegister.html'">企业入驻</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 内容区域 - 补全缺失的FAQ闭合标签 -->
+    <div class="container content">
+        <h3 class="section-title">企业端帮助中心</h3>
+
+        <div class="help-cate">
+            <h4 class="cate-title"><i>🏢</i> 企业入驻与认证相关</h4>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 企业入驻需要提供哪些材料？</div>
+                    <div class="faq-answer">企业入驻需提供：① 营业执照清晰照片（加盖企业公章）；② 法人身份证正反面清晰照片；③ 联系人授权委托书（加盖企业公章）；④ 若联系人非法人，还需提供联系人身份证正反面照片。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 企业资质审核需要多长时间？</div>
+                    <div class="faq-answer">平台会在收到企业提交的认证材料后1-2个工作日内完成审核，审核结果会通过短信和邮箱通知企业联系人；若材料不完整或不符合要求，需补充材料后重新审核。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 企业账号忘记密码怎么办？</div>
+                    <div class="faq-answer">在企业登录页面，点击「忘记密码」，输入企业注册邮箱或联系人手机号，获取验证码，输入验证码后即可重置登录密码；若无法接收验证码，可联系平台客服协助处理。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 企业信息可以修改吗？</div>
+                    <div class="faq-answer">企业基础信息（如联系人、联系电话、邮箱等）可在「企业中心-个人信息」中直接修改；企业名称、统一社会信用代码等资质信息修改需提交相关证明材料，联系客服审核通过后方可修改。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-cate">
+            <h4 class="cate-title"><i>📢</i> 职位发布与推广相关</h4>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 企业最多可以发布多少个兼职职位？</div>
+                    <div class="faq-answer">免费企业账号最多可同时发布5个兼职职位；付费会员账号可根据会员等级不同，发布10-50个不等的兼职职位，具体可查看会员套餐详情。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 发布的职位为什么没有曝光？</div>
+                    <div class="faq-answer">职位无曝光可能有以下原因：① 职位信息填写不完整（如缺少工作地点、薪资范围等核心信息）；② 职位名称不规范或包含违规词汇；③ 企业资质未审核通过；④ 职位已过期，需重新编辑发布。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 如何删除或下架已发布的职位？</div>
+                    <div class="faq-answer">进入「企业中心-我的职位」页面，找到需要删除或下架的职位，点击「下架」按钮可将职位暂时隐藏，点击「删除」按钮可永久删除该职位；下架的职位可重新编辑后再次发布。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 职位付费推广有哪些套餐？</div>
+                    <div class="faq-answer">平台提供三种付费推广套餐：① 首页推荐（100元/3天）；② 精准推送（50元/100位目标求职者）；③ 置顶展示（200元/7天），可在职位发布页面或「我的职位」页面选择推广套餐。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-cate">
+            <h4 class="cate-title"><i>🔍</i> 简历筛选与用工相关</h4>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 如何查看求职者的完整简历？</div>
+                    <div class="faq-answer">免费企业账号可查看求职者的基础简历信息；付费会员账号可查看求职者的完整简历（包括工作经历、技能证书、项目经验等），具体可通过「简历库」或「应聘记录」页面查看。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 可以下载求职者的简历吗？</div>
+                    <div class="faq-answer">仅付费会员账号支持下载求职者的完整简历，进入求职者简历详情页，点击「下载简历」按钮即可将简历保存为PDF格式；免费账号无简历下载权限。</div>
+                </div>
+                <div class="faq-item"> <!-- 补全缺失的faq-item闭合 -->
+                    <div class="faq-question"><i>❓</i> 兼职员工薪资如何通过平台结算？</div>
+                    <div class="faq-answer">企业可在「企业中心-薪资结算」页面，绑定企业银行卡或支付宝账号，添加兼职员工信息，选择结算金额和结算方式（日结/周结/月结），提交结算申请后，平台会在1-3个工作日内完成转账。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><i>❓</i> 与兼职员工发生纠纷如何处理？</div>
+                    <div class="faq-answer">若与兼职员工发生劳务纠纷，可先通过平台内置消息系统协商解决；协商无果的，可收集相关证据（如劳务协议、工作记录、薪资转账凭证等），联系平台客服介入调解；调解无效的，可通过法律途径解决。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-cate">
+            <h4 class="cate-title"><i>📞</i> 联系我们</h4>
+            <div class="contact-module">
+                <div class="contact-title">平台客服联系方式</div>
+                <div class="contact-list">
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-name">客服热线</div>
+                        <div class="contact-info">400-123-4567</div>
+                        <div class="contact-info">工作时间：9:00-18:00（周一至周五）</div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-name">客服邮箱</div>
+                        <div class="contact-info">service@yijianzhi.com</div>
+                        <div class="contact-info">24小时内回复</div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">💬</div>
+                        <div class="contact-name">在线客服</div>
+                        <div class="contact-info">企业端首页右下角悬浮窗</div>
+                        <div class="contact-info">工作时间：9:00-20:00（周一至周日）</div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🏠</div>
+                        <div class="contact-name">线下办公地址</div>
+                        <div class="contact-info">北京市朝阳区XX大厦15层</div>
+                        <div class="contact-info">来访需提前预约</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部区域 - 补全缺失内容，修正链接 -->
+    <footer class="footer">
+        <div class="container footer-wrap">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">企业合作</a></li>
+                    <li><a href="#">新闻动态</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>服务支持</h3>
+                <ul>
+                    <li><a href="HelpCenter.html">帮助中心</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">知识产权</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <ul>
+                    <li><a href="#">电话：400-123-4567</a></li>
+                    <li><a href="#">邮箱：service@yijianzhi.com</a></li>
+                    <li><a href="#">地址：北京市朝阳区XX大厦</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container copyright">
+            © 2025 易兼职 版权所有 | 京ICP备12345678号
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.style.padding = '15px 0';
+            }
+        });
+    </script>
+</body>
+</html>

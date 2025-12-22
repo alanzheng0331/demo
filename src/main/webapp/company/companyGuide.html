@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 企业用工指南</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto; /* 外层容器整体居中 */
+        }
+
+        /* 顶部导航栏 - 与首页（companyIndex.html）完全一致 */
+        .navbar {
+            background-color: #2d3e50; /* 企业端沉稳深灰蓝，替代用户端亮蓝 */
+            color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-item a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item a:hover, .nav-item a.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .auth-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .register-btn {
+            background-color: #3498db;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .register-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 页面内容区域 - 优化居中 */
+        .content {
+            padding: 40px 0;
+            margin: 20px 0;
+            /* 核心：内容模块收缩居中，不撑满宽屏 */
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3e50;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            margin: 10px auto 0; /* 分割线居中 */
+        }
+
+        .guide-section {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            /* 核心：指南板块收缩居中，视觉更聚拢 */
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .guide-subtitle {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .guide-subtitle i {
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        .guide-step {
+            margin-bottom: 25px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-title .step-num {
+            width: 24px;
+            height: 24px;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .step-desc {
+            font-size: 15px;
+            color: #7f8c8d;
+            line-height: 1.8;
+            padding-left: 32px;
+        }
+
+        .attention-list {
+            padding-left: 32px;
+            margin-top: 15px;
+        }
+
+        .attention-list li {
+            list-style: disc;
+            font-size: 15px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .tips-box {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            padding-left: 32px;
+            /* 提示框轻微收缩，更美观 */
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tips-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 10px;
+        }
+
+        .tips-desc {
+            font-size: 14px;
+            color: #7f8c8d;
+            line-height: 1.7;
+        }
+
+        /* 底部区域 - 与首页（companyIndex.html）完全一致，优化居中 */
+        .footer {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            /* 底部内容收缩居中 */
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        .footer-col ul li a:hover {
+            color: #3498db;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 - 补全导航菜单，修正所有链接 -->
+    <nav class="navbar">
+        <div class="container navbar-wrap">
+            <a href="companyIndex.html" class="logo">
+                <h1>易兼职·企业端</h1>
+            </a>
+            <div class="auth-btns">
+                <button class="login-btn" onclick="window.location.href='companyLogin.html'">企业登录</button>
+                <button class="register-btn" onclick="window.location.href='companyRegister.html'">企业入驻</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 内容区域 - 保留原有内容，修正帮助中心跳转链接 -->
+    <div class="container content">
+        <h3 class="section-title">企业兼职用工全流程指南</h3>
+
+        <div class="guide-section">
+            <h4 class="guide-subtitle"><i>📝</i> 第一步：企业入驻与认证</h4>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">1</span> 注册企业账号</h5>
+                <p class="step-desc">进入易兼职企业端首页，点击「企业入驻」按钮，填写企业名称、统一社会信用代码、联系人姓名、联系电话、邮箱等基础信息，设置登录密码，完成账号注册。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">2</span> 企业资质认证</h5>
+                <p class="step-desc">注册成功后，进入企业中心，上传营业执照清晰照片（加盖公章）、法人身份证正反面照片、联系人授权委托书等材料，提交平台审核，审核周期为1-2个工作日。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">3</span> 完善企业信息</h5>
+                <p class="step-desc">资质审核通过后，补充企业简介、经营范围、办公地址、招聘需求等信息，上传企业LOGO及办公环境照片，提升企业曝光度和求职者信任度。</p>
+            </div>
+            <div class="tips-box">
+                <div class="tips-title">温馨提示</div>
+                <p class="tips-desc">上传的资质材料需真实有效，否则将无法通过审核；企业信息越完善，越容易吸引优质兼职求职者投递简历。</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h4 class="guide-subtitle"><i>📢</i> 第二步：发布兼职职位</h4>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">1</span> 选择职位类型</h5>
+                <p class="step-desc">进入「发布职位」页面，根据用工需求选择职位类别（如服务类、技能类、体力类、线上类等），填写职位名称（需清晰明确，如「周末餐饮服务员」「线上短视频剪辑师」）。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">2</span> 填写职位详情</h5>
+                <p class="step-desc">详细填写职位职责、任职要求、工作地点、工作时间、薪资范围（明确计时/计件/项目付费标准）、福利待遇、入职须知等信息，建议补充工作内容描述，减少无效沟通。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">3</span> 发布与曝光</h5>
+                <p class="step-desc">填写完成后，预览职位信息，确认无误后点击「发布」按钮，职位将即时在平台曝光；可选择付费推广（如首页推荐、精准推送），提升职位曝光量，加快招聘速度。</p>
+            </div>
+            <div class="attention-list">
+                <li>薪资范围需符合市场行情，避免过低导致无人投递</li>
+                <li>工作地点需精准到具体地址，方便求职者判断通勤距离</li>
+                <li>任职要求需明确合理，避免设置过高门槛筛选不到合适人才</li>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h4 class="guide-subtitle"><i>🔍</i> 第三步：简历筛选与沟通</h4>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">1</span> 查看简历投递</h5>
+                <p class="step-desc">职位发布后，可在「应聘记录」页面查看求职者投递的简历，系统会展示求职者姓名、年龄、学历、技能、工作经验、薪资预期等核心信息。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">2</span> 精准筛选简历</h5>
+                <p class="step-desc">使用平台筛选功能，按技能、经验、年龄、薪资预期、通勤距离等条件筛选简历，快速锁定符合要求的候选人，减少筛选时间成本。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">3</span> 在线沟通面试</h5>
+                <p class="step-desc">对意向候选人，可通过平台内置消息系统在线沟通，了解求职者详细情况，约定面试时间（线上视频面试/线下现场面试），沟通面试相关事宜。</p>
+            </div>
+            <div class="tips-box">
+                <div class="tips-title">温馨提示</div>
+                <p class="tips-desc">建议在24小时内查看并回复简历投递，避免优质求职者被其他企业抢先录用；沟通时态度友好，清晰告知面试流程及注意事项。</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h4 class="guide-subtitle"><i>🤝</i> 第四步：录用与用工管理</h4>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">1</span> 发送录用通知</h5>
+                <p class="step-desc">面试通过后，向求职者发送录用通知，明确入职时间、入职材料（如身份证复印件、健康证等）、工作安排等信息，确认求职者是否接受录用。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">2</span> 签订劳务协议</h5>
+                <p class="step-desc">求职者入职时，签订兼职劳务协议，明确双方权利与义务、工作内容、薪资结算方式、结算周期、违约责任等条款，避免后续纠纷。</p>
+            </div>
+            <div class="guide-step">
+                <h5 class="step-title"><span class="step-num">3</span> 用工与薪资结算</h5>
+                <p class="step-desc">安排兼职员工上岗，做好岗前简单培训；按劳务协议约定的时间和方式结算薪资（如日结、周结、月结），及时足额支付薪资，提升企业口碑。</p>
+            </div>
+            <div class="attention-list">
+                <li>劳务协议需明确薪资结算细节，避免薪资纠纷</li>
+                <li>上岗前需告知兼职员工工作规范及安全注意事项</li>
+                <li>及时结算薪资，避免拖欠薪资影响企业信用</li>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部区域 - 修正帮助中心跳转链接为HelpCenter.html -->
+    <footer class="footer">
+        <div class="container footer-wrap">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">企业合作</a></li>
+                    <li><a href="#">新闻动态</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>服务支持</h3>
+                <ul>
+                    <li><a href="HelpCenter.html">帮助中心</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">知识产权</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <ul>
+                    <li><a href="#">电话：400-123-4567</a></li>
+                    <li><a href="#">邮箱：service@yijianzhi.com</a></li>
+                    <li><a href="#">地址：北京市朝阳区XX大厦</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container copyright">
+            © 2025 易兼职 版权所有 | 京ICP备12345678号
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果 - 与首页（companyIndex.html）完全一致
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.style.padding = '15px 0';
+            }
+        });
+    </script>
+</body>
+</html>

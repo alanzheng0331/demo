@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 投递记录</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <h1>易兼职</h1>
+            </a>
+            <div class="user-info">
+                <div class="avatar">
+                    <img src="https://picsum.photos/200/200?random=1" alt="用户头像" onerror="this.src='https://via.placeholder.com/40/667eea/ffffff?text=张'">
+                </div>
+                <span class="username">张三</span>
+                <button class="logout-btn" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="https://picsum.photos/200/200?random=1" alt="个人头像" onerror="this.src='https://via.placeholder.com/100/667eea/ffffff?text=张'">
+                </div>
+                <h3 class="profile-name">张三</h3>
+                <p class="profile-role">兼职求职者</p>
+                
+                <button class="edit-profile-btn" onclick="window.location.href='personal.html'">编辑资料</button>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="personal.html" class="nav-link" data-module="profile">
+                        <span class="nav-icon">👤</span>
+                        <span>个人信息</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resume.html" class="nav-link" data-module="resume">
+                        <span class="nav-icon">📝</span>
+                        <span>我的简历</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="apply.html" class="nav-link active" data-module="apply">
+                        <span class="nav-icon">📬</span>
+                        <span>投递记录</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="message.html" class="nav-link" data-module="message">
+                        <span class="nav-icon">💬</span>
+                        <span>消息中心</span>
+                        <span class="badge">2</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="collect.html" class="nav-link" data-module="collect">
+                        <span class="nav-icon">⭐</span>
+                        <span>我的收藏</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setting.html" class="nav-link" data-module="setting">
+                        <span class="nav-icon">⚙️</span>
+                        <span>账户设置</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="help.html" class="nav-link" data-module="help">
+                        <span class="nav-icon">❓</span>
+                        <span>帮助中心</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <div class="content-wrapper">
+            <div class="content-panel">
+                <h3 class="panel-title">简历投递记录</h3>
+                <div class="record-list">
+                    <!-- 投递记录1 -->
+                    <div class="record-item" onclick="openRecordDetail(1)">
+                        <div class="record-header">
+                            <span class="record-job">小学家教辅导（数学/英语）</span>
+                            <span class="record-status status-success">已邀约</span>
+                        </div>
+                        <div class="record-info">
+                            <span>薪资：¥180/小时</span>
+                            <span>地点：朝阳区亚运村</span>
+                            <span>结算：日结</span>
+                        </div>
+                        <div class="record-time">投递时间：2025-05-10 14:30</div>
+                    </div>
+                    <!-- 投递记录2 -->
+                    <div class="record-item" onclick="openRecordDetail(2)">
+                        <div class="record-header">
+                            <span class="record-job">短视频剪辑兼职</span>
+                            <span class="record-status status-pending">审核中</span>
+                        </div>
+                        <div class="record-info">
+                            <span>薪资：¥400/条</span>
+                            <span>地点：远程办公</span>
+                            <span>结算：按单结</span>
+                        </div>
+                        <div class="record-time">投递时间：2025-05-08 09:15</div>
+                    </div>
+                    <!-- 投递记录3 -->
+                    <div class="record-item" onclick="openRecordDetail(3)">
+                        <div class="record-header">
+                            <span class="record-job">奶茶店店员（兼职）</span>
+                            <span class="record-status status-fail">未通过</span>
+                        </div>
+                        <div class="record-info">
+                            <span>薪资：¥28/小时</span>
+                            <span>地点：海淀区中关村</span>
+                            <span>结算：日结</span>
+                        </div>
+                        <div class="record-time">投递时间：2025-05-01 11:20</div>
+                    </div>
+                    <!-- 投递记录4 -->
+                    <div class="record-item" onclick="openRecordDetail(4)">
+                        <div class="record-header">
+                            <span class="record-job">Python编程兼职</span>
+                            <span class="record-status status-success">已录用</span>
+                        </div>
+                        <div class="record-info">
+                            <span>薪资：¥300/天</span>
+                            <span>地点：远程办公</span>
+                            <span>结算：周结</span>
+                        </div>
+                        <div class="record-time">投递时间：2025-04-25 16:40</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 投递记录详情弹窗 -->
+    <div class="modal-mask" id="recordDetailModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="detailTitle">投递记录详情</h2>
+                <button class="modal-close" onclick="closeModal('recordDetailModal')">×</button>
+            </div>
+            <div class="modal-body" id="detailContent">
+                <!-- 详情内容动态生成 -->
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-default" onclick="openChat()">联系雇主</button>
+                <button class="modal-btn btn-primary" onclick="closeModal('recordDetailModal')">我知道了</button>
+            </div>
+        </div>
+    </div>
+<script src="theme-control.js"></script>
+    <script>
+        // 通用弹窗控制
+function openModal(modalId) {
+    document.getElementById(modalId).classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+// 存储当前打开的记录ID
+let currentRecordId = 0;
+
+// 投递记录详情数据（补充雇主信息）
+const recordData = [
+    {}, // 占位，使索引从1开始
+    {
+        title: '小学家教辅导（数学/英语）',
+        status: '已邀约',
+        salary: '¥180/小时',
+        location: '朝阳区亚运村',
+        settle: '日结',
+        time: '2025-05-10 14:30',
+        require: '1. 本科及以上学历，师范类专业优先；2. 有1年以上小学家教经验；3. 熟悉小学数学/英语教材；4. 有耐心，善于沟通；5. 周末能稳定授课2-3小时/天',
+        desc: '招聘小学3-6年级数学/英语家教，要求有相关辅导经验，能制定个性化辅导方案，提升孩子学习成绩。工作地点在朝阳区亚运村，每周周末授课，薪资180元/小时，日结。',
+        // 新增雇主信息
+        employerId: 101,
+        employerName: '王女士（家教雇主）',
+        employerAvatar: 'https://picsum.photos/200/200?random=101',
+        employerDesc: '孩子小学5年级，需要数学和英语辅导，家长人很好，沟通顺畅'
+    },
+    {
+        title: '短视频剪辑兼职',
+        status: '审核中',
+        salary: '¥400/条',
+        location: '远程办公',
+        settle: '按单结',
+        time: '2025-05-08 09:15',
+        require: '1. 熟练使用PR/剪映等剪辑软件；2. 有短视频剪辑经验；3. 能独立完成脚本理解、素材剪辑、配乐、字幕等；4. 审美良好，节奏感强；5. 能按时交付作品',
+        desc: '招聘短视频剪辑兼职，主要负责抖音/快手短视频剪辑，每条400元，按单结算。需提供过往作品，审核通过后开始合作，远程办公，时间灵活。',
+        // 新增雇主信息
+        employerId: 102,
+        employerName: '李经理（传媒公司）',
+        employerAvatar: 'https://picsum.photos/200/200?random=102',
+        employerDesc: '短视频创业公司，需要兼职剪辑师，团队年轻化'
+    },
+    {
+        title: '奶茶店店员（兼职）',
+        status: '未通过',
+        salary: '¥28/小时',
+        location: '海淀区中关村',
+        settle: '日结',
+        time: '2025-05-01 11:20',
+        require: '1. 年龄18-30岁，形象良好；2. 能吃苦耐劳，有服务意识；3. 周末能全天上班；4. 有餐饮行业经验优先；5. 能配合门店排班',
+        desc: '中关村奶茶店招聘兼职店员，主要负责点单、制作奶茶、清洁等工作，薪资28元/小时，日结。要求周末能全天上班，工作时间10:00-22:00，中间有休息。未通过原因：应聘人数过多，已招满。',
+        // 新增雇主信息
+        employerId: 103,
+        employerName: '张店长（奶茶店）',
+        employerAvatar: 'https://picsum.photos/200/200?random=103',
+        employerDesc: '中关村知名奶茶品牌，门店客流量大，需要兼职店员'
+    },
+    {
+        title: 'Python编程兼职',
+        status: '已录用',
+        salary: '¥300/天',
+        location: '远程办公',
+        settle: '周结',
+        time: '2025-04-25 16:40',
+        require: '1. 熟练掌握Python基础语法；2. 熟悉爬虫、数据分析优先；3. 能独立完成简单的编程任务；4. 有良好的代码规范；5. 能按时交付任务',
+        desc: '招聘Python编程兼职，主要负责数据处理、简单爬虫开发等工作，薪资300元/天，周结。远程办公，每天工作6-8小时，要求能稳定合作1-2个月。',
+        // 新增雇主信息
+        employerId: 104,
+        employerName: '陈工程师（科技公司）',
+        employerAvatar: 'https://picsum.photos/200/200?random=104',
+        employerDesc: '专注Python开发的小型科技公司，远程办公，结算及时'
+    }
+];
+
+// 打开投递记录详情
+function openRecordDetail(id) {
+    // 记录当前选中的记录ID
+    currentRecordId = id;
+    const record = recordData[id];
+    if (!record) return;
+    
+    // 设置标题
+    document.getElementById('detailTitle').textContent = `${record.title} - 投递详情`;
+    
+    // 生成详情内容（新增雇主信息展示）
+    const detailHtml = `
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">职位名称</span>
+                <span class="detail-value">${record.title}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">投递状态</span>
+                <span class="detail-value">${record.status}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">薪资待遇</span>
+                <span class="detail-value">${record.salary}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">工作地点</span>
+                <span class="detail-value">${record.location}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">结算方式</span>
+                <span class="detail-value">${record.settle}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">投递时间</span>
+                <span class="detail-value">${record.time}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">对接雇主</span>
+                <span class="detail-value">${record.employerName}</span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">岗位要求</span>
+            <div class="detail-desc">${record.require}</div>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">职位描述</span>
+            <div class="detail-desc">${record.desc}</div>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">雇主简介</span>
+            <div class="detail-desc">${record.employerDesc}</div>
+        </div>
+    `;
+    
+    document.getElementById('detailContent').innerHTML = detailHtml;
+    openModal('recordDetailModal');
+}
+
+// 联系雇主（跳转至contact.html并携带雇主ID参数）
+function openChat() {
+    if (currentRecordId === 0) {
+        alert('请先选择一条投递记录！');
+        return;
+    }
+    const record = recordData[currentRecordId];
+    // 先关闭当前详情弹窗
+    closeModal('recordDetailModal');
+    // 提示用户并跳转（携带雇主ID和名称参数）
+    alert(`即将为您跳转至与【${record.employerName}】的沟通界面`);
+    window.location.href = `contact.html?employerId=${record.employerId}&employerName=${encodeURIComponent(record.employerName)}&employerAvatar=${encodeURIComponent(record.employerAvatar)}`;
+}
+
+// 退出登录
+function logout() {
+    if (confirm('确定要退出登录吗？')) {
+        alert('退出成功！');
+        window.location.href = 'profile.html';
+    }
+}
+    </script>
+</body>
+</html>

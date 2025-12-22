@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户账号管理 - 兼职管理系统</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 投诉相关样式 */
+        .complaint-tag {
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+            margin-left: 8px;
+        }
+        .abnormal-tag {
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: #fbbf24;
+            color: #ffffff;
+            border: 1px solid #fbbf24;
+            margin-left: 4px;
+        }
+        .threshold-tip {
+            font-size: 12px;
+            color: #666;
+            margin: 5px 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo">易兼职—管理员后台</div>
+        <div class="header-user">
+            <span>欢迎, 管理员</span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </header>
+
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-title">审核管理</li>
+                <li><a href="companyReview.html">
+                    <span class="menu-icon">🏢</span><span>企业注册审查</span>
+                </a></li>
+                <li><a href="jobReview.html" >
+                    <span class="menu-icon">💼</span><span>企业兼职审核</span>
+                </a></li>
+                <li class="menu-title">账号管理</li>
+                <li><a href="userManagement.html" class="active">
+                    <span class="menu-icon">👤</span><span>用户账号管理</span>
+                </a></li>
+                <li><a href="companyManagement.html">
+                    <span class="menu-icon">🏭</span><span>企业账号管理</span>
+                </a></li>
+            </ul>
+        </aside>
+
+        <div class="content">
+            <div class="msg-box success-msg" id="successMsg">操作成功！</div>
+            <div class="msg-box error-msg" id="errorMsg">操作失败，请重试！</div>
+
+            <div class="content-header">
+                <h1 class="page-title">用户账号管理</h1>
+                <div>
+                    <select class="search-input" id="statusSelect" style="width: auto; margin-right: 10px;">
+                        <option value="">全部状态</option>
+                        <option value="normal">正常</option>
+                        <option value="frozen">已冻结</option>
+                    </select>
+                    <button class="search-btn" onclick="searchUser()">筛选</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchKey" placeholder="搜索用户名/手机号/邮箱">
+                    <button class="search-btn" onclick="searchUser()">搜索</button>
+                </div>
+
+                <!-- 投诉阈值说明 -->
+                <div class="threshold-tip">
+                    ⚠️ 投诉次数 ≥ 5次 判定为账号异常，建议重点核查并视情况冻结
+                </div>
+
+                <table class="table-common">
+                    <thead>
+                        <tr>
+                            <th>用户ID</th>
+                            <th>用户名</th>
+                            <th>手机号</th>
+                            <th>电子邮箱</th>
+                            <th>注册时间</th>
+                            <th>投诉次数</th>
+                            <th>账号状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <tr>
+                            <td>201</td>
+                            <td>zhangsan123</td>
+                            <td>138****1234</td>
+                            <td>zhangsan@example.com</td>
+                            <td>2025-04-01 10:30</td>
+                            <td>
+                                <span class="complaint-tag">1次</span>
+                            </td>
+                            <td><span class="status-tag status-normal">正常</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewUser(201)">详情</button>
+                                <button class="btn-small btn-freeze" onclick="changeUserStatus(201, 'frozen')">冻结</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>202</td>
+                            <td>lisi456</td>
+                            <td>139****5678</td>
+                            <td>lisi@example.com</td>
+                            <td>2025-04-05 14:20</td>
+                            <td>
+                                <span class="complaint-tag">4次</span> <!-- 4次 < 5次，不显示异常 -->
+                            </td>
+                            <td><span class="status-tag status-normal">正常</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewUser(202)">详情</button>
+                                <button class="btn-small btn-freeze" onclick="changeUserStatus(202, 'frozen')">冻结</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>203</td>
+                            <td>wangwu789</td>
+                            <td>137****9012</td>
+                            <td>wangwu@example.com</td>
+                            <td>2025-03-28 09:15</td>
+                            <td>
+                                <span class="complaint-tag">6次</span> <!-- 6次 ≥ 5次，显示异常 -->
+                                <span class="abnormal-tag">账号异常</span>
+                            </td>
+                            <td><span class="status-tag status-frozen">已冻结</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewUser(203)">详情</button>
+                                <button class="btn-small btn-unfreeze" onclick="changeUserStatus(203, 'normal')">解冻</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>204</td>
+                            <td>zhaoliu101</td>
+                            <td>135****6789</td>
+                            <td>zhaoliu@example.com</td>
+                            <td>2025-04-10 09:00</td>
+                            <td>
+                                <span class="complaint-tag">5次</span> <!-- 5次 = 5次，显示异常 -->
+                                <span class="abnormal-tag">账号异常</span>
+                            </td>
+                            <td><span class="status-tag status-normal">正常</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewUser(204)">详情</button>
+                                <button class="btn-small btn-freeze" onclick="changeUserStatus(204, 'frozen')">冻结</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev')">«</a>
+                    <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1)">1</a>
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage(2)">2</a>
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage('next')">»</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户详情弹窗 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">用户详情</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="userDetailContent"></div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="close-btn" style="background: #f1f5f9; padding: 6px 16px; border-radius: 6px; font-size: 14px; color: #475569;" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 账号状态修改弹窗 -->
+    <div class="modal" id="statusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="statusTitle">冻结用户</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="statusForm" onsubmit="return submitStatus()">
+                <input type="hidden" id="statusUserId" value="">
+                <input type="hidden" id="statusAction" value="">
+                <div class="form-group">
+                    <label class="form-label" for="statusRemark">操作备注</label>
+                    <textarea class="form-control" id="statusRemark" rows="4" placeholder="请输入操作备注（选填）"></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="statusSubmitBtn">确认冻结</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 全局定义投诉异常阈值（后续对接后端可从接口获取）
+        const COMPLAINT_ABNORMAL_THRESHOLD = 5;
+        let currentPage = 1;
+        const totalPages = 2;
+
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 查看用户详情
+        function viewUser(id) {
+            hideMessages();
+            const userData = {
+                201: {
+                    username: 'zhangsan123',
+                    phone: '138****1234',
+                    email: 'zhangsan@example.com',
+                    register: '2025-04-01 10:30',
+                    realName: '张三',
+                    gender: '男',
+                    age: 22,
+                    lastLogin: '2025-05-15 09:20',
+                    loginCount: 86,
+                    complaintCount: 1,
+                    complaintReason: '无有效投诉（用户误操作）',
+                    remark: ''
+                },
+                202: {
+                    username: 'lisi456',
+                    phone: '139****5678',
+                    email: 'lisi@example.com',
+                    register: '2025-04-05 14:20',
+                    realName: '李四',
+                    gender: '女',
+                    age: 21,
+                    lastLogin: '2025-05-14 16:30',
+                    loginCount: 72,
+                    complaintCount: 4,
+                    complaintReason: '1. 兼职信息不符；2. 恶意拖欠薪资；3. 态度恶劣；4. 虚假宣传',
+                    remark: ''
+                },
+                203: {
+                    username: 'wangwu789',
+                    phone: '137****9012',
+                    email: 'wangwu@example.com',
+                    register: '2025-03-28 09:15',
+                    realName: '王五',
+                    gender: '男',
+                    age: 23,
+                    lastLogin: '2025-05-10 11:15',
+                    loginCount: 95,
+                    complaintCount: 6,
+                    complaintReason: '1. 发布违规兼职信息；2. 骗取求职者押金；3. 恶意拉黑用户；4. 薪资未兑现；5. 虚假岗位；6. 辱骂求职者',
+                    remark: '发布违规兼职信息（投诉过多冻结）'
+                },
+                204: {
+                    username: 'zhaoliu101',
+                    phone: '135****6789',
+                    email: 'zhaoliu@example.com',
+                    register: '2025-04-10 09:00',
+                    realName: '赵六',
+                    gender: '男',
+                    age: 24,
+                    lastLogin: '2025-05-20 14:00',
+                    loginCount: 68,
+                    complaintCount: 5,
+                    complaintReason: '1. 岗位与描述严重不符；2. 拒绝支付劳动报酬；3. 恶意刁难求职者；4. 泄露用户个人信息；5. 发布违法兼职信息',
+                    remark: ''
+                }
+            };
+
+            const data = userData[id] || {};
+            let remarkHtml = data.remark ? `<p><strong>冻结原因：</strong>${data.remark}</p>` : '';
+            // 投诉信息（包含阈值提示）
+            let complaintHtml = `
+                <p><strong>投诉次数：</strong>${data.complaintCount || 0}次</p>
+                <p><strong>异常判定：</strong>${data.complaintCount >= COMPLAINT_ABNORMAL_THRESHOLD ? '是（≥5次）' : '否（<5次）'}</p>
+                <p><strong>主要投诉原因：</strong>${data.complaintReason || '无'}</p>
+            `;
+            
+            const html = `
+                <div style="line-height: 1.8;">
+                    <p><strong>用户名：</strong>${data.username || '未知'}</p>
+                    <p><strong>真实姓名：</strong>${data.realName || '未认证'}</p>
+                    <p><strong>性别：</strong>${data.gender || '未知'}</p>
+                    <p><strong>年龄：</strong>${data.age || '未知'}</p>
+                    <p><strong>手机号：</strong>${data.phone || '未知'}</p>
+                    <p><strong>电子邮箱：</strong>${data.email || '未知'}</p>
+                    <p><strong>注册时间：</strong>${data.register || '未知'}</p>
+                    <p><strong>最后登录：</strong>${data.lastLogin || '从未登录'}</p>
+                    <p><strong>登录次数：</strong>${data.loginCount || 0}次</p>
+                    ${complaintHtml}
+                    ${remarkHtml}
+                </div>
+            `;
+            document.getElementById('userDetailContent').innerHTML = html;
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        // 打开状态修改弹窗
+        function changeUserStatus(id, action) {
+            hideMessages();
+            document.getElementById('statusUserId').value = id;
+            document.getElementById('statusAction').value = action;
+            const actionText = action === 'frozen' ? '冻结' : '解冻';
+            document.getElementById('statusTitle').textContent = `${actionText}用户`;
+            document.getElementById('statusSubmitBtn').textContent = `确认${actionText}`;
+            document.getElementById('statusRemark').value = '';
+            document.getElementById('statusModal').style.display = 'flex';
+        }
+
+        // 提交状态修改
+        function submitStatus() {
+            const id = document.getElementById('statusUserId').value;
+            const action = document.getElementById('statusAction').value;
+            const remark = document.getElementById('statusRemark').value.trim();
+            
+            const rows = document.querySelectorAll('#userTableBody tr');
+            let updated = false;
+            rows.forEach(row => {
+                if (row.cells[0].textContent === id) {
+                    const statusTag = row.querySelector('.status-tag');
+                    const btnGroup = row.querySelector('.btn-group');
+                    if (action === 'frozen') {
+                        statusTag.className = 'status-tag status-frozen';
+                        statusTag.textContent = '已冻结';
+                        btnGroup.innerHTML = `
+                            <button class="btn-small btn-view" onclick="viewUser(${id})">详情</button>
+                            <button class="btn-small btn-unfreeze" onclick="changeUserStatus(${id}, 'normal')">解冻</button>
+                        `;
+                    } else {
+                        statusTag.className = 'status-tag status-normal';
+                        statusTag.textContent = '正常';
+                        btnGroup.innerHTML = `
+                            <button class="btn-small btn-view" onclick="viewUser(${id})">详情</button>
+                            <button class="btn-small btn-freeze" onclick="changeUserStatus(${id}, 'frozen')">冻结</button>
+                        `;
+                    }
+                    updated = true;
+                }
+            });
+
+            closeModal();
+            if (updated) {
+                showSuccessMessage(`用户账号${action === 'frozen' ? '冻结' : '解冻'}成功！`);
+            } else {
+                showErrorMessage('操作失败！');
+            }
+            return false;
+        }
+
+        // 搜索用户
+        function searchUser() {
+            hideMessages();
+            const key = document.getElementById('searchKey').value.trim().toLowerCase();
+            const status = document.getElementById('statusSelect').value;
+            const rows = document.querySelectorAll('#userTableBody tr');
+            let hasResult = false;
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const phone = row.cells[2].textContent.toLowerCase();
+                const email = row.cells[3].textContent.toLowerCase();
+                const rowStatus = row.querySelector('.status-tag').classList.contains('status-normal') ? 'normal' : 'frozen';
+                
+                const matchKey = !key || name.includes(key) || phone.includes(key) || email.includes(key);
+                const matchStatus = !status || rowStatus === status;
+
+                if (matchKey && matchStatus) {
+                    row.style.display = '';
+                    hasResult = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (!hasResult) {
+                const tbody = document.getElementById('userTableBody');
+                if (!tbody.querySelector('#emptyRow')) {
+                    tbody.innerHTML += '<tr id="emptyRow"><td colspan="8" style="text-align: center; color: #999;">未找到符合条件的用户</td></tr>';
+                }
+            } else {
+                const emptyRow = document.getElementById('emptyRow');
+                emptyRow && emptyRow.remove();
+            }
+        }
+
+        function changePage(page) {
+            if (page === 'prev') currentPage = Math.max(1, currentPage - 1);
+            else if (page === 'next') currentPage = Math.min(totalPages, currentPage + 1);
+            else currentPage = parseInt(page);
+            
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === currentPage.toString()) btn.classList.add('active');
+            });
+            showSuccessMessage(`已切换到第${currentPage}页`);
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+            document.getElementById('statusModal').style.display = 'none';
+        }
+
+        function showSuccessMessage(msg) {
+            const success = document.getElementById('successMsg');
+            const error = document.getElementById('errorMsg');
+            error.style.display = 'none';
+            success.textContent = msg;
+            success.style.display = 'block';
+            setTimeout(() => success.style.display = 'none', 3000);
+        }
+
+        function showErrorMessage(msg) {
+            const success = document.getElementById('successMsg');
+            const error = document.getElementById('errorMsg');
+            success.style.display = 'none';
+            error.textContent = msg;
+            error.style.display = 'block';
+            setTimeout(() => error.style.display = 'none', 3000);
+        }
+
+        function hideMessages() {
+            document.getElementById('successMsg').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

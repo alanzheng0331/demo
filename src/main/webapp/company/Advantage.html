@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 企业用工优势</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        /* 外层容器：保证整体居中 */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto; /* 核心：水平居中 */
+        }
+
+        /* 顶部导航栏 - 与首页完全一致 */
+        .navbar {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-item a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item a:hover, .nav-item a.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .auth-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .register-btn {
+            background-color: #3498db;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .register-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 页面内容区域 - 优化居中 */
+        .content {
+            padding: 40px 0;
+            margin: 20px 0;
+            /* 核心：让内容模块本身也居中收缩，不撑满容器 */
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3e50;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            margin: 10px auto 0; /* 伪元素居中 */
+        }
+
+        .advantage-section {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            /* 强化居中视觉，避免宽屏过散 */
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .advantage-subtitle {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .advantage-subtitle i {
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        .advantage-desc {
+            font-size: 15px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .advantage-list {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .advantage-list li {
+            list-style: disc;
+            font-size: 15px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .compare-module {
+            background-color: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            /* 表格模块单独居中收缩 */
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .compare-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 15px;
+            text-align: center; /* 标题居中 */
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            /* 表格内部内容居中 */
+            text-align: center;
+        }
+
+        .compare-table th, .compare-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .compare-table th {
+            background-color: #2d3e50;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .compare-table td {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .compare-table tr:nth-child(even) td {
+            background-color: #fcfcfc;
+        }
+
+        /* 底部区域 - 与首页完全一致，保证居中 */
+        .footer {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            /* 底部内容居中收缩 */
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #bdc3c7;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: #3498db;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 - 修正链接匹配首页指定的Advantage.html -->
+    <nav class="navbar">
+        <div class="container navbar-wrap">
+            <a href="companyIndex.html" class="logo">
+                <h1>易兼职·企业端</h1>
+            </a>
+             <div class="auth-btns">
+                <button class="login-btn" onclick="window.location.href='companyLogin.html'">企业登录</button>
+                <button class="register-btn" onclick="window.location.href='companyRegister.html'">企业入驻</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 内容区域 - 保留原有核心内容，已优化居中 -->
+    <div class="container content">
+        <h3 class="section-title">企业兼职用工核心优势</h3>
+
+        <div class="advantage-section">
+            <h4 class="advantage-subtitle"><i>💰</i> 成本控制优势</h4>
+            <p class="advantage-desc">相比传统全职用工，兼职用工能大幅降低企业的人力成本、管理成本及办公成本，尤其适合中小微企业和初创企业，有效缓解资金压力。</p>
+            <ul class="advantage-list">
+                <li>无需承担全职员工的五险一金、带薪年假、节日福利等固定福利支出</li>
+                <li>按小时/按单/按项目付费，避免业务淡季的人力闲置浪费</li>
+                <li>无需配备固定办公工位和设备，节省办公场地租金及设备折旧成本</li>
+                <li>简化管理流程，降低考勤、绩效、员工关系维护等管理成本</li>
+            </ul>
+            <div class="compare-module">
+                <div class="compare-title">全职 vs 兼职 月度成本对比（一线城市普通岗位）</div>
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>成本类型</th>
+                            <th>全职员工</th>
+                            <th>兼职员工</th>
+                            <th>成本节省比例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>基础薪资</td>
+                            <td>6000元</td>
+                            <td>3000元</td>
+                            <td>50%</td>
+                        </tr>
+                        <tr>
+                            <td>企业承担五险一金</td>
+                            <td>2000元</td>
+                            <td>0元</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>福利及办公成本</td>
+                            <td>800元</td>
+                            <td>0元</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>合计成本</td>
+                            <td>8800元</td>
+                            <td>3000元</td>
+                            <td>65.9%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="advantage-section">
+            <h4 class="advantage-subtitle"><i>🔧</i> 灵活调配优势</h4>
+            <p class="advantage-desc">兼职用工能快速响应企业业务波动，灵活调整人力规模，解决短期人力缺口，同时可按需配置专业人才，弥补企业技能短板。</p>
+            <ul class="advantage-list">
+                <li>招聘周期短（1-3天），可快速应对电商大促、展会活动等业务高峰期需求</li>
+                <li>业务淡季可随时缩减人力，无需承担辞退赔偿等风险</li>
+                <li>针对专项项目（设计/翻译/剪辑）招聘兼职专家，项目结束后即可终止合作</li>
+                <li>线上兼职无需地域限制，可招募全国范围内的优质人才</li>
+            </ul>
+        </div>
+
+        <div class="advantage-section">
+            <h4 class="advantage-subtitle"><i>⚡</i> 效率提升优势</h4>
+            <p class="advantage-desc">兼职用工能让全职员工聚焦核心业务，同时兼职员工的工作积极性更高，可有效提升企业整体运营效率和核心竞争力。</p>
+            <ul class="advantage-list">
+                <li>将数据录入、传单派发等非核心工作交由兼职完成，全职员工专注于产品研发、市场拓展等核心业务</li>
+                <li>兼职员工报酬与工作成果挂钩，积极性更高，工作效率优于部分全职员工</li>
+                <li>兼职员工来自不同行业，可带来新思路、新方法，激发团队创新活力</li>
+                <li>无需复杂培训，兼职员工多为熟手，可快速上岗创造价值</li>
+            </ul>
+        </div>
+
+        <div class="advantage-section">
+            <h4 class="advantage-subtitle"><i>🛡️</i> 风险规避优势</h4>
+            <p class="advantage-desc">兼职用工多为劳务关系，而非劳动关系，能有效规避劳动纠纷、业务调整带来的用工风险，降低企业经营压力。</p>
+            <ul class="advantage-list">
+                <li>无需签订劳动合同，避免经济补偿金、赔偿金、社保补缴等劳动纠纷</li>
+                <li>业务调整时可随时终止合作，无需承担全职员工辞退的相关成本</li>
+                <li>兼职员工可作为备用人力，分散全职员工离职、请假带来的运营风险</li>
+                <li>平台担保的兼职用工，可降低求职者失信、工作质量不达标等风险</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 底部区域 - 修正帮助中心链接匹配指定的HelpCenter.html，已优化居中 -->
+    <footer class="footer">
+        <div class="container footer-wrap">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">企业合作</a></li>
+                    <li><a href="#">新闻动态</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>服务支持</h3>
+                <ul>
+                    <li><a href="HelpCenter.html">帮助中心</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">知识产权</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <ul>
+                    <li><a href="#">电话：400-123-4567</a></li>
+                    <li><a href="#">邮箱：service@yijianzhi.com</a></li>
+                    <li><a href="#">地址：北京市朝阳区XX大厦</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container copyright">
+            © 2025 易兼职 版权所有 | 京ICP备12345678号
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.style.padding = '15px 0';
+            }
+        });
+    </script>
+</body>
+</html>

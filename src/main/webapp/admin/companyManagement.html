@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>企业账号管理 - 兼职管理系统</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 投诉相关样式 */
+        .complaint-tag {
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+            margin-left: 8px;
+        }
+        .abnormal-tag {
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: #fbbf24;
+            color: #ffffff;
+            border: 1px solid #fbbf24;
+            margin-left: 4px;
+        }
+        .threshold-tip {
+            font-size: 12px;
+            color: #666;
+            margin: 5px 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo">易兼职—管理员后台</div>
+        <div class="header-user">
+            <span>欢迎, 管理员</span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </header>
+
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-title">审核管理</li>
+                <li><a href="companyReview.html">
+                    <span class="menu-icon">🏢</span><span>企业注册审查</span>
+                </a></li>
+                <li><a href="jobReview.html" >
+                    <span class="menu-icon">💼</span><span>企业兼职审核</span>
+                </a></li>
+                <li class="menu-title">账号管理</li>
+                <li><a href="userManagement.html">
+                    <span class="menu-icon">👤</span><span>用户账号管理</span>
+                </a></li>
+                <li><a href="companyManagement.html" class="active">
+                    <span class="menu-icon">🏭</span><span>企业账号管理</span>
+                </a></li>
+            </ul>
+        </aside>
+
+        <div class="content">
+            <div class="msg-box success-msg" id="successMsg">操作成功！</div>
+            <div class="msg-box error-msg" id="errorMsg">操作失败，请重试！</div>
+
+            <div class="content-header">
+                <h1 class="page-title">企业账号管理</h1>
+                <div>
+                    <select class="search-input" id="statusSelect" style="width: auto; margin-right: 10px;">
+                        <option value="">全部状态</option>
+                        <option value="normal">正常</option>
+                        <option value="frozen">已冻结</option>
+                    </select>
+                    <button class="search-btn" onclick="searchEnterprise()">筛选</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchKey" placeholder="搜索企业名称/联系人/信用代码">
+                    <button class="search-btn" onclick="searchEnterprise()">搜索</button>
+                </div>
+
+                <!-- 投诉阈值说明 -->
+                <div class="threshold-tip">
+                    ⚠️ 投诉次数 ≥ 5次 判定为账号异常，建议重点核查并视情况冻结
+                </div>
+
+                <table class="table-common">
+                    <thead>
+                        <tr>
+                            <th>企业ID</th>
+                            <th>企业名称</th>
+                            <th>统一社会信用代码</th>
+                            <th>联系人</th>
+                            <th>手机号</th>
+                            <th>审核通过时间</th>
+                            <th>投诉次数</th>
+                            <th>账号状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="enterpriseTableBody">
+                        <tr>
+                            <td>301</td>
+                            <td>北京科技有限公司</td>
+                            <td>91110108MA00000000</td>
+                            <td>张经理</td>
+                            <td>138****1234</td>
+                            <td>2025-05-21 11:30</td>
+                            <td>
+                                <span class="complaint-tag">2次</span>
+                            </td>
+                            <td><span class="status-tag status-normal">正常</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewEnterprise(301)">详情</button>
+                                <button class="btn-small btn-freeze" onclick="changeEnterpriseStatus(301, 'frozen')">冻结</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>302</td>
+                            <td>上海文化传媒公司</td>
+                            <td>91310104MA11111111</td>
+                            <td>李总监</td>
+                            <td>139****5678</td>
+                            <td>2025-05-20 15:20</td>
+                            <td>
+                                <span class="complaint-tag">4次</span> <!-- 4次 < 5次，不显示异常 -->
+                            </td>
+                            <td><span class="status-tag status-normal">正常</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewEnterprise(302)">详情</button>
+                                <button class="btn-small btn-freeze" onclick="changeEnterpriseStatus(302, 'frozen')">冻结</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>303</td>
+                            <td>广州贸易有限公司</td>
+                            <td>91440101MA22222222</td>
+                            <td>王总</td>
+                            <td>137****9012</td>
+                            <td>2025-05-19 09:45</td>
+                            <td>
+                                <span class="complaint-tag">8次</span> <!-- 8次 ≥ 5次，显示异常 -->
+                                <span class="abnormal-tag">账号异常</span>
+                            </td>
+                            <td><span class="status-tag status-frozen">已冻结</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewEnterprise(303)">详情</button>
+                                <button class="btn-small btn-unfreeze" onclick="changeEnterpriseStatus(303, 'normal')">解冻</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>304</td>
+                            <td>深圳科技有限公司</td>
+                            <td>91440300MA55555555</td>
+                            <td>陈经理</td>
+                            <td>136****1234</td>
+                            <td>2025-05-22 10:00</td>
+                            <td>
+                                <span class="complaint-tag">5次</span> <!-- 5次 = 5次，显示异常 -->
+                                <span class="abnormal-tag">账号异常</span>
+                            </td>
+                            <td><span class="status-tag status-normal">正常</span></td>
+                            <td class="btn-group">
+                                <button class="btn-small btn-view" onclick="viewEnterprise(304)">详情</button>
+                                <button class="btn-small btn-freeze" onclick="changeEnterpriseStatus(304, 'frozen')">冻结</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage('prev')">«</a>
+                    <a href="javascript:void(0)" class="page-btn active" onclick="changePage(1)">1</a>
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage(2)">2</a>
+                    <a href="javascript:void(0)" class="page-btn" onclick="changePage('next')">»</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 企业详情弹窗 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">企业账号详情</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="enterpriseDetailContent"></div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="close-btn" style="background: #f1f5f9; padding: 6px 16px; border-radius: 6px; font-size: 14px; color: #475569;" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 账号状态修改弹窗 -->
+    <div class="modal" id="statusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="statusTitle">冻结企业账号</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="statusForm" onsubmit="return submitStatus()">
+                <input type="hidden" id="statusEntId" value="">
+                <input type="hidden" id="statusAction" value="">
+                <div class="form-group">
+                    <label class="form-label" for="statusRemark">操作备注</label>
+                    <textarea class="form-control" id="statusRemark" rows="4" placeholder="请输入操作备注（选填）"></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="statusSubmitBtn">确认冻结</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 全局定义投诉异常阈值（后续对接后端可从接口获取）
+        const COMPLAINT_ABNORMAL_THRESHOLD = 5;
+        let currentPage = 1;
+        const totalPages = 2;
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 查看企业详情
+        function viewEnterprise(id) {
+            hideMessages();
+            const enterpriseData = {
+                301: {
+                    name: '北京科技有限公司',
+                    code: '91110108MA00000000',
+                    contact: '张经理',
+                    phone: '138****1234',
+                    email: 'zhang@example.com',
+                    address: '北京市朝阳区科技园8号楼',
+                    business: '技术开发、技术咨询、技术服务',
+                    passTime: '2025-05-21 11:30',
+                    publishCount: 12,
+                    lastLogin: '2025-05-25 10:15',
+                    complaintCount: 2,
+                    complaintReason: '1. 兼职岗位调整未通知；2. 薪资发放延迟1天（已补发）',
+                    remark: ''
+                },
+                302: {
+                    name: '上海文化传媒公司',
+                    code: '91310104MA11111111',
+                    contact: '李总监',
+                    phone: '139****5678',
+                    email: 'li@example.com',
+                    address: '上海市徐汇区文化街15号',
+                    business: '文化活动策划、广告设计、影视制作',
+                    passTime: '2025-05-20 15:20',
+                    publishCount: 8,
+                    lastLogin: '2025-05-24 16:30',
+                    complaintCount: 4,
+                    complaintReason: '1. 实习生无补贴；2. 加班无加班费；3. 不签订实习协议；4. 拖欠稿费',
+                    remark: ''
+                },
+                303: {
+                    name: '广州贸易有限公司',
+                    code: '91440101MA22222222',
+                    contact: '王总',
+                    phone: '137****9012',
+                    email: 'wang@example.com',
+                    address: '广州市天河区商贸中心20层',
+                    business: '国内贸易、货物进出口、批发零售',
+                    passTime: '2025-05-19 09:45',
+                    publishCount: 15,
+                    lastLogin: '2025-05-20 08:45',
+                    complaintCount: 8,
+                    complaintReason: '1. 虚假兼职信息；2. 骗取求职者保证金；3. 客服态度恶劣；4. 商品质量不符；5. 售后无保障；6. 恶意扣罚工资；7. 岗位与描述不符；8. 拒绝退换货',
+                    remark: '发布虚假兼职信息，投诉过多冻结'
+                },
+                304: {
+                    name: '深圳科技有限公司',
+                    code: '91440300MA55555555',
+                    contact: '陈经理',
+                    phone: '136****1234',
+                    email: 'chen@example.com',
+                    address: '深圳市南山区科技园',
+                    business: '电子产品研发、销售及技术服务',
+                    passTime: '2025-05-22 10:00',
+                    publishCount: 10,
+                    lastLogin: '2025-05-26 09:30',
+                    complaintCount: 5,
+                    complaintReason: '1. 拖欠员工工资；2. 岗位要求与实际不符；3. 无五险一金；4. 强制加班；5. 试用期不通过无说明',
+                    remark: ''
+                }
+            };
+
+            const data = enterpriseData[id] || {};
+            let remarkHtml = data.remark ? `<p><strong>冻结原因：</strong>${data.remark}</p>` : '';
+            // 投诉信息（包含阈值提示）
+            let complaintHtml = `
+                <p><strong>投诉次数：</strong>${data.complaintCount || 0}次</p>
+                <p><strong>异常判定：</strong>${data.complaintCount >= COMPLAINT_ABNORMAL_THRESHOLD ? '是（≥5次）' : '否（<5次）'}</p>
+                <p><strong>主要投诉原因：</strong>${data.complaintReason || '无'}</p>
+            `;
+            
+            const html = `
+                <div style="line-height: 1.8;">
+                    <p><strong>企业名称：</strong>${data.name || '未知'}</p>
+                    <p><strong>统一社会信用代码：</strong>${data.code || '未知'}</p>
+                    <p><strong>联系人：</strong>${data.contact || '未知'}</p>
+                    <p><strong>联系电话：</strong>${data.phone || '未知'}</p>
+                    <p><strong>电子邮箱：</strong>${data.email || '未知'}</p>
+                    <p><strong>企业地址：</strong>${data.address || '未知'}</p>
+                    <p><strong>经营范围：</strong>${data.business || '未知'}</p>
+                    <p><strong>审核通过时间：</strong>${data.passTime || '未知'}</p>
+                    <p><strong>发布兼职数量：</strong>${data.publishCount || 0}条</p>
+                    <p><strong>最后登录时间：</strong>${data.lastLogin || '从未登录'}</p>
+                    ${complaintHtml}
+                    ${remarkHtml}
+                </div>
+            `;
+            document.getElementById('enterpriseDetailContent').innerHTML = html;
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        // 打开状态修改弹窗
+        function changeEnterpriseStatus(id, action) {
+            hideMessages();
+            document.getElementById('statusEntId').value = id;
+            document.getElementById('statusAction').value = action;
+            const actionText = action === 'frozen' ? '冻结' : '解冻';
+            document.getElementById('statusTitle').textContent = `${actionText}企业账号`;
+            document.getElementById('statusSubmitBtn').textContent = `确认${actionText}`;
+            document.getElementById('statusRemark').value = '';
+            document.getElementById('statusModal').style.display = 'flex';
+        }
+
+        // 提交状态修改
+        function submitStatus() {
+            const id = document.getElementById('statusEntId').value;
+            const action = document.getElementById('statusAction').value;
+            const remark = document.getElementById('statusRemark').value.trim();
+            
+            const rows = document.querySelectorAll('#enterpriseTableBody tr');
+            let updated = false;
+            rows.forEach(row => {
+                if (row.cells[0].textContent === id) {
+                    const statusTag = row.querySelector('.status-tag');
+                    const btnGroup = row.querySelector('.btn-group');
+                    if (action === 'frozen') {
+                        statusTag.className = 'status-tag status-frozen';
+                        statusTag.textContent = '已冻结';
+                        btnGroup.innerHTML = `
+                            <button class="btn-small btn-view" onclick="viewEnterprise(${id})">详情</button>
+                            <button class="btn-small btn-unfreeze" onclick="changeEnterpriseStatus(${id}, 'normal')">解冻</button>
+                        `;
+                    } else {
+                        statusTag.className = 'status-tag status-normal';
+                        statusTag.textContent = '正常';
+                        btnGroup.innerHTML = `
+                            <button class="btn-small btn-view" onclick="viewEnterprise(${id})">详情</button>
+                            <button class="btn-small btn-freeze" onclick="changeEnterpriseStatus(${id}, 'frozen')">冻结</button>
+                        `;
+                    }
+                    updated = true;
+                }
+            });
+
+            closeModal();
+            if (updated) {
+                showSuccessMessage(`企业账号${action === 'frozen' ? '冻结' : '解冻'}成功！`);
+            } else {
+                showErrorMessage('操作失败！');
+            }
+            return false;
+        }
+
+        // 搜索企业
+        function searchEnterprise() {
+            hideMessages();
+            const key = document.getElementById('searchKey').value.trim().toLowerCase();
+            const status = document.getElementById('statusSelect').value;
+            const rows = document.querySelectorAll('#enterpriseTableBody tr');
+            let hasResult = false;
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const code = row.cells[2].textContent.toLowerCase();
+                const contact = row.cells[3].textContent.toLowerCase();
+                const rowStatus = row.querySelector('.status-tag').classList.contains('status-normal') ? 'normal' : 'frozen';
+                
+                const matchKey = !key || name.includes(key) || code.includes(key) || contact.includes(key);
+                const matchStatus = !status || rowStatus === status;
+
+                if (matchKey && matchStatus) {
+                    row.style.display = '';
+                    hasResult = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (!hasResult) {
+                const tbody = document.getElementById('enterpriseTableBody');
+                if (!tbody.querySelector('#emptyRow')) {
+                    tbody.innerHTML += '<tr id="emptyRow"><td colspan="9" style="text-align: center; color: #999;">未找到符合条件的企业</td></tr>';
+                }
+            } else {
+                const emptyRow = document.getElementById('emptyRow');
+                emptyRow && emptyRow.remove();
+            }
+        }
+
+        // 分页切换
+        function changePage(page) {
+            if (page === 'prev') currentPage = Math.max(1, currentPage - 1);
+            else if (page === 'next') currentPage = Math.min(totalPages, currentPage + 1);
+            else currentPage = parseInt(page);
+            
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === currentPage.toString()) btn.classList.add('active');
+            });
+            showSuccessMessage(`已切换到第${currentPage}页`);
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+            document.getElementById('statusModal').style.display = 'none';
+        }
+
+        // 提示信息
+        function showSuccessMessage(msg) {
+            const success = document.getElementById('successMsg');
+            const error = document.getElementById('errorMsg');
+            error.style.display = 'none';
+            success.textContent = msg;
+            success.style.display = 'block';
+            setTimeout(() => success.style.display = 'none', 3000);
+        }
+
+        function showErrorMessage(msg) {
+            const success = document.getElementById('successMsg');
+            const error = document.getElementById('errorMsg');
+            success.style.display = 'none';
+            error.textContent = msg;
+            error.style.display = 'block';
+            setTimeout(() => error.style.display = 'none', 3000);
+        }
+
+        function hideMessages() {
+            document.getElementById('successMsg').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
