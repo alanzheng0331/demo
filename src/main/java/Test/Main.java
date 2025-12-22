@@ -1,19 +1,22 @@
-package ALL_20252160A0925.Test;
+package test;
 
 
-import ALL_20252160A0925.Test.Test.Test;
-import ALL_20252160A0925.Test.Test.Test_User;
+import test.test.TestModelDao;
+import test.test.TestRoot;
+import test.test.TestUser;
 
 /**
  * 测试类：基于用户提供的测试表（test/test_user/test_company）测试核心方法
  */
 public class Main {
     public static void main(String[] args) {
-        //new Test().mainX();
+        new TestModelDao().mainX();
         try{
-//            new Test_User().Test_Login();
-//            new Test_User().Test_Register();
-            new     Test_User().Test_Show();
+            new TestUser().Test_Login();
+            new TestUser().Test_Register();
+            new TestUser().Test_Show();
+            new TestRoot().Test_Login();
+            new TestRoot().Test_Show();
         }catch(Exception e){
             System.out.println(e.getMessage());
         }

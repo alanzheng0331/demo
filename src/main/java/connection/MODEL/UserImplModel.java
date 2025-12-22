@@ -1,9 +1,9 @@
-package ALL_20252160A0925.D2_CONNECTION.MODEL;
+package connection.model;
 
 import java.util.List;
 import java.util.Map;
 
-public interface IMPI_User {
+public interface UserImplModel {
 
     /**
      * 实现的功能 用户登录
@@ -25,4 +25,6 @@ public interface IMPI_User {
      * 输出：查询过到的 关于用户的 所有东西 Name 其实不许重复 但是 我很懒
      */
     public List<Map<String,Object>> Show(String USERNAME) throws Exception;
+
+
 }

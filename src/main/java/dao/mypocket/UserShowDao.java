@@ -1,17 +1,19 @@
-package ALL_20252160A0925.D3_DAO;
+package dao.mypocket;
 
-import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_MOD;
-import ALL_20252160A0925.D3_DAO.MODEL.TestClass_DAO_SQL_PUBLIC;
-import ALL_20252160A0925.D3_DAO.MODEL.Test_TABLE_NAME_MODEL;
+
+
+import dao.model.PublicDao;
+import dao.model.ModelDao;
+import dao.model.TableNameBasis;
 
 import java.util.List;
 import java.util.Map;
 
-public class TestClass_DAO_FOR_User_showDATA extends TestClass_DAO_SQL_MOD {
+public class UserShowDao extends ModelDao {
 
-    public TestClass_DAO_FOR_User_showDATA() {
+    public UserShowDao() {
         super(
-                new Test_TABLE_NAME_MODEL().getTableNameTestUser()
+                new TableNameBasis().getTableNameTestUser()
         );
     }
 
@@ -24,15 +26,15 @@ public class TestClass_DAO_FOR_User_showDATA extends TestClass_DAO_SQL_MOD {
 
     /**
      * 登录要用到的类 查询
-     * 输入 User NAME +Password
+     * 输入 User NAME
      *
-     * 返回 对应的值 List<Map<String, Object>>  User NAME +Password
+     * 返回 对应的值 List<Map<String, Object>>
      */
 
     //测试 手动输入：
     public List<Map<String, Object>> Test_RUNNING( String USERNAME) throws Exception {
         // 获取数据模板
-        List<Map<String, Object>> dataList = TestClass_DAO_SQL_PUBLIC.getTestUserInsertTemplate();
+        List<Map<String, Object>> dataList = PublicDao.getTestUserInsertTemplate();
         // 直接修改第一个Map中的值（索引为0）
         dataList.get(0).put("NAME", USERNAME);       // 修改NAME
         //直接插入

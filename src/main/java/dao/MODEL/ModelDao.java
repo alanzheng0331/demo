@@ -1,6 +1,6 @@
-package ALL_20252160A0925.D3_DAO.MODEL;
+package dao.model;
 
-import ALL_20252160A0925.D4_UTIL.TestUtil;
+import util.mypocket.TestUtil;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * 实现类：仅负责SQL拼装、过滤，SQL执行完全依赖TestUtil
  * 遵循Java 8规范，数据库操作全部调用TestUtil
  */
-public class TestClass_DAO_SQL_MOD implements TestClass_DAO_SQL, TestInterface_DAO_SQL_PUBLIC, TestInterface_DAO_SQL_Filter {
+public class ModelDao implements TestClass_DAO_SQL, TestInterface_DAO_SQL_PUBLIC, TestInterface_DAO_SQL_Filter {
 
     // 正则表达式：匹配1=1（忽略大小写和任意空格）
     private Pattern PATTERN_1_EQ_1 = Pattern.compile("1\\s*=\\s*1", Pattern.CASE_INSENSITIVE);
@@ -25,7 +25,7 @@ public class TestClass_DAO_SQL_MOD implements TestClass_DAO_SQL, TestInterface_D
 
     // 数据库表名（可根据业务需求调整，或通过配置注入）
     public String TABLE_NAME = "test";
-    public TestClass_DAO_SQL_MOD(String tableName) {
+    public ModelDao(String tableName) {
         if(tableName.isEmpty() || tableName==null){
             TABLE_NAME = "test";
         }else{

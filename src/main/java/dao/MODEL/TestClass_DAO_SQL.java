@@ -1,4 +1,4 @@
-package ALL_20252160A0925.D3_DAO.MODEL;
+package dao.model;
 
 import java.util.List;
 import java.util.Map;

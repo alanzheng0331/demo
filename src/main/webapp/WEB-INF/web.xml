@@ -36,4 +36,6 @@
         <servlet-name>CompanyRegisterServlet</servlet-name>
         <url-pattern>/company/register</url-pattern>
     </servlet-mapping>
+
+
 </web-app>
