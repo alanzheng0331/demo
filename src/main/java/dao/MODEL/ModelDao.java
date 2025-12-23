@@ -370,6 +370,7 @@ public class ModelDao implements TestClass_DAO_SQL, TestInterface_DAO_SQL_PUBLIC
     public List<Map<String, Object>> TestInterface_DAO_SQL_SELECT_1() throws Exception {
         // 拼装全表查询SQL
         String sql = String.format("SELECT * FROM %s", TABLE_NAME);
+        System.out.println(sql);
         // 执行SQL并返回结果
         return TestInterface_DAO_SQL_PUBLIC(sql);
     }

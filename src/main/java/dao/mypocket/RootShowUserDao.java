@@ -1,18 +1,17 @@
 package dao.mypocket;
 
 import dao.model.ModelDao;
-import dao.model.PublicDao;
 import dao.model.TableNameBasis;
 
 import java.util.List;
 import java.util.Map;
 
-public class RootShowDao extends ModelDao {
+public class RootShowUserDao extends ModelDao {
 
-    public RootShowDao() {
+    public RootShowUserDao() {
         super(
                 /*用户表【来源 模板TableNameBasis】*/
-                new TableNameBasis().getTableNameTestUser()
+                new TableNameBasis().getTableNameUser()
         );
     }
 

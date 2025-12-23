@@ -13,7 +13,7 @@ public class UserShowDao extends ModelDao {
 
     public UserShowDao() {
         super(
-                new TableNameBasis().getTableNameTestUser()
+                new TableNameBasis().getTableNameUser()
         );
     }
 
@@ -34,7 +34,7 @@ public class UserShowDao extends ModelDao {
     //测试 手动输入：
     public List<Map<String, Object>> Test_RUNNING( String USERNAME) throws Exception {
         // 获取数据模板
-        List<Map<String, Object>> dataList = PublicDao.getTestUserInsertTemplate();
+        List<Map<String, Object>> dataList =new PublicDao().getUserInsertTemplate();
         // 直接修改第一个Map中的值（索引为0）
         dataList.get(0).put("NAME", USERNAME);       // 修改NAME
         //直接插入

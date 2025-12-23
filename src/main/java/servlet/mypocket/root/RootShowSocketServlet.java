@@ -17,14 +17,17 @@ public class RootShowSocketServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
-        // 声明数据变量
+        // 声明数据变量：用户数据 + 企业数据
         List<Map<String, Object>> userDataList = null;
+        List<Map<String, Object>> companyDataList = null; // 新增：企业数据变量
+
         try {
             // 2. 获取RootImplModel的真实实现类对象（现在用AllOfImpl）
             RootImplModel rootModel = getRootImplModelInstance();
 
-            // 3. 调用RootShow()方法获取用户表所有数据（此时会调用AllOfImpl的RootShow，进而调用RootShowDao的数据库逻辑）
-            userDataList = rootModel.RootShow();
+            // 3. 调用方法获取数据
+            userDataList = rootModel.RootShowUser(); // 用户表数据
+            companyDataList = rootModel.RootShowCompany(); // 新增：企业表数据（直接调用已实现的方法）
 
         } catch (Exception e) {
             // 异常处理：打印异常信息，存入request供JSP展示
@@ -33,17 +36,17 @@ public class RootShowSocketServlet extends HttpServlet {
         }
 
         // 4. 将查询到的数据存入request域，供JSP页面获取
-        request.setAttribute("userDataList", userDataList);
+        request.setAttribute("userDataList", userDataList); // 用户数据
+        request.setAttribute("companyDataList", companyDataList); // 新增：企业数据
 
-        // 5. 处理Session中的用户名，判断是否为root（你注释掉的部分可以按需恢复）
-        // 恢复后JSP就能拿到isRoot标识，判断是否是root用户
-        HttpSession session = request.getSession(false); // false：不存在则返回null，不新建
-        String username = session != null ? (String) session.getAttribute("username") : null;
-        boolean isRoot = "root".equals(username); // 严格判断是否为root用户
-        request.setAttribute("isRoot", isRoot); // 存入request域，供JSP使用
+        // 5. 处理Session中的用户名，判断是否为root
+//        HttpSession session = request.getSession(false); // false：不存在则返回null，不新建
+//        String username = session != null ? (String) session.getAttribute("username") : null;
+//        boolean isRoot = "root".equals(username); // 严格判断是否为root用户
+//        request.setAttribute("isRoot", isRoot); // 存入request域，供JSP使用
 
         // 6. 请求转发到指定JSP页面（路径对应你的项目部署路径）
-        request.getRequestDispatcher("/mypocket/rootShow.jsp").forward(request, response);
+        request.getRequestDispatcher("mypocket/rootShow.jsp").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
