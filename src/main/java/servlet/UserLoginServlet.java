@@ -18,10 +18,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * 企业登录Servlet（适配Gson工具类）
+ * 求职者登录Servlet（适配Gson工具类）
  */
-@WebServlet("/company/login") // 对应前端AJAX请求路径
-public class CompanyLoginServlet extends HttpServlet {
+@WebServlet("/user/login") // 对应前端AJAX请求路径
+public class UserLoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -31,33 +31,20 @@ public class CompanyLoginServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
 
         // 1. 获取前端传递的参数
-        String companyName = request.getParameter("companyName");
-        String companyPwd = request.getParameter("companyPwd");
+        String phone = request.getParameter("phone");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
 
         // 2. 参数校验
-        if (companyName == null || companyName.trim().isEmpty()) {
-            String errorJson = JsonUtil.toJson(Result.error("企业名称不能为空"));
+        if (phone == null || phone.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            String errorJson = JsonUtil.toJson(Result.error("手机号和密码不能为空"));
             writer.write(errorJson);
             writer.flush();
             writer.close();
             return;
         }
-        if (companyPwd == null || companyPwd.trim().isEmpty()) {
-            String errorJson = JsonUtil.toJson(Result.error("企业密码不能为空"));
-            writer.write(errorJson);
-            writer.flush();
-            writer.close();
-            return;
-        }
-        if (companyName.trim().length() < 2 || companyName.trim().length() > 200) {
-            String errorJson = JsonUtil.toJson(Result.error("企业名称长度需在2-200个字符之间"));
-            writer.write(errorJson);
-            writer.flush();
-            writer.close();
-            return;
-        }
-        if (companyPwd.trim().length() < 6 || companyPwd.trim().length() > 32) {
-            String errorJson = JsonUtil.toJson(Result.error("企业密码长度需在6-32个字符之间"));
+        if (phone.trim().length() != 11) {
+            String errorJson = JsonUtil.toJson(Result.error("请输入11位有效手机号"));
             writer.write(errorJson);
             writer.flush();
             writer.close();
@@ -70,18 +57,19 @@ public class CompanyLoginServlet extends HttpServlet {
         ResultSet rs = null;
         try {
             conn = MysqlDBUtil.getConnection();
-            // 匹配t_company表查询
-            String sql = "SELECT id, company_name, company_phone, status FROM t_company WHERE company_name = ? AND company_pwd = ?";
+            // 匹配t_user表查询
+            String sql = "SELECT id, name, phone, role, status FROM t_user WHERE phone = ? AND password = ? AND role = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, companyName.trim());
-            pstmt.setString(2, companyPwd.trim());
+            pstmt.setString(1, phone.trim());
+            pstmt.setString(2, password.trim());
+            pstmt.setString(3, role != null ? role : "job_seeker");
 
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                // 校验企业账号状态
-                Integer status = rs.getInt("status");
-                if (status == null || status != 1) {
-                    String errorJson = JsonUtil.toJson(Result.error("企业账号已被禁用或待审核，请等待管理员处理"));
+                // 校验账号状态
+                int status = rs.getInt("status");
+                if (status != 1) {
+                    String errorJson = JsonUtil.toJson(Result.error("账号已被禁用，请联系管理员"));
                     writer.write(errorJson);
                     writer.flush();
                     writer.close();
@@ -90,21 +78,22 @@ public class CompanyLoginServlet extends HttpServlet {
 
                 // 登录成功，存入Session
                 HttpSession session = request.getSession();
-                session.setAttribute("companyId", rs.getLong("id"));
-                session.setAttribute("companyName", rs.getString("company_name"));
-                session.setAttribute("companyPhone", rs.getString("company_phone"));
+                session.setAttribute("userId", rs.getLong("id"));
+                session.setAttribute("userName", rs.getString("name"));
+                session.setAttribute("userPhone", rs.getString("phone"));
+                session.setAttribute("userRole", rs.getString("role"));
 
                 // 返回成功响应
-                String successJson = JsonUtil.toJson(Result.success("企业登录成功"));
+                String successJson = JsonUtil.toJson(Result.success("登录成功"));
                 writer.write(successJson);
             } else {
-                // 企业名称或密码错误
-                String errorJson = JsonUtil.toJson(Result.error("企业名称或密码错误"));
+                // 手机号或密码错误
+                String errorJson = JsonUtil.toJson(Result.error("手机号或密码错误"));
                 writer.write(errorJson);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            String errorJson = JsonUtil.toJson(Result.error("数据库异常，企业登录失败"));
+            String errorJson = JsonUtil.toJson(Result.error("数据库异常，登录失败"));
             writer.write(errorJson);
         } finally {
             // 关闭资源
