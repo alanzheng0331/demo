@@ -40,4 +40,42 @@
     <!--  我的 SERVLET 用户   -->
 
     <!--    -->
+    <!-- ServletTest 配置 -->
+    <servlet>
+        <servlet-name>SocketServlet</servlet-name>
+        <!-- 对应 ServletTest 类的完整包路径 -->
+        <servlet-class>servlet.mypocket.Test.SocketServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SocketServlet</servlet-name>
+        <!-- 匹配表单提交的 action 路径 -->
+        <url-pattern>/SocketServlet</url-pattern>
+    </servlet-mapping>
+
+    <!--  Root  -->
+        <!-- ServletTest login 配置 -->
+        <servlet>
+            <servlet-name>RootLoginSocketServlet</servlet-name>
+            <!-- 对应 ServletTest 类的完整包路径 -->
+            <servlet-class>servlet.mypocket.root.RootLoginSocketServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>RootLoginSocketServlet</servlet-name>
+            <!-- 匹配表单提交的 action 路径 -->
+            <url-pattern>/RootLoginSocketServlet</url-pattern>
+        </servlet-mapping>
+        <!-- ServletTest SHow 配置 -->
+        <servlet>
+            <servlet-name>RootShowSocketServlet</servlet-name>
+            <!-- 对应 ServletTest 类的完整包路径 -->
+            <servlet-class>servlet.mypocket.root.RootShowSocketServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>RootShowSocketServlet</servlet-name>
+            <!-- 匹配表单提交的 action 路径 -->
+            <url-pattern>/RootShowSocketServlet</url-pattern>
+        </servlet-mapping>
+
+
+
 </web-app>
