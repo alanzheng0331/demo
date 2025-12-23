@@ -20,7 +20,7 @@ import java.sql.SQLException;
 /**
  * 企业登录Servlet（适配Gson工具类）
  */
-@WebServlet("/company/login") // 对应前端AJAX请求路径
+@WebServlet("/user/login")
 public class CompanyLoginServlet extends HttpServlet {
 
     @Override

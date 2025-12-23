@@ -3,9 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
          http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1"> <!-- 适配Tomcat 8.5 -->
+         version="3.1"
+         metadata-complete="false"> <!-- 适配Tomcat 8.5 -->
 
-    <!-- 字符编码过滤器 -->
+    <!-- 字符编码过滤器（增强版，强制设置请求+响应编码） -->
     <filter>
         <filter-name>encodingFilter</filter-name>
         <filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
@@ -13,18 +14,28 @@
             <param-name>encoding</param-name>
             <param-value>UTF-8</param-value>
         </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- 默认首页 -->
+    <!-- Session超时配置（可选，60分钟超时） -->
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+    <!-- 默认首页（补充登录页，优先引导登录） -->
     <welcome-file-list>
+        <welcome-file>login.jsp</welcome-file>
         <welcome-file>user/index.jsp</welcome-file>
     </welcome-file-list>
 
-    <!-- 验证码Servlet配置（保留，因为你没有给它加注解） -->
+    <!-- 验证码Servlet配置（保留，无注解） -->
     <servlet>
         <servlet-name>VerifyCodeServlet</servlet-name>
         <servlet-class>servlet.VerifyCodeServlet</servlet-class>
@@ -34,7 +45,7 @@
         <url-pattern>/verifyCodeServlet</url-pattern>
     </servlet-mapping>
 
-    <!-- 用户注册Servlet配置（根据你的实际情况保留/修改） -->
+    <!-- 用户注册Servlet配置（保留） -->
     <servlet>
         <servlet-name>UserServlet</servlet-name>
         <servlet-class>servlet.UserServlet</servlet-class>
@@ -44,16 +55,14 @@
         <url-pattern>/user/register</url-pattern>
     </servlet-mapping>
 
-    <!-- 企业注册Servlet配置（保留，无注解，仅XML配置） -->
+    <!-- 企业注册Servlet配置（优化路径，和用户注册风格一致） -->
     <servlet>
         <servlet-name>CompanyRegisterServlet</servlet-name>
         <servlet-class>servlet.CompanyRegisterServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CompanyRegisterServlet</servlet-name>
-        <url-pattern>/companyRegisterServlet</url-pattern>
+        <url-pattern>/company/register</url-pattern>
     </servlet-mapping>
-
-    <!-- 【删除】UserLoginServlet和CompanyLoginServlet的XML配置，避免和注解冲突 -->
 
 </web-app>
