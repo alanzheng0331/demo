@@ -15,9 +15,8 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 
 /**
- * 求职者登录Servlet（复用UserDao，适配双数据库）
+ * 求职者登录Servlet
  */
-
 public class UserLoginServlet extends HttpServlet {
 
     private UserDao userDao = new UserDao(); // 注入UserDao
