@@ -5,7 +5,7 @@ import util.Result;
 import util.MysqlDBUtil;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
 /**
  * 企业登录Servlet（适配Gson工具类）
  */
-@WebServlet("/user/login")
+
 public class CompanyLoginServlet extends HttpServlet {
 
     @Override

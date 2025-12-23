@@ -6,7 +6,6 @@ import util.JsonUtil;
 import util.Result;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +17,7 @@ import java.sql.SQLException;
 /**
  * 求职者登录Servlet（复用UserDao，适配双数据库）
  */
-@WebServlet("/user/login")
+
 public class UserLoginServlet extends HttpServlet {
 
     private UserDao userDao = new UserDao(); // 注入UserDao
