@@ -9,55 +9,52 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
-/**
- * 根用户登录Servlet
- * 优化点：使用Session存储用户信息、动态获取项目路径、优化空值处理、增加安全限制、完善错误反馈
- */
-public class RootLoginSocketServlet extends HttpServlet { // 类名简化：去掉Socket（非Socket通信，命名误导）
+// 必加注解：指定Servlet映射路径，否则登录请求无法匹配
+@WebServlet("/mypocket/rootLogin")
+public class RootLoginSocketServlet extends HttpServlet {
 
-    // 常量定义：统一配置，便于维护
-    private static final String ROOT_USERNAME = "root"; // 若需求是大写ROOT，改为"ROOT"
+    // 常量定义（新增isRoot的Session键，方便所有页面统一读取）
+    private static final String ROOT_USERNAME = "root";
     private static final String ROOT_PASSWORD = "root";
-    private static final String SESSION_KEY_USER = "rootUser"; // Session中用户信息的key
+    private static final String SESSION_KEY_USER = "rootUser";
+    private static final String SESSION_KEY_IS_ROOT = "isRoot"; // 新增：所有页面统一读这个键
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. 处理请求/响应编码
+        // 编码处理（原有逻辑不变）
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType("text/html;charset=" + StandardCharsets.UTF_8.name());
 
-        // 2. 获取表单参数（优化空值处理：Objects.requireNonNullElse）
-        // Java 8：三元运算符处理null，和你原代码一致
+        // 获取参数（原有逻辑不变）
         String username = request.getParameter("username") == null ? "" : request.getParameter("username");
         String password = request.getParameter("password") == null ? "" : request.getParameter("password");
 
-        // 3. 验证用户名密码
         if (ROOT_USERNAME.equals(username) && ROOT_PASSWORD.equals(password)) {
-            // 3.1 存入Session（核心优化：替代URL传参，安全存储）
+            // 1. 获取Session（用户级全局存储，跨页面有效）
             HttpSession session = request.getSession();
-            session.setAttribute(SESSION_KEY_USER, username); // 可存储用户对象，此处简化为用户名
-            session.setMaxInactiveInterval(30 * 60); // 设置Session过期时间：30分钟（可选）
+            // 2. 存入用户名（保留原有逻辑，不破坏联动）
+            session.setAttribute(SESSION_KEY_USER, username);
+            // 3. 存入布尔型isRoot标识（核心：所有页面统一读这个值）
+            session.setAttribute(SESSION_KEY_IS_ROOT, true);
+            // 4. 设置Session过期时间（原有逻辑不变）
+            session.setMaxInactiveInterval(30 * 60);
 
-            // 3.2 重定向到根首页（使用相对路径，避免硬编码）
-            // request.getContextPath()：动态获取项目根路径（替代硬编码的part_time_system_war_exploded）
+            // 5. 重定向到首页（恢复重定向，避免转发的重复提交问题）
             String redirectUrl = request.getContextPath() + "/mypocket/rootIndex.jsp";
             response.sendRedirect(redirectUrl);
         } else {
-            // 3.3 验证失败：重定向回登录页并携带错误提示（启用错误反馈，优化用户体验）
+            // 登录失败逻辑（原有逻辑不变）
             String errorMsg = URLEncoder.encode("用户名或密码错误，请重新登录！", StandardCharsets.UTF_8.name());
             String loginPageUrl = request.getContextPath() + "/mypocket/rootlogin.html?error=" + errorMsg;
             response.sendRedirect(loginPageUrl);
         }
-        // 注意：Servlet容器会自动关闭输出流，无需手动调用out.close()
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 登录请求禁止使用GET（防止参数暴露），重定向到登录页或返回错误
+        // GET请求重定向到登录页（原有逻辑不变）
         String loginPageUrl = request.getContextPath() + "/mypocket/rootlogin.html";
         response.sendRedirect(loginPageUrl);
-        // 或直接返回405错误：response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "不支持GET请求");
     }
 }

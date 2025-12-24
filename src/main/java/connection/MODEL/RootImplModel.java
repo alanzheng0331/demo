@@ -31,10 +31,10 @@ public interface RootImplModel {
     /*分页查询 不一定实现*/
 
     /**
-     * 实现的功能 删除 企业表
-     * 输入：List Map
+     * 实现的功能 删除 表
+     * 输入：出
      * 输出：直接删除 List Map 其实是指条件
      */
-
-    public List<Map<String,Object>> RootDelete() throws Exception;
+    public String RootDeleteUser(Map<String, Object> MY_WAY) throws Exception;
+    public String RootDeleteCompany(Map<String, Object> MY_WAY) throws Exception;
 }

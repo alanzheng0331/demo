@@ -25,7 +25,7 @@ public class AllOfImpl implements
     RootShowUserDao _Root_ShowDao =new RootShowUserDao();
     RootShowCampanyDao _Root_ShowCampanyDao =new RootShowCampanyDao();
     RootDeleteUserDao _Root_DeleteUserDao =new RootDeleteUserDao();
-
+    RootDeleteCompanyDao _Root_DeleteCompanyDao =new RootDeleteCompanyDao();
     /**
      *User
      */
@@ -63,8 +63,14 @@ public class AllOfImpl implements
     }
 
     @Override
-    public List<Map<String, Object>> RootDelete() throws Exception {
-        return null;
-        //return _Root_DeleteUserDao.Test_RUNNING();
+    public String RootDeleteUser(Map<String, Object> MY_WAY) throws Exception {
+        return _Root_DeleteUserDao.Test_RUNNING(MY_WAY);
     }
+
+    @Override
+    public String RootDeleteCompany(Map<String, Object> MY_WAY) throws Exception {
+        return _Root_DeleteCompanyDao.Test_RUNNING(MY_WAY);
+    }
+
+
 }

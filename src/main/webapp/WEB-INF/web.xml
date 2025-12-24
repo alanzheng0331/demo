@@ -64,6 +64,17 @@
             <!-- 匹配表单提交的 action 路径 -->
             <url-pattern>/RootLoginSocketServlet</url-pattern>
         </servlet-mapping>
+        <!-- ServletTest ONLY only SHow 配置 -->
+        <servlet>
+            <servlet-name>RootOnlyShowSocketServlet</servlet-name>
+            <!-- 对应 ServletTest 类的完整包路径 -->
+            <servlet-class>servlet.mypocket.root.RootOnlyShowSocketServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>RootOnlyShowSocketServlet</servlet-name>
+            <!-- 匹配表单提交的 action 路径 -->
+            <url-pattern>/RootOnlyShowSocketServlet</url-pattern>
+        </servlet-mapping>
         <!-- ServletTest SHow 配置 -->
         <servlet>
             <servlet-name>RootShowSocketServlet</servlet-name>
@@ -75,7 +86,30 @@
             <!-- 匹配表单提交的 action 路径 -->
             <url-pattern>/RootShowSocketServlet</url-pattern>
         </servlet-mapping>
+        <!-- ServletTest DELETE User 配置 -->
+        <servlet>
+            <servlet-name>RootDeleteUserSocketServlet</servlet-name>
+            <!-- 对应 ServletTest 类的完整包路径 -->
+            <servlet-class>servlet.mypocket.root.RootDeleteUserSocketServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>RootDeleteUserSocketServlet</servlet-name>
+            <!-- 匹配表单提交的 action 路径 -->
+            <url-pattern>/RootDeleteUserSocketServlet</url-pattern>
+        </servlet-mapping>
+        <!-- ServletTest DELETE Company 配置 -->
+        <servlet>
+            <servlet-name>RootDeleteCompanySocketServlet</servlet-name>
+            <!-- 对应 ServletTest 类的完整包路径 -->
+            <servlet-class>servlet.mypocket.root.RootDeleteCompanySocketServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>RootDeleteCompanySocketServlet</servlet-name>
+            <!-- 匹配表单提交的 action 路径 -->
+            <url-pattern>/RootDeleteCompanySocketServlet</url-pattern>
+        </servlet-mapping>
 
+    <!--  Root  -->
 
 
 </web-app>
