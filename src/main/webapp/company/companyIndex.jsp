@@ -1,19 +1,23 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.net.URLDecoder" %>
 <%
-// 统一编码设置
-request.setCharacterEncoding("UTF-8");
-response.setCharacterEncoding("UTF-8");
-response.setContentType("text/html;charset=UTF-8");
+    // 统一编码设置
+    request.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("text/html;charset=UTF-8");
 
-// 1. 校验企业登录状态（从Session获取企业名称）
-String companyName = (String) session.getAttribute("companyName");
-boolean isLogin = (companyName != null && !companyName.trim().isEmpty());
+    // 1. 校验企业登录状态（关键修正：Session的key要和Servlet中一致，Servlet存的是"company_name"）
+    String companyName = (String) session.getAttribute("company_name");
+    // 解码避免中文乱码
+    if (companyName != null && !companyName.trim().isEmpty()) {
+        companyName = URLDecoder.decode(companyName, "UTF-8");
+    }
+    boolean isLogin = (companyName != null && !companyName.trim().isEmpty());
 
-// 2. 获取项目上下文路径（适配不同部署环境，避免路径错误）
-String contextPath = request.getContextPath();
+    // 2. 获取项目上下文路径（适配不同部署环境，避免路径错误）
+    String contextPath = request.getContextPath();
 %>
-<!--<!DOCTYPE html>-->
+<!DOCTYPE html> <!-- 恢复DOCTYPE，保证页面渲染标准 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -272,6 +276,7 @@ String contextPath = request.getContextPath();
 
         .op-item {
             text-align: center;
+            cursor: pointer; /* 增加鼠标指针样式，提示可点击 */
         }
 
         .op-icon {
@@ -357,8 +362,9 @@ String contextPath = request.getContextPath();
             <span class="company-info">欢迎，<%= companyName %></span>
             <button class="logout-btn" onclick="logout()">退出登录</button>
             <% } else { %>
-            <button class="login-btn" onclick="window.location.href='<%= contextPath %>/login/enterprise-login.jsp'">企业登录</button>
-            <button class="register-btn" onclick="window.location.href='<%= contextPath %>/login/enterprise-register.jsp'">企业入驻</button>
+            <%-- 修正登录跳转路径：指向之前的login.jsp（根目录） --%>
+            <button class="login-btn" onclick="window.location.href='<%= contextPath %>/login/login.jsp'">企业登录</button>
+            <button class="register-btn" onclick="window.location.href='<%= contextPath %>/company/companyRegister.jsp'">企业注册</button>
             <% } %>
         </div>
     </div>
@@ -369,7 +375,7 @@ String contextPath = request.getContextPath();
     <div class="banner">
         <h2 class="banner-title">高效招募兼职人才，助力企业灵活用工</h2>
         <p class="banner-desc">易兼职企业端为您提供优质兼职求职者资源，便捷发布职位、快速筛选简历、高效沟通面试，一站式解决企业临时用工需求</p>
-        <button class="banner-btn" onclick="window.location.href='<%= contextPath %>/login/enterprise-register.jsp'">立即入驻，发布兼职</button>
+        <button class="banner-btn" onclick="window.location.href='<%= contextPath %>/companyRegister.html'">立即入驻，发布兼职</button>
     </div>
 
     <!-- 核心优势区域 - 路径改为JSP适配 -->
@@ -438,7 +444,7 @@ String contextPath = request.getContextPath();
         <div class="footer-col">
             <h3>服务支持</h3>
             <ul>
-                <li><a href="<%= contextPath %>/company/help-center.jsp">帮助中心</a></li>
+                <li><a href="<%= contextPath %>/company/HelpCenter.jsp">帮助中心</a></li>
                 <li><a href="#">常见问题</a></li>
                 <li><a href="#">联系客服</a></li>
             </ul>
@@ -476,10 +482,16 @@ String contextPath = request.getContextPath();
         }
     });
 
-    // 退出登录功能（JSP适配）
+    // 退出登录功能（JSP适配，增加默认跳转）
     function logout() {
         if (confirm("确定要退出登录吗？")) {
-            window.location.href = "<%= contextPath %>/company/logout";
+            // 1. 清空Session（如果有LogoutServlet则用下面的路径，否则直接跳转并清空）
+            <%
+                session.removeAttribute("company_name");
+                session.invalidate(); // 销毁Session
+            %>
+            // 2. 跳转到登录页
+            window.location.href = "<%= contextPath %>/company/companyIndex.jsp";
         }
     }
 </script>
