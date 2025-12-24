@@ -7,27 +7,24 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * 求职者退出登录Servlet（web.xml配置版）
- */
 public class UserLoginoutServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-
+        // 获取当前会话并销毁
         HttpSession session = request.getSession(false);
         if (session != null) {
-            session.invalidate(); // 销毁Session
+            // 移除会话中的用户信息
+            session.removeAttribute("loginUser");
+            // 销毁整个会话
+            session.invalidate();
         }
-
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/user/index.jsp");
+        // 重定向到登录页面
+        response.sendRedirect(request.getContextPath() + "/user/index.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 支持POST请求退出（如果前端用POST方式）
         doGet(request, response);
     }
 }

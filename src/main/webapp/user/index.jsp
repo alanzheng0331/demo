@@ -434,7 +434,7 @@
                 <img src="<%= userAvatar %>" alt="用户头像" class="user-avatar">
             </a>
             <!-- 可选：新增退出登录按钮（根据需求保留/删除） -->
-            <a href="${pageContext.request.contextPath}/login/logoutServlet" class="nav-btn logout">退出登录</a>
+            <a href="javascript:void(0);" class="nav-btn logout" onclick="confirmLogout()">退出登录</a>
             <% } %>
         </div>
     </div>
@@ -587,22 +587,12 @@
 </footer>
 
 <script>
-    // 所有跳转都是静态的，仅做页面跳转提示（排除登录链接和头像链接）
-    document.addEventListener('DOMContentLoaded', function() {
-        const links = document.querySelectorAll('a');
-        links.forEach(function(link) {
-            // 排除登录按钮、头像链接（带有user-avatar的父级a标签）、jsp链接
-            if (!link.classList.contains('login-link') &&
-                !link.querySelector('.user-avatar') &&
-                (link.href === '#' || !link.href.includes('.jsp'))) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    var text = this.textContent.trim();
-                    alert("【" + text + "】功能正在建设中，敬请期待！");
-                });
-            }
-        });
-    });
+    function confirmLogout() {
+        if (confirm("确定要退出登录吗？")) {
+            // 跳转到退出登录Servlet
+            window.location.href = "${pageContext.request.contextPath}/loginout";
+        }
+    }
 </script>
 </body>
 </html>
