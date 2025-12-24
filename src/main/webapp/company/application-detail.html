@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 应聘详情</title>
+    <style>
+        /* 全局样式重置 - 复用 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 顶部导航栏 - 复用 */
+        .navbar {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-item a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item a:hover, .nav-item a.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .auth-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        /* 主内容区 - 详情样式 */
+        .detail-section {
+            padding: 40px 0;
+        }
+
+        .detail-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3e50;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .detail-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            margin: 10px auto 0;
+        }
+
+        /* 职位基本信息卡片 */
+        .job-info-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .job-info-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .job-info-content {
+            font-size: 14px;
+            line-height: 2;
+            color: #2d3e50;
+        }
+
+        .job-info-content span {
+            color: #7f8c8d;
+            display: inline-block;
+            width: 80px;
+        }
+
+        /* 筛选排序栏 - 新增 */
+        .filter-sort-bar {
+            background-color: #fafbfc;
+            border-radius: 6px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-size: 14px;
+            color: #2d3e50;
+            font-weight: 500;
+        }
+
+        .filter-item select, .filter-item button {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #2d3e50;
+            background-color: #fff;
+        }
+
+        .sort-btn {
+            padding: 6px 15px;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .sort-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .view-mode-toggle {
+            margin-left: auto;
+            font-size: 14px;
+        }
+
+        .view-mode-toggle button {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 13px;
+        }
+
+        .view-mode-toggle button.active {
+            background-color: #3498db;
+            color: #fff;
+            border-color: #3498db;
+        }
+
+        /* 应聘人员列表 - 核心优化 */
+        .applicant-list {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            overflow-x: auto; /* 适配小屏横向滚动 */
+        }
+
+        .applicant-list-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .applicant-list-title span {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+
+        /* 应聘人员列表容器 - 网格布局，按钮固定右侧 */
+        .applicant-card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* 单个应聘者卡片 - 核心调整：左侧简略信息，右侧按钮组 */
+        .applicant-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border: 1px solid #f1f5f9;
+            border-radius: 6px;
+            background-color: #fafbfc;
+            transition: background-color 0.3s ease;
+        }
+
+        .applicant-card:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* 左侧简略信息区 */
+        .applicant-brief-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .applicant-info-item {
+            font-size: 14px;
+            color: #2d3e50;
+        }
+
+        .applicant-info-item label {
+            color: #7f8c8d;
+            margin-right: 5px;
+            font-weight: 500;
+        }
+
+        /* 右侧按钮组 - 新增：聊天按钮 + 查看简历+录用+不录用 */
+        .applicant-btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        /* 新增：聊天按钮样式 */
+        .chat-btn {
+            background-color: #9b59b6;
+            color: #ffffff;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            white-space: nowrap; /* 防止按钮文字换行 */
+        }
+
+        .chat-btn:hover {
+            background-color: #8e44ad;
+            box-shadow: 0 2px 5px rgba(155, 89, 182, 0.2);
+        }
+
+        /* 查看简历按钮 - 含已查看状态 */
+        .resume-btn {
+            background-color: #3498db;
+            color: #ffffff;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            white-space: nowrap; /* 防止按钮文字换行 */
+        }
+
+        .resume-btn:hover {
+            background-color: #2980b9;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
+        }
+
+        .resume-btn.viewed {
+            background-color: #95a5a6;
+            cursor: default;
+        }
+
+        .resume-btn.viewed:hover {
+            background-color: #95a5a6;
+            box-shadow: none;
+        }
+
+        /* 录用按钮样式 */
+        .hire-btn {
+            background-color: #27ae60;
+            color: #ffffff;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .hire-btn:hover {
+            background-color: #219653;
+            box-shadow: 0 2px 5px rgba(39, 174, 96, 0.2);
+        }
+
+        .hire-btn.hired {
+            background-color: #2ecc71;
+            cursor: default;
+        }
+
+        .hire-btn.hired:hover {
+            background-color: #2ecc71;
+            box-shadow: none;
+        }
+
+        /* 不录用按钮样式 */
+        .reject-btn {
+            background-color: #e74c3c;
+            color: #ffffff;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .reject-btn:hover {
+            background-color: #c0392b;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.2);
+        }
+
+        .reject-btn.rejected {
+            background-color: #ec7063;
+            cursor: default;
+        }
+
+        .reject-btn.rejected:hover {
+            background-color: #ec7063;
+            box-shadow: none;
+        }
+
+        /* 分页控件 - 新增 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .pagination-btn {
+            padding: 8px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #2d3e50;
+        }
+
+        .pagination-btn:hover:not(.disabled) {
+            background-color: #f1f5f9;
+        }
+
+        .pagination-btn.active {
+            background-color: #3498db;
+            color: #fff;
+            border-color: #3498db;
+        }
+
+        .pagination-btn.disabled {
+            color: #bdc3c7;
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+        }
+
+        /* 加载更多按钮 - 新增 */
+        .load-more-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 25px;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none; /* 默认隐藏，切换模式显示 */
+        }
+
+        .load-more-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .load-more-btn.disabled {
+            background-color: #95a5a6;
+            cursor: default;
+        }
+
+        /* 简历弹窗（优化样式） */
+        .resume-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .resume-modal-content {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .resume-modal-close {
+            text-align: right;
+            font-size: 20px;
+            cursor: pointer;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .resume-modal-close:hover {
+            color: #e74c3c;
+        }
+
+        .resume-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .resume-modal-content p {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* 简历模块标题样式强化 */
+        .resume-modal-content strong {
+            color: #2d3e50;
+            font-size: 15px;
+        }
+
+        /* 响应式适配 - 移动端优化 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 22px;
+            }
+
+            /* 移动端应聘者卡片：信息换行，按钮组下移并全屏宽 */
+            .applicant-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .applicant-brief-info {
+                gap: 10px;
+                width: 100%;
+            }
+
+            .applicant-btn-group {
+                width: 100%;
+                gap: 8px;
+            }
+
+            /* 移动端按钮平分宽度（聊天+简历+录用+不录用） */
+            .chat-btn, .resume-btn, .hire-btn, .reject-btn {
+                flex: 1;
+                text-align: center;
+                padding: 10px 0;
+            }
+
+            /* 移动端筛选栏换行 */
+            .filter-sort-bar {
+                gap: 10px;
+            }
+
+            .view-mode-toggle {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-wrap {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .auth-btns {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .detail-title {
+                font-size: 24px;
+            }
+
+            .applicant-info-item {
+                width: 100%; /* 移动端信息项独占一行 */
+            }
+        }
+
+        /* 底部区域 - 复用 */
+        .footer {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        .footer-col ul li a:hover {
+            color: #3498db;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="container navbar-wrap">
+            <a href="companyIndex.html" class="logo">
+                <h1>易兼职·企业端</h1>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="companyIndex.html">首页</a></li>
+                <li class="nav-item"><a href="publish-job.html">发布兼职</a></li>
+                <li class="nav-item"><a href="HelpCenter.html">帮助中心</a></li>
+            </ul>
+            <div class="auth-btns">
+                <button class="login-btn" onclick="window.location.href='enterprise-login.html'">企业登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 - 应聘详情 -->
+    <section class="detail-section">
+        <div class="container">
+            <!-- 返回按钮 -->
+            <a href="application-record.html" class="back-btn">← 返回应聘记录列表</a>
+            
+            <h3 class="detail-title">小学英语家教 - 应聘详情</h3>
+
+            <!-- 职位基本信息卡片 -->
+            <div class="job-info-card">
+                <h4 class="job-info-title">职位基本信息</h4>
+                <div class="job-info-content">
+                    <p><span>职位名称：</span>小学英语家教</p>
+                    <p><span>薪资待遇：</span>80-100元/小时</p>
+                    <p><span>工作地点：</span>北京市海淀区</p>
+                    <p><span>结算方式：</span>周结</p>
+                    <p><span>工作时间：</span>2025-12-15 至 2026-01-15</p>
+                    <p><span>对接人：</span>张经理 13800138000</p>
+                </div>
+            </div>
+
+            <!-- 应聘人员列表 -->
+            <div class="applicant-list">
+                <h4 class="applicant-list-title">
+                    应聘者列表
+                    <span id="applicant-count">共12人 · 当前展示4人</span>
+                </h4>
+
+                <!-- 筛选排序栏 - 新增 -->
+                <div class="filter-sort-bar">
+                    <div class="filter-item">
+                        <label>学历筛选：</label>
+                        <select id="education-filter">
+                            <option value="all">全部学历</option>
+                            <option value="大专">大专</option>
+                            <option value="本科">本科</option>
+                            <option value="硕士">硕士</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>录用状态：</label>
+                        <select id="status-filter">
+                            <option value="all">全部状态</option>
+                            <option value="hired">已录用</option>
+                            <option value="rejected">不录用</option>
+                            <option value="unhandled">未处理</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <button class="sort-btn" id="sort-by-time">按应聘时间排序</button>
+                    </div>
+                    <div class="view-mode-toggle">
+                        <button id="pagination-mode" class="active">分页模式</button>
+                        <button id="load-more-mode">加载更多</button>
+                    </div>
+                </div>
+
+                <!-- 应聘者卡片容器 -->
+                <div class="applicant-card-container" id="applicant-container">
+                    <!-- 由JS动态渲染 -->
+                </div>
+
+                <!-- 分页控件 - 新增 -->
+                <div class="pagination" id="pagination">
+                    <button class="pagination-btn disabled" id="prev-page">上一页</button>
+                    <button class="pagination-btn active" data-page="1">1</button>
+                    <button class="pagination-btn" data-page="2">2</button>
+                    <button class="pagination-btn" data-page="3">3</button>
+                    <button class="pagination-btn" id="next-page">下一页</button>
+                </div>
+
+                <!-- 加载更多按钮 - 新增 -->
+                <button class="load-more-btn" id="load-more">加载更多</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 简历弹窗 -->
+    <div class="resume-modal" id="resumeModal">
+        <div class="resume-modal-content">
+            <div class="resume-modal-close" onclick="closeResumeModal()">×</div>
+            <h4 class="resume-modal-title" id="resumeName">李华 - 个人简历</h4>
+            <div id="resumeContent">
+                <!-- 由JS动态渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部区域 - 复用 -->
+    <footer class="footer">
+        <div class="container footer-wrap">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">企业合作</a></li>
+                    <li><a href="#">新闻动态</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>服务支持</h3>
+                <ul>
+                    <li><a href="HelpCenter.html">帮助中心</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">知识产权</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <ul>
+                    <li><a href="#">电话：400-123-4567</a></li>
+                    <li><a href="#">邮箱：service@yijianzhi.com</a></li>
+                    <li><a href="#">地址：北京市朝阳区XX大厦</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container copyright">
+            © 2025 易兼职 版权所有 | 京ICP备12345678号
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.style.padding = '15px 0';
+            }
+        });
+
+        // ************ 核心数据定义 ************
+        // 12名应聘者完整模拟数据（新增applicantId唯一标识 + status字段）
+        const allApplicants = [
+            { applicantId: 'AP2025001', name: '李华', phone: '13500135000', applyTime: '2025-12-02 10:23', education: '本科', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025002', name: '王明', phone: '13600136000', applyTime: '2025-12-02 14:15', education: '硕士', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025003', name: '张丽', phone: '13700137000', applyTime: '2025-12-03 09:40', education: '本科', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025004', name: '刘阳', phone: '13900139000', applyTime: '2025-12-03 16:05', education: '大专', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025005', name: '赵雪', phone: '13000130000', applyTime: '2025-12-04 08:30', education: '本科', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025006', name: '孙强', phone: '13100131000', applyTime: '2025-12-04 11:20', education: '大专', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025007', name: '周敏', phone: '13200132000', applyTime: '2025-12-05 13:15', education: '硕士', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025008', name: '吴杰', phone: '13400134000', applyTime: '2025-12-05 15:40', education: '本科', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025009', name: '郑浩', phone: '18000180000', applyTime: '2025-12-06 09:10', education: '大专', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025010', name: '马丽', phone: '18100181000', applyTime: '2025-12-06 14:30', education: '本科', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025011', name: '朱芳', phone: '18200182000', applyTime: '2025-12-07 10:00', education: '硕士', viewed: false, status: 'unhandled' },
+            { applicantId: 'AP2025012', name: '胡兵', phone: '18300183000', applyTime: '2025-12-07 16:20', education: '本科', viewed: false, status: 'unhandled' }
+        ];
+
+        // 简历数据映射（技能特长改为纯名词短语格式）
+        const resumeData = {
+            '李华': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：李华 | 性别：女 | 年龄：22岁 | 联系电话：13500135000</p>
+                <p>学历：本科 | 专业：英语（师范） | 毕业院校：北京师范大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语四六级、小学英语教师资格证、趣味教学法、情景化教学、沟通能力</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.09-2025.06 私人家教 | 辅导3名小学3-6年级学生英语，平均提分20+</p>
+                <p>2. 2025.07-2025.08 暑期英语培训机构代课老师 | 负责小学段课程设计与授课</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>耐心负责，有爱心，熟悉小学英语教材体系，能快速抓住学生薄弱点并制定针对性辅导方案，注重培养学生的英语学习兴趣和学习习惯。</p>
+            `,
+            '王明': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：王明 | 性别：男 | 年龄：25岁 | 联系电话：13600136000</p>
+                <p>学历：硕士 | 专业：外国语言学及应用语言学 | 毕业院校：北京大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>专八、雅思7.5、小学英语教师资格证、语法体系讲解、词汇记忆方法、教育心理学应用</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2023.09-至今 北大附中兼职英语助教 | 负责小学段课后辅导和作业批改</p>
+                <p>2. 2024.01-2024.12 线上家教平台签约老师 | 累计授课300+小时，学员好评率98%</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>专业功底扎实，逻辑思维清晰，教学风格严谨且不失趣味性，擅长帮助学生构建完整的英语知识体系，尤其适合有提分需求的中高年级小学生。</p>
+            `,
+            '张丽': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：张丽 | 性别：女 | 年龄：23岁 | 联系电话：13700137000</p>
+                <p>学历：本科 | 专业：小学教育（英语方向） | 毕业院校：首都师范大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语六级、小学英语教师资格证、普通话二甲、音标教学、单词记忆、教具制作</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.03-2025.03 公立小学实习老师 | 负责3年级英语教学，参与备课和教研活动</p>
+                <p>2. 2025.04-至今 一对一私人家教 | 辅导2名小学生，期末成绩均进入班级前10</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>热爱小学教育事业，熟悉新课标教学要求，注重基础教学和学习习惯培养，能耐心解答学生的每一个问题，适合低年级小学生的英语启蒙和基础巩固。</p>
+            `,
+            '刘阳': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：刘阳 | 性别：男 | 年龄：21岁 | 联系电话：13900139000</p>
+                <p>学历：大专 | 专业：应用英语 | 毕业院校：北京城市学院</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语四级、普通话二乙、英语口语交流、英语游戏设计、亲和力</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.07-2024.09 社区暑期托管班英语老师 | 负责1-3年级英语趣味课堂</p>
+                <p>2. 2025.01-2025.06 兼职家教 | 辅导4名小学生完成英语作业，提升学习积极性</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>性格开朗，有耐心，擅长和小学生沟通，注重学习兴趣培养，虽然教学经验不算丰富，但会用百分百的用心对待每一个学生，适合低年级学生的英语启蒙。</p>
+            `,
+            '赵雪': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：赵雪 | 性别：女 | 年龄：22岁 | 联系电话：13000130000</p>
+                <p>学历：本科 | 专业：英语教育 | 毕业院校：北京外国语大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语六级、小学英语教师资格证、剑桥英语教学证书、口语教学、绘本阅读指导、课件制作</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.06-2025.09 线上一对一英语家教 | 累计服务50+小学生，专注口语提升</p>
+                <p>2. 2025.07-2025.08 少儿英语夏令营助教 | 负责口语教学和英语游戏组织</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>发音标准，教学风格活泼，擅长通过绘本、游戏等方式激发学生的英语学习兴趣，尤其注重口语表达能力的培养，适合希望提升英语口语的小学生。</p>
+            `,
+            '孙强': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：孙强 | 性别：男 | 年龄：21岁 | 联系电话：13100131000</p>
+                <p>学历：大专 | 专业：商务英语 | 毕业院校：北京培黎职业学院</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语四级、普通话二甲、语法教学、单词拼写、耐心讲解</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.09-2025.06 社区公益课堂英语老师 | 负责1-3年级基础英语教学</p>
+                <p>2. 2025.03-2025.08 家教兼职 | 辅导2名小学生完成英语作业，巩固基础知识</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>有责任心，善于和孩子沟通，教学风格朴实认真，注重基础知识点的巩固和掌握，能耐心反复讲解学生不懂的问题，适合基础薄弱的小学生。</p>
+            `,
+            '周敏': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：周敏 | 性别：女 | 年龄：26岁 | 联系电话：13200132000</p>
+                <p>学历：硕士 | 专业：小学教育（英语） | 毕业院校：华东师范大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>专八、雅思8.0、小学英语教师资格证、多版本教材熟悉、提分技巧、应试策略</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2022.09-2024.06 上海民办小学英语老师 | 带3-5年级课程，所带班级平均分年级前三</p>
+                <p>2. 2024.09-至今 一对一高端家教 | 辅导多名小学生冲刺英语竞赛和重点中学入学考试</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>教学经验丰富，熟悉小学英语教学大纲和考试重点，能根据学生的学习情况制定个性化提分方案，尤其适合有升学、竞赛需求的中高年级学生。</p>
+            `,
+            '吴杰': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：吴杰 | 性别：男 | 年龄：23岁 | 联系电话：13400134000</p>
+                <p>学历：本科 | 专业：教育学（英语方向） | 毕业院校：北京理工大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语六级、小学英语教师资格证、计算机二级、知识点梳理、学习方法总结、信息化教学</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.07-2024.09 暑期英语辅导班老师 | 负责4-6年级英语课程，主打知识点梳理</p>
+                <p>2. 2024.10-至今 兼职家教 | 辅导3名小学生，帮助构建完整的知识体系，成绩提升显著</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>逻辑清晰，擅长把复杂的英语知识点简单化，教学风格条理分明，注重学习方法的传授，能帮助学生形成自己的学习思路，适合中高年级学生。</p>
+            `,
+            '郑浩': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：郑浩 | 性别：男 | 年龄：20岁 | 联系电话：18000180000</p>
+                <p>学历：大专 | 专业：小学英语教育 | 毕业院校：北京汇佳职业学院</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语三级、小学英语教师资格证、普通话二甲、低龄英语启蒙、趣味教学、亲和力</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2025.01-2025.06 幼儿园英语助教 | 培养低龄儿童英语兴趣和语感</p>
+                <p>2. 2025.03-至今 家教兼职 | 辅导1-2年级小学生英语启蒙，效果良好</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>亲和力强，有童心，擅长针对低龄儿童设计趣味英语游戏和互动环节，注重英语语感和学习兴趣的培养，非常适合1-3年级小学生的英语启蒙。</p>
+            `,
+            '马丽': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：马丽 | 性别：女 | 年龄：22岁 | 联系电话：18100181000</p>
+                <p>学历：本科 | 专业：翻译（英语） | 毕业院校：北京第二外国语学院</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>专四、小学英语教师资格证、口译三级、写作教学、翻译指导、作文批改</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.09-2025.06 兼职家教 | 辅导2名5-6年级学生英语写作，作文分数提升明显</p>
+                <p>2. 2025.07-2025.08 翻译公司兼职 | 参与少儿英语绘本翻译，积累了丰富的儿童英语表达素材</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>写作能力突出，擅长英语作文的审题、构思和表达指导，能帮助学生掌握不同类型作文的写作技巧，适合希望提升英语写作能力的中高年级小学生。</p>
+            `,
+            '朱芳': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：朱芳 | 性别：女 | 年龄：27岁 | 联系电话：18200182000</p>
+                <p>学历：硕士 | 专业：英语语言文学 | 毕业院校：清华大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>专八、雅思8.5、小学英语教师资格证、培优拔高教学、竞赛指导、名校教学资源</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2020.09-2023.06 清华附小兼职英语老师 | 负责实验班英语教学，主打培优</p>
+                <p>2. 2023.09-至今 高端家教 | 辅导多名小学生考入重点中学英语实验班</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>名校背景，教学方法先进，擅长针对学有余力的学生进行培优拔高，拓展英语知识面和应用能力，适合基础较好、有更高学习目标的小学生。</p>
+            `,
+            '胡兵': `
+                <p><strong>基本信息：</strong></p>
+                <p>姓名：胡兵 | 性别：男 | 年龄：24岁 | 联系电话：18300183000</p>
+                <p>学历：本科 | 专业：体育教育（英语双学位） | 毕业院校：北京体育大学</p>
+                <br>
+                <p><strong>技能特长：</strong></p>
+                <p>英语六级、小学英语教师资格证、篮球教练证、趣味英语活动设计、体育游戏融合、专注力提升</p>
+                <br>
+                <p><strong>工作/实习经历：</strong></p>
+                <p>1. 2024.07-2024.09 体育夏令营英语老师 | 设计趣味英语体育游戏，提升学习兴趣</p>
+                <p>2. 2024.10-至今 家教兼职 | 辅导好动型小学生英语学习，改善注意力不集中问题</p>
+                <br>
+                <p><strong>自我评价：</strong></p>
+                <p>了解儿童心理，擅长针对好动、注意力不集中的孩子设计动静结合的英语教学方案，能有效提升这类学生的学习专注力和学习兴趣，适合活泼好动的小学生。</p>
+            `
+        };
+
+        // ************ 全局状态管理 ************
+        let currentPage = 1; // 当前页码
+        const pageSize = 4; // 每页条数
+        let currentMode = 'pagination'; // 当前展示模式：pagination(分页)/loadmore(加载更多)
+        let filteredApplicants = [...allApplicants]; // 筛选后的应聘者列表
+        let loadedCount = pageSize; // 加载更多模式下已加载的条数
+
+        // ************ DOM元素获取 ************
+        const applicantContainer = document.getElementById('applicant-container');
+        const pagination = document.getElementById('pagination');
+        const loadMoreBtn = document.getElementById('load-more');
+        const prevPageBtn = document.getElementById('prev-page');
+        const nextPageBtn = document.getElementById('next-page');
+        const paginationModeBtn = document.getElementById('pagination-mode');
+        const loadMoreModeBtn = document.getElementById('load-more-mode');
+        const educationFilter = document.getElementById('education-filter');
+        const statusFilter = document.getElementById('status-filter');
+        const sortByTimeBtn = document.getElementById('sort-by-time');
+        const applicantCountSpan = document.getElementById('applicant-count');
+        const resumeModal = document.getElementById('resumeModal');
+        const resumeName = document.getElementById('resumeName');
+        const resumeContent = document.getElementById('resumeContent');
+
+        // ************ 核心渲染函数 ************
+        // 渲染应聘者列表（新增聊天按钮）
+        function renderApplicants(list) {
+            applicantContainer.innerHTML = '';
+            list.forEach(applicant => {
+                const card = document.createElement('div');
+                card.className = 'applicant-card';
+                // 按钮状态判断
+                const resumeBtnClass = applicant.viewed ? 'resume-btn viewed' : 'resume-btn';
+                const resumeBtnText = applicant.viewed ? '已查看' : '查看简历';
+                const hireBtnClass = applicant.status === 'hired' ? 'hire-btn hired' : 'hire-btn';
+                const hireBtnText = applicant.status === 'hired' ? '已录用' : '录用';
+                const rejectBtnClass = applicant.status === 'rejected' ? 'reject-btn rejected' : 'reject-btn';
+                const rejectBtnText = applicant.status === 'rejected' ? '不录用' : '不录用';
+
+                card.innerHTML = `
+                    <div class="applicant-brief-info">
+                        <div class="applicant-info-item">
+                            <label>姓名：</label>${applicant.name}
+                        </div>
+                        <div class="applicant-info-item">
+                            <label>电话：</label>${applicant.phone}
+                        </div>
+                        <div class="applicant-info-item">
+                            <label>应聘时间：</label>${applicant.applyTime}
+                        </div>
+                        <div class="applicant-info-item">
+                            <label>学历：</label>${applicant.education}
+                        </div>
+                        ${applicant.status !== 'unhandled' ? `
+                        <div class="applicant-info-item">
+                            <label>状态：</label>${applicant.status === 'hired' ? '<span style="color:#27ae60">已录用</span>' : '<span style="color:#e74c3c">不录用</span>'}
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="applicant-btn-group">
+                        <!-- 新增：聊天按钮，传递唯一applicantId -->
+                        <button class="chat-btn" onclick="goToChat('${applicant.applicantId}')">在线聊天</button>
+                        <button class="${resumeBtnClass}" onclick="openResumeModal('${applicant.name}')">${resumeBtnText}</button>
+                        <button class="${hireBtnClass}" onclick="setApplicantStatus('${applicant.name}', 'hired')">${hireBtnText}</button>
+                        <button class="${rejectBtnClass}" onclick="setApplicantStatus('${applicant.name}', 'rejected')">${rejectBtnText}</button>
+                    </div>
+                `;
+                applicantContainer.appendChild(card);
+            });
+            // 更新计数显示
+            updateCountDisplay();
+        }
+
+        // 更新计数显示
+        function updateCountDisplay() {
+            let displayText = '';
+            if (currentMode === 'pagination') {
+                const start = (currentPage - 1) * pageSize + 1;
+                const end = Math.min(currentPage * pageSize, filteredApplicants.length);
+                displayText = `共${filteredApplicants.length}人 · 当前展示${start}-${end}人`;
+            } else {
+                displayText = `共${filteredApplicants.length}人 · 当前展示${loadedCount}人`;
+            }
+            applicantCountSpan.textContent = displayText;
+        }
+
+        // 渲染分页按钮状态
+        function renderPaginationStatus() {
+            // 重置所有页码按钮
+            document.querySelectorAll('.pagination-btn[data-page]').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.page) === currentPage) {
+                    btn.classList.add('active');
+                }
+            });
+            // 禁用/启用上一页/下一页
+            prevPageBtn.classList.toggle('disabled', currentPage === 1);
+            nextPageBtn.classList.toggle('disabled', currentPage === Math.ceil(filteredApplicants.length / pageSize));
+        }
+
+        // 切换展示模式
+        function switchMode(mode) {
+            currentMode = mode;
+            paginationModeBtn.classList.toggle('active', mode === 'pagination');
+            loadMoreModeBtn.classList.toggle('active', mode === 'loadmore');
+            pagination.style.display = mode === 'pagination' ? 'flex' : 'none';
+            loadMoreBtn.style.display = mode === 'loadmore' ? 'block' : 'none';
+            
+            if (mode === 'pagination') {
+                currentPage = 1;
+                renderPaginationList();
+            } else {
+                loadedCount = pageSize;
+                renderLoadMoreList();
+            }
+        }
+
+        // 分页模式渲染
+        function renderPaginationList() {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageList = filteredApplicants.slice(start, end);
+            renderApplicants(pageList);
+            renderPaginationStatus();
+        }
+
+        // 加载更多模式渲染
+        function renderLoadMoreList() {
+            const loadList = filteredApplicants.slice(0, loadedCount);
+            renderApplicants(loadList);
+            // 禁用加载更多按钮
+            loadMoreBtn.classList.toggle('disabled', loadedCount >= filteredApplicants.length);
+        }
+
+        // 设置应聘者录用状态
+        function setApplicantStatus(name, status) {
+            // 更新数据源状态
+            allApplicants.forEach(item => {
+                if (item.name === name) {
+                    // 录用和不录用互斥
+                    if (status === 'hired') {
+                        item.status = 'hired';
+                    } else if (status === 'rejected') {
+                        item.status = 'rejected';
+                    }
+                }
+            });
+            // 重新筛选（保持筛选条件）
+            filterApplicants();
+            // 重新渲染
+            if (currentMode === 'pagination') {
+                renderPaginationList();
+            } else {
+                renderLoadMoreList();
+            }
+        }
+
+        // 筛选应聘者（学历+状态）
+        function filterApplicants() {
+            const educationValue = educationFilter.value;
+            const statusValue = statusFilter.value;
+            
+            // 先筛选学历
+            let tempList = educationValue === 'all' ? [...allApplicants] : allApplicants.filter(item => item.education === educationValue);
+            
+            // 再筛选状态
+            if (statusValue === 'all') {
+                filteredApplicants = tempList;
+            } else if (statusValue === 'hired') {
+                filteredApplicants = tempList.filter(item => item.status === 'hired');
+            } else if (statusValue === 'rejected') {
+                filteredApplicants = tempList.filter(item => item.status === 'rejected');
+            } else if (statusValue === 'unhandled') {
+                filteredApplicants = tempList.filter(item => item.status === 'unhandled');
+            }
+            
+            // 重置分页/加载状态
+            currentPage = 1;
+            loadedCount = pageSize;
+        }
+
+        // ************ 新增：聊天跳转函数（与首页/详情页统一） ************
+        function goToChat(applicantId = '') {
+            // 基础聊天页面地址
+            let chatUrl = 'chat.html';
+            // 如果有应聘者ID，拼接参数（实现一对一聊天）
+            if (applicantId) {
+                chatUrl += `?applicantId=${applicantId}`;
+            }
+            // 跳转至聊天页面
+            window.location.href = chatUrl;
+        }
+
+        // ************ 事件绑定 ************
+        // 初始化
+        function init() {
+            // 初始渲染分页列表
+            renderPaginationList();
+
+            // 分页按钮点击事件
+            document.querySelectorAll('.pagination-btn[data-page]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentPage = parseInt(btn.dataset.page);
+                    renderPaginationList();
+                });
+            });
+
+            // 上一页/下一页
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPaginationList();
+                }
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                const maxPage = Math.ceil(filteredApplicants.length / pageSize);
+                if (currentPage < maxPage) {
+                    currentPage++;
+                    renderPaginationList();
+                }
+            });
+
+            // 切换展示模式
+            paginationModeBtn.addEventListener('click', () => switchMode('pagination'));
+            loadMoreModeBtn.addEventListener('click', () => switchMode('loadmore'));
+
+            // 加载更多
+            loadMoreBtn.addEventListener('click', () => {
+                if (loadedCount < filteredApplicants.length) {
+                    loadedCount = Math.min(loadedCount + pageSize, filteredApplicants.length);
+                    renderLoadMoreList();
+                }
+            });
+
+            // 学历筛选
+            educationFilter.addEventListener('change', () => {
+                filterApplicants();
+                // 重新渲染
+                if (currentMode === 'pagination') {
+                    renderPaginationList();
+                } else {
+                    renderLoadMoreList();
+                }
+            });
+
+            // 状态筛选
+            statusFilter.addEventListener('change', () => {
+                filterApplicants();
+                // 重新渲染
+                if (currentMode === 'pagination') {
+                    renderPaginationList();
+                } else {
+                    renderLoadMoreList();
+                }
+            });
+
+            // 按时间排序
+            let sortAsc = true; // 升序/降序切换
+            sortByTimeBtn.addEventListener('click', () => {
+                filteredApplicants.sort((a, b) => {
+                    const timeA = new Date(a.applyTime.replace(' ', 'T'));
+                    const timeB = new Date(b.applyTime.replace(' ', 'T'));
+                    return sortAsc ? timeA - timeB : timeB - timeA;
+                });
+                sortAsc = !sortAsc;
+                sortByTimeBtn.textContent = sortAsc ? '按应聘时间升序' : '按应聘时间降序';
+                // 重新渲染
+                if (currentMode === 'pagination') {
+                    renderPaginationList();
+                } else {
+                    renderLoadMoreList();
+                }
+            });
+        }
+
+        // 简历弹窗逻辑
+        function openResumeModal(name) {
+            // 更新已查看状态
+            allApplicants.forEach(item => {
+                if (item.name === name) {
+                    item.viewed = true;
+                }
+            });
+            // 重新渲染当前列表（更新按钮状态）
+            if (currentMode === 'pagination') {
+                renderPaginationList();
+            } else {
+                renderLoadMoreList();
+            }
+            // 显示弹窗
+            resumeName.textContent = `${name} - 个人简历`;
+            resumeContent.innerHTML = resumeData[name] || resumeData['李华'];
+            resumeModal.style.display = 'flex';
+        }
+
+        function closeResumeModal() {
+            resumeModal.style.display = 'none';
+        }
+
+        // 点击弹窗外区域关闭
+        window.addEventListener('click', function(e) {
+            if (e.target === resumeModal) {
+                closeResumeModal();
+            }
+        });
+
+        // 初始化执行
+        init();
+    </script>
+</body>
+</html>

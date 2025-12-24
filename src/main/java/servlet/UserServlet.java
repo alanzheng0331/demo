@@ -1,6 +1,5 @@
 package servlet;
 
-import com.google.code.kaptcha.Constants;
 import dao.CollectDao;
 import dao.ResumeDao;
 import dao.UserDao;
@@ -10,7 +9,6 @@ import entity.User;
 import constant.UserConstants;
 import util.FileUploadUtil;
 import util.JsonUtil;
-import util.MD5Util;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,104 +25,143 @@ import java.util.Map;
  * 用户模块核心控制器
  * 覆盖：注册/登录/个人信息修改/头像上传/密码修改/简历管理/收藏管理
  */
+
 public class UserServlet extends HttpServlet {
     private UserDao userDao = new UserDao();
     private ResumeDao resumeDao = new ResumeDao();
     private CollectDao collectDao = new CollectDao();
-    private static final String SALT = "job_platform_2025"; // 密码加密盐值
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 1. 强制设置响应格式，防止乱码和格式错误
         response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String path = request.getPathInfo();
+        response.setCharacterEncoding("UTF-8");
+        // 禁用缓存，避免响应被缓存导致解析错误
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
 
+        PrintWriter out = null;
         try {
-            switch (path) {
-                case "/register": // 注册
+            request.setCharacterEncoding("UTF-8");
+            out = response.getWriter();
+            String servletPath = request.getServletPath();
+
+            // 核心业务逻辑
+            switch (servletPath) {
+                case "/user/register": // 注册
                     register(request, out);
                     break;
-                case "/login": // 登录
-                    login(request, out);
-                    break;
-                case "/logout": // 退出登录
+                case "/user/logout": // 退出登录
                     logout(request, out);
                     break;
-                case "/updateInfo": // 修改基本信息
+                case "/user/updateInfo": // 修改基本信息
                     updateInfo(request, out);
                     break;
-                case "/uploadAvatar": // 上传头像
+                case "/user/uploadAvatar": // 上传头像
                     uploadAvatar(request, out);
                     break;
-                case "/updatePassword": // 修改密码
+                case "/user/updatePassword": // 修改密码
                     updatePassword(request, out);
                     break;
-                case "/updatePhone": // 更换手机号
+                case "/user/updatePhone": // 更换手机号
                     updatePhone(request, out);
                     break;
-                case "/addResume": // 创建简历
+                case "/user/addResume": // 创建简历
                     addResume(request, out);
                     break;
-                case "/updateResume": // 编辑简历
+                case "/user/updateResume": // 编辑简历
                     updateResume(request, out);
                     break;
-                case "/deleteResume": // 删除简历
+                case "/user/deleteResume": // 删除简历
                     deleteResume(request, out);
                     break;
-                case "/collectJob": // 收藏兼职
+                case "/user/collectJob": // 收藏兼职
                     collectJob(request, out);
                     break;
-                case "/cancelCollect": // 取消收藏
+                case "/user/cancelCollect": // 取消收藏
                     cancelCollect(request, out);
                     break;
                 default:
-                    out.write("{\"code\":404,\"msg\":\"接口不存在\"}");
+                    // 确保默认情况也返回标准JSON
+                    out.write("{\"code\":404,\"msg\":\"接口不存在：" + servletPath + "\"}");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            out.write("{\"code\":500,\"msg\":\"服务器异常：" + e.getMessage() + "\"}");
+            // 异常时强制返回标准JSON，避免前端解析失败
+            if (out != null) {
+                String errorMsg = e.getMessage() == null ? "服务器内部错误" : e.getMessage().replace("\"", "\\\"").replace("\n", "");
+                out.write("{\"code\":500,\"msg\":\"" + errorMsg + "\"}");
+            } else {
+                // 若PrintWriter获取失败，直接通过response输出
+                PrintWriter errorOut = response.getWriter();
+                errorOut.write("{\"code\":500,\"msg\":\"服务器响应异常\"}");
+                errorOut.flush();
+                errorOut.close();
+            }
         } finally {
-            out.flush();
-            out.close();
+            // 确保响应完整输出并关闭流
+            if (out != null) {
+                out.flush();
+                out.close();
+            }
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 与doPost保持一致的响应头设置
         response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String path = request.getPathInfo();
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
 
+        PrintWriter out = null;
         try {
-            switch (path) {
-                case "/getUserInfo": // 获取个人信息
+            request.setCharacterEncoding("UTF-8");
+            out = response.getWriter();
+            String servletPath = request.getServletPath();
+
+            switch (servletPath) {
+                case "/user/getUserInfo": // 获取个人信息
                     getUserInfo(request, out);
                     break;
-                case "/getResumeList": // 获取简历列表
+                case "/user/getResumeList": // 获取简历列表
                     getResumeList(request, out);
                     break;
-                case "/getResumeDetail": // 获取简历详情
+                case "/user/getResumeDetail": // 获取简历详情
                     getResumeDetail(request, out);
                     break;
-                case "/getCollectList": // 获取收藏列表
+                case "/user/getCollectList": // 获取收藏列表
                     getCollectList(request, out);
                     break;
-                case "/checkCollect": // 检查是否收藏
+                case "/user/checkCollect": // 检查是否收藏
                     checkCollect(request, out);
                     break;
                 default:
-                    out.write("{\"code\":404,\"msg\":\"接口不存在\"}");
+                    out.write("{\"code\":404,\"msg\":\"接口不存在：" + servletPath + "\"}");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            out.write("{\"code\":500,\"msg\":\"服务器异常\"}");
+            if (out != null) {
+                String errorMsg = e.getMessage() == null ? "服务器内部错误" : e.getMessage().replace("\"", "\\\"").replace("\n", "");
+                out.write("{\"code\":500,\"msg\":\"" + errorMsg + "\"}");
+            } else {
+                PrintWriter errorOut = response.getWriter();
+                errorOut.write("{\"code\":500,\"msg\":\"服务器响应异常\"}");
+                errorOut.flush();
+                errorOut.close();
+            }
         } finally {
-            out.flush();
-            out.close();
+            if (out != null) {
+                out.flush();
+                out.close();
+            }
         }
     }
 
-    // 1. 注册功能
+    // 1. 注册功能（移除密码加密，替换为自定义验证码校验，移除冗余status赋值）
     private void register(HttpServletRequest request, PrintWriter out) throws SQLException {
         // 获取参数
         String role = request.getParameter("role");
@@ -136,6 +173,9 @@ public class UserServlet extends HttpServlet {
         String code = request.getParameter("code");
         String skillTags = request.getParameter("skillTags");
         String expectedSalary = request.getParameter("expectedSalary");
+
+        // 打印参数，便于调试
+        System.out.println("注册参数：role=" + role + ", name=" + name + ", phone=" + phone + ", code=" + code);
 
         // 参数校验
         if (role == null || !UserConstants.ROLE_JOB_SEEKER.equals(role) && !UserConstants.ROLE_ADMIN.equals(role)) {
@@ -154,14 +194,29 @@ public class UserServlet extends HttpServlet {
             out.write("{\"code\":400,\"msg\":\"手机号格式错误\"}");
             return;
         }
+        // 校验验证码参数非空
+        if (code == null || code.isEmpty()) {
+            out.write("{\"code\":400,\"msg\":\"验证码不能为空\"}");
+            return;
+        }
 
-        // 验证码校验
+        // ========== 新增：自定义验证码校验逻辑 ==========
+        // 1. 获取用户输入的验证码（统一转为小写，避免大小写问题）
+        String userInputCode = code.trim().toLowerCase();
+        // 2. 从Session中获取生成的验证码
         HttpSession session = request.getSession();
-        String sessionCode = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        if (sessionCode == null || !sessionCode.equalsIgnoreCase(code)) {
+        String sessionCode = (String) session.getAttribute("verifyCode");
+
+        // 3. 验证验证码
+        if (sessionCode == null || !sessionCode.equals(userInputCode)) {
+            // 验证码错误
             out.write("{\"code\":400,\"msg\":\"验证码错误或已过期\"}");
             return;
         }
+
+        // 4. 验证码正确后，移除Session中的验证码（防止重复使用）
+        session.removeAttribute("verifyCode");
+        // =============================================
 
         // 手机号重复校验
         if (userDao.existsByPhone(phone)) {
@@ -169,70 +224,78 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        // 密码加密
-        String encryptPwd = MD5Util.md5(password + SALT);
-
-        // 保存用户
+        // 保存用户（直接使用明文密码，移除加密，移除冗余status赋值）
         User user = new User();
         user.setRole(role);
         user.setName(name);
         user.setPhone(phone);
         user.setEmail(email);
-        user.setPassword(encryptPwd);
+        user.setPassword(password); // 明文密码
         user.setSkillTags(skillTags);
         user.setExpectedSalary(expectedSalary);
-        user.setStatus(UserConstants.USER_STATUS_NORMAL);
 
-        User User = new User();
-        int result = userDao.register(User);
+        int result = userDao.register(user);
         if (result > 0) {
-            session.removeAttribute(Constants.KAPTCHA_SESSION_KEY); // 清空验证码
             out.write("{\"code\":200,\"msg\":\"注册成功，请登录\"}");
         } else {
             out.write("{\"code\":500,\"msg\":\"注册失败，请重试\"}");
         }
     }
 
-    // 2. 登录功能
-    private void login(HttpServletRequest request, PrintWriter out) throws SQLException {
-        String phone = request.getParameter("phone");
-        String password = request.getParameter("password");
-
-        // 参数校验
-        if (phone == null || phone.isEmpty() || password == null || password.isEmpty()) {
-            out.write("{\"code\":400,\"msg\":\"手机号或密码不能为空\"}");
-            return;
-        }
-
-        // 查询用户
-        User user = userDao.findByPhone(phone);
-        if (user == null) {
-            out.write("{\"code\":400,\"msg\":\"用户不存在\"}");
-            return;
-        }
-
-        // 校验密码
-        String encryptPwd = MD5Util.md5(password + SALT);
-        if (!encryptPwd.equals(user.getPassword())) {
-            out.write("{\"code\":400,\"msg\":\"密码错误\"}");
-            return;
-        }
-
-        // 校验用户状态
-        if (UserConstants.USER_STATUS_DISABLED == user.getStatus()) {
-            out.write("{\"code\":403,\"msg\":\"账号已禁用，请联系管理员\"}");
-            return;
-        }
-
-        // 登录成功，存入Session
-        HttpSession session = request.getSession();
-        session.setAttribute("loginUser", user);
-        session.setMaxInactiveInterval(86400); // 24小时有效期
-
-        // 返回用户信息（隐藏密码）
-        user.setPassword(null);
-        out.write("{\"code\":200,\"msg\":\"登录成功\",\"data\":" + JsonUtil.toJson(user) + "}");
-    }
+//    // 2. 登录功能（移除密码加密校验）
+//    private void login(HttpServletRequest request, PrintWriter out) throws SQLException {
+//        String phone = request.getParameter("phone");
+//        String password = request.getParameter("password");
+//        String role = request.getParameter("role");
+//
+//        // 强制兜底：避免空指针
+//        if (role == null) role = "job_seeker";
+//        try {
+//            // 参数校验
+//            if (phone == null || phone.isEmpty() || password == null || password.isEmpty()) {
+//                out.write("{\"code\":400,\"msg\":\"手机号或密码不能为空\"}");
+//                return;
+//            }
+//
+//            // 查询用户
+//            User user = userDao.findByPhone(phone);
+//            if (user == null) {
+//                out.write("{\"code\":400,\"msg\":\"用户不存在\"}");
+//                return;
+//            }
+//
+//            // 直接校验明文密码，移除加密
+//            if (!password.equals(user.getPassword())) {
+//                out.write("{\"code\":400,\"msg\":\"密码错误\"}");
+//                return;
+//            }
+//
+//            // 校验用户状态
+//            if (UserConstants.USER_STATUS_DISABLED == user.getStatus()) {
+//                out.write("{\"code\":403,\"msg\":\"账号已禁用，请联系管理员\"}");
+//                return;
+//            }
+//
+//            // 登录成功，存入Session
+//            HttpSession session = request.getSession();
+//            session.setAttribute("loginUser", user);
+//            session.setMaxInactiveInterval(86400); // 24小时有效期
+//
+//            // 确保JSON格式绝对正确
+//            user.setPassword(null);
+//            String userJson = JsonUtil.toJson(user);
+//            if (userJson == null || userJson.isEmpty()) {
+//                out.write("{\"code\":200,\"msg\":\"登录成功\",\"data\":{}}");
+//            } else {
+//                out.write("{\"code\":200,\"msg\":\"登录成功\",\"data\":" + userJson + "}");
+//            }
+//        } catch (Exception e) {
+//            // 捕获login方法内部的所有异常，确保返回标准JSON
+//            e.printStackTrace();
+//            String errorMsg = e.getMessage() == null ? "登录处理异常" : e.getMessage().replace("\"", "\\\"");
+//            out.write("{\"code\":500,\"msg\":\"" + errorMsg + "\"}");
+//        }
+//    }
 
     // 3. 退出登录
     private void logout(HttpServletRequest request, PrintWriter out) {
@@ -344,11 +407,12 @@ public class UserServlet extends HttpServlet {
                 out.write("{\"code\":500,\"msg\":\"头像上传失败\"}");
             }
         } catch (Exception e) {
-            out.write("{\"code\":500,\"msg\":\"上传失败：" + e.getMessage() + "\"}");
+            String msg = e.getMessage().replace("\"", "\\\"").replace("\n", "");
+            out.write("{\"code\":500,\"msg\":\"上传失败：" + msg + "\"}");
         }
     }
 
-    // 7. 修改密码
+    // 7. 修改密码（移除密码加密）
     private void updatePassword(HttpServletRequest request, PrintWriter out) throws SQLException {
         HttpSession session = request.getSession(false);
         User loginUser = (User) session.getAttribute("loginUser");
@@ -372,20 +436,18 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        // 校验原密码
-        String encryptOldPwd = MD5Util.md5(oldPwd + SALT);
-        if (!encryptOldPwd.equals(loginUser.getPassword())) {
+        // 直接校验明文原密码，移除加密
+        if (!oldPwd.equals(loginUser.getPassword())) {
             out.write("{\"code\":400,\"msg\":\"原密码错误\"}");
             return;
         }
 
-        // 加密新密码并更新
-        String encryptNewPwd = MD5Util.md5(newPwd + SALT);
-        int result = userDao.updatePassword(loginUser.getId(), encryptNewPwd);
+        // 直接使用明文新密码更新，移除加密
+        int result = userDao.updatePassword(loginUser.getId(), newPwd);
 
         if (result > 0) {
             // 更新Session中的密码
-            loginUser.setPassword(encryptNewPwd);
+            loginUser.setPassword(newPwd);
             session.setAttribute("loginUser", loginUser);
 
             out.write("{\"code\":200,\"msg\":\"密码修改成功，请重新登录\"}");
@@ -421,9 +483,8 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        // 验证码校验（此处简化，实际需对接短信验证码）
-        // TODO: 对接短信验证码接口
-        if (code == null || !"123456".equals(code)) { // 测试用固定验证码
+        // 验证码校验（测试用固定验证码）
+        if (code == null || !"123456".equals(code)) {
             out.write("{\"code\":400,\"msg\":\"验证码错误\"}");
             return;
         }
@@ -487,7 +548,6 @@ public class UserServlet extends HttpServlet {
 
             // 如果设置为默认简历，取消其他简历的默认状态
             if (resume.getIsDefault() == UserConstants.RESUME_DEFAULT_YES) {
-                // 先查询用户现有简历
                 List<Resume> resumeList = resumeDao.findResumeList(loginUser.getId());
                 if (resumeList != null && !resumeList.isEmpty()) {
                     for (Resume r : resumeList) {
@@ -509,7 +569,8 @@ public class UserServlet extends HttpServlet {
                 out.write("{\"code\":500,\"msg\":\"简历创建失败\"}");
             }
         } catch (Exception e) {
-            out.write("{\"code\":500,\"msg\":\"创建失败：" + e.getMessage() + "\"}");
+            String msg = e.getMessage().replace("\"", "\\\"").replace("\n", "");
+            out.write("{\"code\":500,\"msg\":\"创建失败：" + msg + "\"}");
         }
     }
 
@@ -632,7 +693,7 @@ public class UserServlet extends HttpServlet {
         out.write("{\"code\":200,\"msg\":\"查询成功\",\"data\":" + JsonUtil.toJson(collectList) + "}");
     }
 
-    // 其他方法（getResumeDetail、checkCollect）逻辑类似，已包含参数校验和结果返回
+    // 15. 获取简历详情
     private void getResumeDetail(HttpServletRequest request, PrintWriter out) throws SQLException {
         HttpSession session = request.getSession(false);
         User loginUser = (User) session.getAttribute("loginUser");
@@ -656,6 +717,7 @@ public class UserServlet extends HttpServlet {
         out.write("{\"code\":200,\"msg\":\"查询成功\",\"data\":" + JsonUtil.toJson(resume) + "}");
     }
 
+    // 16. 检查是否收藏
     private void checkCollect(HttpServletRequest request, PrintWriter out) throws SQLException {
         HttpSession session = request.getSession(false);
         User loginUser = (User) session.getAttribute("loginUser");
@@ -674,6 +736,7 @@ public class UserServlet extends HttpServlet {
         out.write("{\"code\":200,\"msg\":\"查询成功\",\"data\":{\"isCollected\":" + isCollected + "}}");
     }
 
+    // 17. 编辑简历
     private void updateResume(HttpServletRequest request, PrintWriter out) throws SQLException {
         HttpSession session = request.getSession(false);
         User loginUser = (User) session.getAttribute("loginUser");

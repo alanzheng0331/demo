@@ -1,3 +1,22 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" %>
+<%
+    // 设置编码
+    response.setCharacterEncoding("UTF-8");
+    request.setCharacterEncoding("UTF-8");
+
+    // ******************** 新增：获取登录用户信息（session中存储的用户对象，可根据你的实际项目调整key和属性） ********************
+    // 假设登录成功后，将用户对象存入session，key为"loginUser"，用户头像属性为"avatar"，若没有自定义头像则使用默认头像
+    Object loginUser = session.getAttribute("loginUser");
+    String userAvatar = null;
+    boolean isLogin = false;
+    if (loginUser != null) {
+        isLogin = true;
+        // 这里替换为你的实际用户头像获取逻辑，例如：userAvatar = ((User)loginUser).getAvatar();
+        // 先使用默认头像占位，后续可替换为用户自定义头像路径
+        userAvatar = "${pageContext.request.contextPath}/images/avatar-default.png";
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -55,6 +74,7 @@
         .nav-buttons {
             display: flex;
             gap: 15px;
+            align-items: center; /* ******************** 新增：垂直居中，保证头像与其他按钮对齐 ******************** */
         }
 
         .nav-btn {
@@ -80,6 +100,31 @@
             background: white;
             color: #764ba2;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn.logout {
+            background: rgba(255, 80, 80, 0.2);
+        }
+
+        .nav-btn.logout:hover {
+            background: rgba(255, 80, 80, 0.3);
+        }
+
+        /* ******************** 新增：用户头像样式 ******************** */
+        .user-avatar {
+            width: 40px; /* 头像大小 */
+            height: 40px;
+            border-radius: 50%; /* 圆形头像 */
+            object-fit: cover; /* 保证图片不变形 */
+            border: 2px solid rgba(255, 255, 255, 0.8); /* 白色边框，提升美观度 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: translateY(-2px);
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /*  hover时发光效果 */
         }
 
         /* 横幅区 */
@@ -348,6 +393,11 @@
                 text-align: center;
             }
 
+            /* ******************** 新增：响应式下头像居中 ******************** */
+            .user-avatar {
+                margin: 0 auto;
+            }
+
             .banner-title {
                 font-size: 24px;
             }
@@ -363,114 +413,128 @@
     </style>
 </head>
 <body>
-    <!-- 顶部导航栏 -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="index.html" class="logo">
-                <h1>易兼职</h1>
+<!-- 顶部导航栏：使用绝对路径跳转，排除JS拦截 -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <!-- 主页logo绝对路径 -->
+        <a href="${pageContext.request.contextPath}/user/index.jsp" class="logo">
+            <h1>易兼职</h1>
+        </a>
+        <div class="nav-buttons">
+            <!-- 兼职检索绝对路径 -->
+            <a href="${pageContext.request.contextPath}/user/search.jsp" class="nav-btn">兼职检索</a>
+
+            <%-- ******************** 核心修改：根据登录状态动态切换元素 ******************** --%>
+            <% if (!isLogin) { %>
+            <!-- 未登录：显示登录/注册按钮 -->
+            <a href="${pageContext.request.contextPath}/login/login.jsp" class="nav-btn login login-link">登录/注册</a>
+            <% } else { %>
+            <!-- 已登录：显示用户头像，跳转至个人主页 -->
+            <a href="${pageContext.request.contextPath}/user/personal.jsp" title="我的主页">
+                <img src="<%= userAvatar %>" alt="用户头像" class="user-avatar">
             </a>
-            <div class="nav-buttons">
-                <a href="search.html" class="nav-btn">兼职检索</a>
-                <a href="login.html" class="nav-btn login">登录/注册</a>
-            </div>
+            <!-- 可选：新增退出登录按钮（根据需求保留/删除） -->
+            <a href="javascript:void(0);" class="nav-btn logout" onclick="confirmLogout()">退出登录</a>
+            <% } %>
         </div>
-    </nav>
-
-    <!-- 横幅区 -->
-    <div class="banner">
-        <h2 class="banner-title">找靠谱兼职，上易兼职</h2>
-        <p class="banner-subtitle">海量优质兼职岗位，日结/周结/月结多种结算方式，学生、宝妈、上班族都能找到合适的兼职</p>
-        <a href="search.html" class="banner-btn">立即找兼职</a>
     </div>
+</nav>
 
-    <!-- 主内容区 -->
-    <main class="main-container">
-        <!-- 核心功能入口 -->
-        <section class="function-section">
-            <h2 class="section-title">核心功能</h2>
-            <div class="function-grid">
-                <!-- 兼职检索 -->
-                <a href="search.html" class="function-card">
-                    <div class="function-icon">🔍</div>
-                    <h3 class="function-title">兼职检索</h3>
-                    <p class="function-desc">按关键词、地点、薪资、结算方式精准检索，找到最适合你的兼职</p>
-                </a>
+<!-- 横幅区 -->
+<div class="banner">
+    <h2 class="banner-title">找靠谱兼职，上易兼职</h2>
+    <p class="banner-subtitle">海量优质兼职岗位，日结/周结/月结多种结算方式，学生、宝妈、上班族都能找到合适的兼职</p>
+    <a href="${pageContext.request.contextPath}/user/search.jsp" class="banner-btn">立即找兼职</a>
+</div>
 
-                <!-- 兼职指南 -->
-                <a href="guide.html" class="function-card">
-                    <div class="function-icon">📚</div>
-                    <h3 class="function-title">兼职指南</h3>
-                    <p class="function-desc">兼职防骗、面试技巧、薪资谈判，全方位指导你的兼职之路</p>
-                </a>
+<!-- 主内容区 -->
+<main class="main-container">
+    <!-- 核心功能入口 -->
+    <section class="function-section">
+        <h2 class="section-title">核心功能</h2>
+        <div class="function-grid">
+            <!-- 兼职检索 -->
+            <a href="${pageContext.request.contextPath}/user/search.jsp" class="function-card">
+                <div class="function-icon">🔍</div>
+                <h3 class="function-title">兼职检索</h3>
+                <p class="function-desc">按关键词、地点、薪资、结算方式精准检索，找到最适合你的兼职</p>
+            </a>
 
-                <!-- 薪资查询 -->
-                <a href="salary-query.html" class="function-card">
-                    <div class="function-icon">💰</div>
-                    <h3 class="function-title">薪资查询</h3>
-                    <p class="function-desc">查询各行业兼职薪资标准，避免被低薪坑，保障自身权益</p>
-                </a>
+            <!-- 兼职指南 -->
+            <a href="${pageContext.request.contextPath}/user/guide.jsp" class="function-card">
+                <div class="function-icon">📚</div>
+                <h3 class="function-title">兼职指南</h3>
+                <p class="function-desc">兼职防骗、面试技巧、薪资谈判，全方位指导你的兼职之路</p>
+            </a>
 
-                <!-- 我的兼职 -->
-                <a href="personal.html" class="function-card">
-                    <div class="function-icon">📝</div>
-                    <h3 class="function-title">我的兼职</h3>
-                    <p class="function-desc">查看已应聘、已接单、已完成的兼职，管理你的兼职记录</p>
-                </a>
+            <!-- 薪资查询 -->
+            <a href="${pageContext.request.contextPath}/user/salary-query.jsp" class="function-card">
+                <div class="function-icon">💰</div>
+                <h3 class="function-title">薪资查询</h3>
+                <p class="function-desc">查询各行业兼职薪资标准，避免被低薪坑，保障自身权益</p>
+            </a>
 
-                <!-- 新增：在线联系 -->
-                <a href="contact.html" class="function-card">
-                    <div class="function-icon">📞</div>
-                    <h3 class="function-title">在线联系</h3>
-                    <p class="function-desc">直接联系雇主，及时解决兼职过程中的各种问题</p>
-                </a>
+            <!-- 我的兼职 -->
+            <a href="${pageContext.request.contextPath}/user/personal.jsp" class="function-card">
+                <div class="function-icon">📝</div>
+                <h3 class="function-title">我的兼职</h3>
+                <p class="function-desc">查看已应聘、已接单、已完成的兼职，管理你的兼职记录</p>
+            </a>
 
-                <!-- 意见反馈 -->
-                <a href="feedback.html" class="function-card">
-                    <div class="function-icon">💬</div>
-                    <h3 class="function-title">意见反馈</h3>
-                    <p class="function-desc">如果你在兼职过程中遇到雇主违规行为，可通过此页面进行投诉。</p>
-                </a>
-            </div>
-        </section>
+            <!-- 新增：在线联系 -->
+            <a href="${pageContext.request.contextPath}/user/contact.jsp" class="function-card">
+                <div class="function-icon">📞</div>
+                <h3 class="function-title">在线联系</h3>
+                <p class="function-desc">直接联系雇主，及时解决兼职过程中的各种问题</p>
+            </a>
 
-        <!-- 快捷导航 -->
+            <!-- 意见反馈 -->
+            <a href="${pageContext.request.contextPath}/user/feedback.jsp" class="function-card">
+                <div class="function-icon">💬</div>
+                <h3 class="function-title">意见反馈</h3>
+                <p class="function-desc">对平台有任何建议或问题，随时反馈，我们会尽快处理</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- 快捷导航 -->
     <section class="quick-nav-section">
         <h2 class="quick-nav-title">热门兼职分类</h2>
         <div class="quick-nav-grid">
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">家教辅导</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">餐饮服务</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">电商客服</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">文字创作</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">设计美工</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">技术开发</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">跑腿配送</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">摄影摄像</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">活动执行</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">翻译口译</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">市场推广</div>
             </div>
-            <div class="quick-nav-item" onclick="window.location.href='search.html'">
+            <div class="quick-nav-item" onclick="window.location.href='${pageContext.request.contextPath}/user/search.jsp'">
                 <div class="quick-nav-name">其他兼职</div>
             </div>
         </div>
@@ -523,19 +587,12 @@
 </footer>
 
 <script>
-    // 所有跳转都是静态的，仅做页面跳转提示
-    document.addEventListener('DOMContentLoaded', function() {
-        // 非检索/登录的跳转链接提示
-        const links = document.querySelectorAll('a');
-        links.forEach(link => {
-            if (link.href === '#' || !link.href.includes('.html')) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert(`【${this.textContent.trim()}】功能正在建设中，敬请期待！`);
-                });
-            }
-        });
-    });
+    function confirmLogout() {
+        if (confirm("确定要退出登录吗？")) {
+            // 跳转到退出登录Servlet
+            window.location.href = "${pageContext.request.contextPath}/loginout";
+        }
+    }
 </script>
 </body>
 </html>

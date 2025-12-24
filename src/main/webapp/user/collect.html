@@ -459,6 +459,11 @@
                 window.location.href = 'profile.html';
             }
         }
+// collect.html 中读取收藏数据
+const collectedJobs = JSON.parse(localStorage.getItem('collectedJobs')) || [];
+// 根据ID筛选出收藏的兼职数据
+const collectedJobData = jobData.filter(job => collectedJobs.includes(job.id));
+// 渲染到收藏列表中
     </script>
 </body>
 </html>

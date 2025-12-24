@@ -1,4 +1,23 @@
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.net.URLDecoder" %>
+<%
+    // 统一编码设置
+    request.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("text/html;charset=UTF-8");
+
+    // 1. 校验企业登录状态（关键修正：Session的key要和Servlet中一致，Servlet存的是"company_name"）
+    String companyName = (String) session.getAttribute("company_name");
+    // 解码避免中文乱码
+    if (companyName != null && !companyName.trim().isEmpty()) {
+        companyName = URLDecoder.decode(companyName, "UTF-8");
+    }
+    boolean isLogin = (companyName != null && !companyName.trim().isEmpty());
+
+    // 2. 获取项目上下文路径（适配不同部署环境，避免路径错误）
+    String contextPath = request.getContextPath();
+%>
+<!DOCTYPE html> <!-- 恢复DOCTYPE，保证页面渲染标准 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -41,9 +60,9 @@
             margin: 0 auto;
         }
 
-        /* 顶部导航栏 - 完全保留原版样式 */
+        /* 顶部导航栏 - 保留原版样式 */
         .navbar {
-            background-color: #2d3e50; /* 企业端沉稳深灰蓝 */
+            background-color: #2d3e50;
             color: #ffffff;
             padding: 15px 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -84,6 +103,7 @@
         .auth-btns {
             display: flex;
             gap: 15px;
+            align-items: center;
         }
 
         .login-btn {
@@ -110,6 +130,25 @@
 
         .register-btn:hover {
             background-color: #2980b9;
+        }
+
+        /* 登录后显示的企业信息样式 */
+        .company-info {
+            font-size: 15px;
+            color: #3498db;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background-color: #e74c3c;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
         }
 
         /* 横幅区域 - 保留原版样式 */
@@ -150,7 +189,7 @@
             transform: translateY(-2px);
         }
 
-        /* 核心优势区域 - 调整布局适配5张卡片，样式统一 */
+        /* 核心优势区域 - 保留样式 */
         .advantage {
             padding: 50px 0;
         }
@@ -173,16 +212,14 @@
             margin: 10px auto 0;
         }
 
-        /* 适配多列的响应式布局，缩小最小宽度适配更多卡片 */
         .advantage-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            max-width: 1200px; /* 加宽适配多列 */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
-        /* 卡片链接样式，确保整个卡片可点击 */
         .advantage-link {
             display: block;
             width: 100%;
@@ -220,10 +257,9 @@
         .advantage-desc {
             font-size: 14px;
             color: #7f8c8d;
-            line-height: 1.5;
         }
 
-        /* 快速操作区域 - 完全保留原版样式 */
+        /* 快速操作区域 - 保留原版样式 */
         .quick-op {
             padding: 40px 0;
             background-color: #f1f5f9;
@@ -240,7 +276,7 @@
 
         .op-item {
             text-align: center;
-            cursor: pointer; /* 增加鼠标指针样式 */
+            cursor: pointer; /* 增加鼠标指针样式，提示可点击 */
         }
 
         .op-icon {
@@ -254,12 +290,6 @@
             justify-content: center;
             font-size: 30px;
             margin: 0 auto 15px;
-            transition: all 0.3s ease;
-        }
-
-        .op-item:hover .op-icon {
-            background-color: #2980b9;
-            transform: scale(1.05);
         }
 
         .op-title {
@@ -268,7 +298,7 @@
             color: #2d3e50;
         }
 
-        /* 底部区域 - 完全保留原版样式 */
+        /* 底部区域 - 保留原版样式 */
         .footer {
             background-color: #2d3e50;
             color: #ffffff;
@@ -313,101 +343,94 @@
     </style>
 </head>
 <body>
-<!-- 顶部导航栏 - 保留原有结构 -->
+<!-- 顶部导航栏 - 增加登录状态判断 -->
 <nav class="navbar">
     <div class="container navbar-wrap">
-        <a href="companyIndex.html" class="logo">
+        <a href="<%= contextPath %>/company/companyIndex.jsp" class="logo">
             <h1>易兼职·企业端</h1>
         </a>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="companyIndex.html" class="active">首页</a></li>
-            <li class="nav-item"><a href="publish-job.html">发布兼职</a></li>
-            <li class="nav-item"><a href="HelpCenter.html">帮助中心</a></li>
+            <li class="nav-item"><a href="<%= contextPath %>/company/companyIndex.jsp" class="active">首页</a></li>
+            <li class="nav-item"><a href="<%= contextPath %>/company/publish-job.jsp">发布兼职</a></li>
+            <li class="nav-item"><a href="<%= contextPath %>/company/resume-pool.jsp">简历库</a></li>
+            <li class="nav-item"><a href="<%= contextPath %>/company/HelpCenter.jsp">帮助中心</a></li>
         </ul>
+
+        <%-- 动态显示：登录后展示企业名称+退出按钮，未登录展示登录/注册 --%>
         <div class="auth-btns">
-            <button class="login-btn" onclick="window.location.href='enterprise-login.html'">企业登录</button>
-            <button class="register-btn" onclick="window.location.href='enterprise-register.html'">企业入驻</button>
+            <% if (isLogin) { %>
+            <span class="company-info">欢迎，<%= companyName %></span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+            <% } else { %>
+            <%-- 修正登录跳转路径：指向之前的login.jsp（根目录） --%>
+            <button class="login-btn" onclick="window.location.href='<%= contextPath %>/login/login.jsp'">企业登录</button>
+            <button class="register-btn" onclick="window.location.href='<%= contextPath %>/company/companyRegister.jsp'">企业注册</button>
+            <% } %>
         </div>
     </div>
 </nav>
 
-<!-- 横幅区域 - 保留原有代码 -->
+<!-- 横幅区域 - 路径改为JSP适配 -->
 <div class="container">
     <div class="banner">
         <h2 class="banner-title">高效招募兼职人才，助力企业灵活用工</h2>
         <p class="banner-desc">易兼职企业端为您提供优质兼职求职者资源，便捷发布职位、快速筛选简历、高效沟通面试，一站式解决企业临时用工需求</p>
-        <button class="banner-btn" onclick="window.location.href='publish-job.html'">立即入驻，发布兼职</button>
+        <button class="banner-btn" onclick="window.location.href='<%= contextPath %>/companyRegister.html'">立即入驻，发布兼职</button>
     </div>
 
-    <!-- 核心优势区域 - 新增「个人中心」和「意见反馈」卡片 -->
+    <!-- 核心优势区域 - 路径改为JSP适配 -->
     <section class="advantage">
         <h3 class="section-title">企业服务核心指南</h3>
         <div class="advantage-list">
-            <!-- 原有：用工优势 -->
             <div class="advantage-item">
-                <a href="Advantage.html" class="advantage-link">
+                <a href="<%= contextPath %>/company/Advantage.jsp" class="advantage-link">
                     <div class="advantage-icon">✅</div>
                     <h4 class="advantage-title">用工优势</h4>
                     <p class="advantage-desc">降低人力成本 30%-50%<br>灵活调配人力，应对业务波动<br>无需承担全职员工社保等附加成本</p>
                 </a>
             </div>
-            <!-- 原有：用工指南 -->
             <div class="advantage-item">
-                <a href="companyGuide.html" class="advantage-link">
+                <a href="<%= contextPath %>/company/companyGuide.jsp" class="advantage-link">
                     <div class="advantage-icon">📋</div>
                     <h4 class="advantage-title">用工指南</h4>
                     <p class="advantage-desc">涵盖 10+ 行业用工模板<br>从发布职位到入职全流程指导<br>提供合规用工合同参考范本</p>
                 </a>
             </div>
-            <!-- 原有：帮助中心 -->
             <div class="advantage-item">
-                <a href="HelpCenter.html" class="advantage-link">
+                <a href="<%= contextPath %>/company/HelpCenter.jsp" class="advantage-link">
                     <div class="advantage-icon">❓</div>
                     <h4 class="advantage-title">帮助中心</h4>
                     <p class="advantage-desc">7×12小时在线客服支持<br>累计解决 5w+ 企业用工问题<br>常见问题一键查询，快速答疑</p>
                 </a>
             </div>
-            <!-- 新增：个人中心 -->
-            <div class="advantage-item">
-                <a href="personalqiye.html" class="advantage-link">
-                    <div class="advantage-icon">🏢</div>
-                    <h4 class="advantage-title">个人中心</h4>
-                    <p class="advantage-desc">查看企业信息<br>查看站内信息通知<br>账户设置</p>
-                </a>
-            </div>
-            <!-- 新增：意见反馈 -->
-            <div class="advantage-item">
-                <a href="feedbackqiye.html" class="advantage-link">
-                    <div class="advantage-icon">💡</div>
-                    <h4 class="advantage-title">意见反馈</h4>
-                    <p class="advantage-desc">投诉兼职者<br>反馈给管理员</p>
-                </a>
-            </div>
         </div>
     </section>
 
-    <!-- 快速操作区域 - 修改在线聊天为跳转 -->
+    <!-- 快速操作区域 - 路径改为JSP适配 -->
     <section class="quick-op">
         <h3 class="section-title">快速操作入口</h3>
         <div class="op-list">
-            <div class="op-item" onclick="window.location.href='publish-job.html'">
+            <div class="op-item" onclick="window.location.href='<%= contextPath %>/company/publish-job.jsp'">
                 <div class="op-icon">📝</div>
                 <p class="op-title">发布兼职职位</p>
             </div>
-            <div class="op-item" onclick="window.location.href='application-record.html'">
+            <div class="op-item" onclick="window.location.href='<%= contextPath %>/company/resume-pool.jsp'">
+                <div class="op-icon">📂</div>
+                <p class="op-title">浏览简历库</p>
+            </div>
+            <div class="op-item" onclick="window.location.href='<%= contextPath %>/company/application-record.jsp'">
                 <div class="op-icon">📬</div>
                 <p class="op-title">查看应聘记录</p>
             </div>
-            <!-- 修改：在线聊天改为跳转至聊天页面 -->
-            <div class="op-item" onclick="window.location.href='application-record.html'">
-                <div class="op-icon">💬</div>
-                <p class="op-title">在线聊天</p>
+            <div class="op-item" onclick="window.location.href='<%= contextPath %>/company/enterprise-profile.jsp'">
+                <div class="op-icon">🏢</div>
+                <p class="op-title">完善企业信息</p>
             </div>
         </div>
     </section>
 </div>
 
-<!-- 底部区域 - 保留原有代码 -->
+<!-- 底部区域 - 路径改为JSP适配 -->
 <footer class="footer">
     <div class="container footer-wrap">
         <div class="footer-col">
@@ -421,8 +444,8 @@
         <div class="footer-col">
             <h3>服务支持</h3>
             <ul>
-                <li><a href="HelpCenter.html">帮助中心</a></li>
-                <li><a href="feedback.html">意见反馈</a></li>
+                <li><a href="<%= contextPath %>/company/HelpCenter.jsp">帮助中心</a></li>
+                <li><a href="#">常见问题</a></li>
                 <li><a href="#">联系客服</a></li>
             </ul>
         </div>
@@ -449,7 +472,7 @@
 </footer>
 
 <script>
-    // 原有滚动交互
+    // 导航栏滚动效果（保留原版）
     window.addEventListener('scroll', function() {
         const navbar = document.querySelector('.navbar');
         if (window.scrollY > 50) {
@@ -459,16 +482,17 @@
         }
     });
 
-    // 新增：聊天跳转函数（支持传递应聘者ID，兼容应聘详情页）
-    function goToChat(applicantId = '') {
-        // 基础聊天页面地址
-        let chatUrl = 'chat.html';
-        // 如果有应聘者ID，拼接参数（应聘详情页调用时传入）
-        if (applicantId) {
-            chatUrl += `?applicantId=${applicantId}`;
+    // 退出登录功能（JSP适配，增加默认跳转）
+    function logout() {
+        if (confirm("确定要退出登录吗？")) {
+            // 1. 清空Session（如果有LogoutServlet则用下面的路径，否则直接跳转并清空）
+            <%
+                session.removeAttribute("company_name");
+                session.invalidate(); // 销毁Session
+            %>
+            // 2. 跳转到登录页
+            window.location.href = "<%= contextPath %>/company/companyIndex.jsp";
         }
-        // 跳转至聊天页面
-        window.location.href = chatUrl;
     }
 </script>
 </body>

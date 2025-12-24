@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 在线聊天</title>
+    <style>
+        /* 全局样式重置 - 复用原有风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 顶部导航栏 - 完全复用 */
+        .navbar {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-item a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item a:hover, .nav-item a.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .auth-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        /* 返回按钮 - 复用 */
+        .back-btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #3498db;
+            margin: 20px 0;
+        }
+
+        .back-btn:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        /* 聊天主区域 */
+        .chat-section {
+            padding: 0 0 40px;
+        }
+
+        /* 聊天头部 - 显示对话对象信息 */
+        .chat-header {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .chat-user-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3e50;
+            margin-bottom: 5px;
+        }
+
+        .chat-user-info p {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* 聊天内容区域 */
+        .chat-content {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        /* 消息气泡通用样式 */
+        .message-item {
+            max-width: 70%;
+            display: flex;
+            gap: 8px;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            color: #2d3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .message-bubble {
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        /* 企业（我方）消息 */
+        .message-item.company {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .message-item.company .message-avatar {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .message-item.company .message-bubble {
+            background-color: #3498db;
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* 应聘者（对方）消息 */
+        .message-item.applicant {
+            margin-right: auto;
+        }
+
+        .message-item.applicant .message-bubble {
+            background-color: #f1f5f9;
+            color: #2d3e50;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* 消息时间 */
+        .message-time {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        /* 输入区域 */
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
+            height: 60px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #message-input:focus {
+            border-color: #3498db;
+        }
+
+        #send-btn {
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        #send-btn:hover {
+            background-color: #2980b9;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
+        }
+
+        #send-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* 空消息提示 */
+        .empty-tip {
+            text-align: center;
+            padding: 40px 0;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .navbar-wrap {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .nav-menu {
+                gap: 15px;
+                margin-top: 10px;
+            }
+
+            .chat-content {
+                height: 400px;
+            }
+
+            .message-item {
+                max-width: 85%;
+            }
+
+            .chat-header {
+                padding: 15px 20px;
+            }
+
+            .avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 22px;
+            }
+
+            .chat-content {
+                height: 300px;
+                padding: 15px;
+            }
+
+            .chat-input-area {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            #message-input {
+                height: 80px;
+            }
+
+            #send-btn {
+                width: 100%;
+            }
+
+            .chat-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+
+        /* 底部区域 - 复用 */
+        .footer {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        .footer-col ul li a:hover {
+            color: #3498db;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="container navbar-wrap">
+            <a href="companyIndex.html" class="logo">
+                <h1>易兼职·企业端</h1>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="companyIndex.html">首页</a></li>
+                <li class="nav-item"><a href="publish-job.html">发布兼职</a></li>
+                <li class="nav-item"><a href="HelpCenter.html">帮助中心</a></li>
+            </ul>
+            <div class="auth-btns">
+                <button class="login-btn" onclick="window.location.href='enterprise-login.html'">企业登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 聊天主内容区 -->
+    <section class="chat-section">
+        <div class="container">
+            <!-- 返回按钮 -->
+            <a href="javascript:history.back()" class="back-btn">← 返回上一页</a>
+
+            <!-- 聊天头部 -->
+            <div class="chat-header">
+                <div class="avatar" id="chat-avatar">李</div>
+                <div class="chat-user-info">
+                    <h4 id="chat-username">李华</h4>
+                    <p id="chat-user-phone">联系电话：13500135000</p>
+                </div>
+            </div>
+
+            <!-- 聊天内容区域 -->
+            <div class="chat-content" id="chat-content">
+                <!-- 空消息提示 -->
+                <div class="empty-tip" id="empty-tip">暂无聊天记录，开始对话吧！</div>
+                <!-- 消息列表由JS动态渲染 -->
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="chat-input-area">
+                <textarea id="message-input" placeholder="请输入消息内容（支持回车发送）..." spellcheck="false"></textarea>
+                <button id="send-btn" disabled>发送</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部区域 - 复用 -->
+    <footer class="footer">
+        <div class="container footer-wrap">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">企业合作</a></li>
+                    <li><a href="#">新闻动态</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>服务支持</h3>
+                <ul>
+                    <li><a href="HelpCenter.html">帮助中心</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">知识产权</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <ul>
+                    <li><a href="#">电话：400-123-4567</a></li>
+                    <li><a href="#">邮箱：service@yijianzhi.com</a></li>
+                    <li><a href="#">地址：北京市朝阳区XX大厦</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container copyright">
+            © 2025 易兼职 版权所有 | 京ICP备12345678号
+        </div>
+    </footer>
+
+    <script>
+        // ************ 核心数据定义 ************
+        // 应聘者信息映射（匹配应聘详情页的applicantId）
+        const applicantMap = {
+            'AP2025001': { name: '李华', phone: '13500135000', avatar: '李' },
+            'AP2025002': { name: '王明', phone: '13600136000', avatar: '王' },
+            'AP2025003': { name: '张丽', phone: '13700137000', avatar: '张' },
+            'AP2025004': { name: '刘阳', phone: '13900139000', avatar: '刘' },
+            'AP2025005': { name: '赵雪', phone: '13000130000', avatar: '赵' },
+            'AP2025006': { name: '孙强', phone: '13100131000', avatar: '孙' },
+            'AP2025007': { name: '周敏', phone: '13200132000', avatar: '周' },
+            'AP2025008': { name: '吴杰', phone: '13400134000', avatar: '吴' },
+            'AP2025009': { name: '郑浩', phone: '18000180000', avatar: '郑' },
+            'AP2025010': { name: '马丽', phone: '18100181000', avatar: '马' },
+            'AP2025011': { name: '朱芳', phone: '18200182000', avatar: '朱' },
+            'AP2025012': { name: '胡兵', phone: '18300183000', avatar: '胡' }
+        };
+
+        // 聊天消息列表（模拟数据）
+        let messageList = [];
+
+        // ************ DOM元素获取 ************
+        const chatAvatar = document.getElementById('chat-avatar');
+        const chatUsername = document.getElementById('chat-username');
+        const chatUserPhone = document.getElementById('chat-user-phone');
+        const chatContent = document.getElementById('chat-content');
+        const emptyTip = document.getElementById('empty-tip');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        // ************ 工具函数 ************
+        // 获取URL参数
+        function getUrlParam(name) {
+            const searchParams = new URLSearchParams(window.location.search);
+            return searchParams.get(name) || '';
+        }
+
+        // 格式化时间
+        function formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // 滚动到底部
+        function scrollToBottom() {
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+
+        // ************ 核心渲染函数 ************
+        // 初始化聊天对象信息
+        function initChatUser() {
+            const applicantId = getUrlParam('applicantId');
+            // 默认显示第一个应聘者
+            const currentUser = applicantMap[applicantId] || applicantMap['AP2025001'];
+            
+            chatAvatar.textContent = currentUser.avatar;
+            chatUsername.textContent = currentUser.name;
+            chatUserPhone.textContent = `联系电话：${currentUser.phone}`;
+        }
+
+        // 渲染消息列表
+        function renderMessageList() {
+            // 隐藏空提示
+            emptyTip.style.display = messageList.length > 0 ? 'none' : 'block';
+            
+            // 清空现有内容
+            chatContent.innerHTML = '';
+            if (messageList.length > 0) {
+                chatContent.appendChild(emptyTip); // 保留空提示DOM，控制显示/隐藏
+            }
+
+            // 渲染每条消息
+            messageList.forEach(msg => {
+                const messageItem = document.createElement('div');
+                messageItem.className = `message-item ${msg.senderType}`;
+
+                const avatarText = msg.senderType === 'company' ? '企' : chatAvatar.textContent;
+                
+                messageItem.innerHTML = `
+                    <div class="message-avatar">${avatarText}</div>
+                    <div class="message-bubble">
+                        ${msg.content}
+                        <div class="message-time">${msg.time}</div>
+                    </div>
+                `;
+
+                chatContent.appendChild(messageItem);
+            });
+
+            // 自动滚动到底部
+            scrollToBottom();
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const content = messageInput.value.trim();
+            if (!content) return;
+
+            // 构建消息对象
+            const newMessage = {
+                senderType: 'company', // 企业发送
+                content: content,
+                time: formatTime(new Date())
+            };
+
+            // 添加到消息列表
+            messageList.push(newMessage);
+            // 清空输入框
+            messageInput.value = '';
+            // 禁用发送按钮
+            sendBtn.disabled = true;
+            // 渲染消息
+            renderMessageList();
+
+            // 模拟对方回复（2秒后）
+            setTimeout(() => {
+                const replyContent = getReplyContent(content);
+                const replyMessage = {
+                    senderType: 'applicant', // 应聘者回复
+                    content: replyContent,
+                    time: formatTime(new Date())
+                };
+                messageList.push(replyMessage);
+                renderMessageList();
+            }, 2000);
+        }
+
+        // 模拟回复内容（简单匹配）
+        function getReplyContent(input) {
+            const replyMap = {
+                '你好': '您好！请问有什么可以帮助我的吗？',
+                '面试': '请问面试的时间和地点是什么时候呀？',
+                '薪资': '请问这个职位的薪资是按小时结算吗？',
+                '工作时间': '请问具体的工作时间是怎样安排的呢？',
+                '录用': '请问我被录用了吗？期待您的回复～',
+                '简历': '我的简历已经提交了，您看过了吗？'
+            };
+
+            // 匹配关键词
+            for (const [key, value] of Object.entries(replyMap)) {
+                if (input.includes(key)) {
+                    return value;
+                }
+            }
+
+            // 默认回复
+            return '好的，我明白了！我会尽快准备相关材料，期待进一步沟通～';
+        }
+
+        // ************ 事件绑定 ************
+        // 输入框变化事件（控制发送按钮状态）
+        messageInput.addEventListener('input', () => {
+            sendBtn.disabled = messageInput.value.trim() === '';
+        });
+
+        // 发送按钮点击事件
+        sendBtn.addEventListener('click', sendMessage);
+
+        // 回车发送（排除shift+回车）
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // 阻止换行
+                sendMessage();
+            }
+        });
+
+        // 导航栏滚动效果（复用）
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.style.padding = '15px 0';
+            }
+        });
+
+        // ************ 初始化 ************
+        function init() {
+            initChatUser();
+            renderMessageList();
+        }
+
+        init();
+    </script>
+</body>
+</html>

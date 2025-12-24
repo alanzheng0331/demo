@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>易兼职 - 意见反馈</title>
+    <title>易兼职 - 投诉雇主</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +18,7 @@
             min-height: 100vh;
         }
 
-        /* 顶部导航栏（和其他页面完全一致） */
+        /* 顶部导航栏 */
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 15px 20px;
@@ -144,7 +144,7 @@
             line-height: 1.6;
         }
 
-        /* 反馈表单区域 */
+        /* 投诉表单区域 */
         .feedback-form-section {
             max-width: 800px;
             margin: 0 auto 40px;
@@ -222,7 +222,7 @@
             line-height: 1.6;
         }
 
-        /* 反馈类型选项 */
+        /* 投诉类型选项 */
         .feedback-type-group {
             display: flex;
             flex-wrap: wrap;
@@ -282,7 +282,7 @@
             box-shadow: none;
         }
 
-        /* 反馈须知 */
+        /* 投诉须知 */
         .feedback-notice {
             max-width: 800px;
             margin: 0 auto;
@@ -322,7 +322,7 @@
             margin-top: 4px;
         }
 
-        /* 底部（和其他页面一致） */
+        /* 底部 */
         .footer {
             background: #333;
             color: white;
@@ -443,7 +443,7 @@
                 <h1>易兼职</h1>
             </a>
             <div class="nav-buttons">
-                <a href="index.html"class="nav-btn login" >返回首页</a>
+                <a href="index.html" class="nav-btn login" >返回首页</a>
                 <a href="login.html" class="nav-btn home">登录/注册</a>
             </div>
         </div>
@@ -452,69 +452,82 @@
     <!-- 主内容区 -->
     <main class="main-container">
         
-        <h2 class="page-title">意见反馈</h2>
+        <h2 class="page-title">投诉雇主</h2>
         <p class="page-desc">
-            如果你对易兼职平台有任何建议、问题或投诉，欢迎填写以下表单反馈给我们。
-            我们会在1-3个工作日内回复，感谢你的支持与监督！
+            如果你在兼职过程中遇到雇主违规行为，可通过以下表单进行投诉。
+            请如实填写相关信息，我们会在24小时内介入调查处理，维护你的合法权益。
         </p>
 
-        <!-- 反馈表单 -->
+        <!-- 投诉表单 -->
         <section class="feedback-form-section">
-            <h3 class="form-title">提交反馈</h3>
-            <form class="feedback-form" id="feedbackForm">
-                <!-- 反馈类型 -->
+            <h3 class="form-title">提交雇主投诉</h3>
+            <form class="feedback-form" id="complaintForm">
+                <!-- 雇主信息 -->
                 <div class="form-group">
-                    <label class="required">反馈类型</label>
+                    <label for="employerName" class="required">雇主名称</label>
+                    <input type="text" class="form-control" id="employerName" placeholder="请填写雇主/企业名称">
+                </div>
+
+                <!-- 兼职岗位名称 -->
+                <div class="form-group">
+                    <label for="jobPosition" class="required">涉及兼职岗位</label>
+                    <input type="text" class="form-control" id="jobPosition" placeholder="请填写涉及的兼职岗位名称">
+                </div>
+
+                <!-- 投诉类型 -->
+                <div class="form-group">
+                    <label class="required">投诉类型</label>
                     <div class="feedback-type-group">
-                        <label class="type-option" for="type-suggest">
-                            <input type="radio" name="feedbackType" id="type-suggest" value="功能建议"> 功能建议
+                        <label class="type-option" for="type-salary">
+                            <input type="radio" name="complaintType" id="type-salary" value="拖欠薪资"> 拖欠薪资
                         </label>
-                        <label class="type-option" for="type-complaint">
-                            <input type="radio" name="feedbackType" id="type-complaint" value="违规投诉"> 违规投诉
+                        <label class="type-option" for="type-fraud">
+                            <input type="radio" name="complaintType" id="type-fraud" value="虚假招聘"> 虚假招聘
                         </label>
-                        <label class="type-option" for="type-bug">
-                            <input type="radio" name="feedbackType" id="type-bug" value="问题反馈"> 问题反馈
+                        <label class="type-option" for="type-unsafe">
+                            <input type="radio" name="complaintType" id="type-unsafe" value="工作环境不安全"> 工作环境不安全
+                        </label>
+                        <label class="type-option" for="type-breach">
+                            <input type="radio" name="complaintType" id="type-breach" value="违反约定"> 违反约定
+                        </label>
+                        <label class="type-option" for="type-harass">
+                            <input type="radio" name="complaintType" id="type-harass" value="骚扰歧视"> 骚扰歧视
                         </label>
                         <label class="type-option" for="type-other">
-                            <input type="radio" name="feedbackType" id="type-other" value="其他问题"> 其他问题
+                            <input type="radio" name="complaintType" id="type-other" value="其他违规"> 其他违规
                         </label>
                     </div>
                 </div>
 
-                <!-- 反馈标题 -->
+                <!-- 投诉详情 -->
                 <div class="form-group">
-                    <label for="feedbackTitle" class="required">反馈标题</label>
-                    <input type="text" class="form-control" id="feedbackTitle" placeholder="请简要描述反馈的问题/建议（如：兼职检索结果不准确）">
-                </div>
-
-                <!-- 反馈内容 -->
-                <div class="form-group">
-                    <label for="feedbackContent" class="required">反馈内容</label>
-                    <textarea class="form-control" id="feedbackContent" placeholder="请详细描述你的问题或建议，尽可能提供相关信息（如时间、截图、兼职ID等），便于我们快速处理..."></textarea>
+                    <label for="complaintDetails" class="required">投诉详情</label>
+                    <textarea class="form-control" id="complaintDetails" placeholder="请详细描述事件经过，包括发生时间、具体情况、涉及金额等关键信息..."></textarea>
                 </div>
 
                 <!-- 联系方式 -->
                 <div class="form-group">
-                    <label for="contactInfo">联系方式（选填）</label>
-                    <input type="text" class="form-control" id="contactInfo" placeholder="请填写手机号/微信号/QQ号，方便我们回复你">
+                    <label for="contactInfo" class="required">联系方式</label>
+                    <input type="text" class="form-control" id="contactInfo" placeholder="请填写手机号，方便我们联系你核实情况">
                 </div>
 
                 <!-- 提交按钮 -->
                 <div class="submit-btn-wrapper">
-                    <button type="submit" class="submit-btn" id="submitBtn">提交反馈</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">提交投诉</button>
                 </div>
             </form>
         </section>
 
-        <!-- 反馈须知 -->
+        <!-- 投诉须知 -->
         <section class="feedback-notice">
-            <h3 class="notice-title">反馈须知</h3>
+            <h3 class="notice-title">投诉处理说明</h3>
             <ul class="notice-list">
-                <li>请如实填写反馈内容，恶意提交虚假信息将被限制使用平台功能；</li>
-                <li>涉及兼职诈骗、薪资拖欠等紧急问题，建议优先拨打12333劳动保障热线；</li>
-                <li>我们会严格保护你的隐私，联系方式仅用于回复反馈，不会泄露给第三方；</li>
-                <li>常规反馈将在1-3个工作日内回复，紧急问题会在24小时内处理；</li>
-                <li>提交反馈后可保留反馈截图，如需跟进可通过底部联系方式联系客服。</li>
+                <li>请如实填写投诉内容，提交虚假投诉将承担相应责任；</li>
+                <li>投诉提交后，我们将在24小时内进行初步审核，3个工作日内给出处理结果；</li>
+                <li>涉及重大纠纷或可能触犯法律的情况，建议同时向当地劳动监察部门投诉；</li>
+                <li>请尽量提供完整的投诉详情，这将有助于我们更快更准确地处理你的投诉；</li>
+                <li>你的联系方式仅用于投诉处理沟通，我们会严格保密，不会泄露给被投诉方；</li>
+                <li>投诉处理进度可通过预留手机号查询，重要进展我们会主动与你联系。</li>
             </ul>
         </section>
     </main>
@@ -536,7 +549,7 @@
                 <ul>
                     <li><a href="guide.html">兼职指南</a></li>
                     <li><a href="salary-query.html">薪资查询</a></li>
-                    <li><a href="feedback.html">意见反馈</a></li>
+                    <li><a href="complaint.html">投诉雇主</a></li>
                     <li><a href="#">安全保障</a></li>
                 </ul>
             </div>
@@ -566,7 +579,7 @@
 <script src="theme-control.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. 反馈类型选项交互
+            // 1. 投诉类型选项交互
             const typeOptions = document.querySelectorAll('.type-option');
             typeOptions.forEach(option => {
                 option.addEventListener('click', function() {
@@ -581,46 +594,64 @@
             });
 
             // 2. 表单提交验证
-            const feedbackForm = document.getElementById('feedbackForm');
+            const complaintForm = document.getElementById('complaintForm');
             const submitBtn = document.getElementById('submitBtn');
-            const feedbackTypeRadios = document.getElementsByName('feedbackType');
-            const feedbackTitle = document.getElementById('feedbackTitle');
-            const feedbackContent = document.getElementById('feedbackContent');
+            const complaintTypeRadios = document.getElementsByName('complaintType');
+            const employerName = document.getElementById('employerName');
+            const jobPosition = document.getElementById('jobPosition');
+            const complaintDetails = document.getElementById('complaintDetails');
+            const contactInfo = document.getElementById('contactInfo');
 
-            feedbackForm.addEventListener('submit', function(e) {
+            complaintForm.addEventListener('submit', function(e) {
                 e.preventDefault(); // 阻止默认提交
 
-                // 验证反馈类型
+                // 验证雇主名称
+                if (!employerName.value.trim()) {
+                    alert('请填写雇主名称！');
+                    employerName.focus();
+                    return;
+                }
+
+                // 验证兼职岗位
+                if (!jobPosition.value.trim()) {
+                    alert('请填写涉及的兼职岗位！');
+                    jobPosition.focus();
+                    return;
+                }
+
+                // 验证投诉类型
                 let typeSelected = false;
-                feedbackTypeRadios.forEach(radio => {
+                complaintTypeRadios.forEach(radio => {
                     if (radio.checked) typeSelected = true;
                 });
                 if (!typeSelected) {
-                    alert('请选择反馈类型！');
+                    alert('请选择投诉类型！');
                     return;
                 }
 
-                // 验证标题
-                if (!feedbackTitle.value.trim()) {
-                    alert('请填写反馈标题！');
-                    feedbackTitle.focus();
+                // 验证投诉详情
+                if (!complaintDetails.value.trim()) {
+                    alert('请填写投诉详情！');
+                    complaintDetails.focus();
                     return;
                 }
-                if (feedbackTitle.value.length > 50) {
-                    alert('反馈标题不能超过50个字！');
-                    feedbackTitle.focus();
+                if (complaintDetails.value.length > 1500) {
+                    alert('投诉详情不能超过1500个字！');
+                    complaintDetails.focus();
                     return;
                 }
 
-                // 验证内容
-                if (!feedbackContent.value.trim()) {
-                    alert('请填写反馈内容！');
-                    feedbackContent.focus();
+                // 验证联系方式
+                if (!contactInfo.value.trim()) {
+                    alert('请填写联系方式！');
+                    contactInfo.focus();
                     return;
                 }
-                if (feedbackContent.value.length > 1000) {
-                    alert('反馈内容不能超过1000个字！');
-                    feedbackContent.focus();
+                // 简单手机号验证
+                const phoneReg = /^1[3-9]\d{9}$/;
+                if (!phoneReg.test(contactInfo.value.trim()) && contactInfo.value.trim().length !== 0) {
+                    alert('请填写有效的手机号！');
+                    contactInfo.focus();
                     return;
                 }
 
@@ -628,20 +659,20 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = '提交中...';
 
-                // 模拟接口请求（500ms延迟）
+                // 模拟接口请求
                 setTimeout(() => {
                     // 重置表单
-                    feedbackForm.reset();
+                    complaintForm.reset();
                     typeOptions.forEach(opt => opt.classList.remove('selected'));
                     submitBtn.disabled = false;
-                    submitBtn.textContent = '提交反馈';
+                    submitBtn.textContent = '提交投诉';
 
                     // 提交成功提示
-                    alert('反馈提交成功！我们会在1-3个工作日内处理并回复，感谢你的反馈～');
+                    alert('投诉提交成功！我们会在24小时内进行审核，感谢你的反馈～');
                 }, 800);
             });
 
-            // 3. 未完成功能提示（和其他页面逻辑一致）
+            // 3. 未完成功能提示
             const links = document.querySelectorAll('a');
             links.forEach(link => {
                 if (link.href === '#' || !link.href.includes('.html')) {

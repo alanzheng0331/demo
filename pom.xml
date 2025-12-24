@@ -24,7 +24,8 @@
         <gson.version>2.8.9</gson.version>
         <commons-fileupload.version>1.5</commons-fileupload.version>
         <commons-io.version>2.15.1</commons-io.version>
-        <!-- 【删除】tomcat9插件版本属性，因为不存在该工件 -->
+        <!-- 新增MySQL驱动版本管理（统一维护，方便修改） -->
+        <mysql-connector.version>8.0.30</mysql-connector.version>
     </properties>
 
     <!-- 依赖配置 -->
@@ -42,11 +43,21 @@
             <version>2.3.3</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- 【保留】SQL Server驱动 -->
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
             <version>9.4.0.jre8</version>
         </dependency>
+
+        <!-- 【新增】MySQL JDBC驱动（直接添加，不替换原有依赖） -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -94,8 +105,6 @@
             <version>9.0.87</version>
             <scope>provided</scope>
         </dependency>
-        <!-- 【注意】您配置了重复的javax.servlet-api依赖（上一个版本为4.0.1），此处已移除重复项。 -->
-        <!-- 重复依赖已删除: javax.servlet-api 3.1.0 -->
 
         <!-- JSON转换库 -->
         <dependency>

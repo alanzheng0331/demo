@@ -31,4 +31,8 @@ public interface CompanyService {
      * 重置企业密码
      */
     String resetPwd(String phone, String code, String newPwd) throws SQLException;
+
+    Company getCompanyByNameAndCreditCode(String companyName, String creditCode) throws SQLException;
+
+    int resetPwdByCompanyName(String companyName, String encryptPwd) throws SQLException;
 }
