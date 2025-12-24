@@ -82,4 +82,13 @@
         <url-pattern>/login/company/login</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>UserLoginoutServlet</servlet-name>
+        <servlet-class>servlet.UserLoginoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserLoginoutServlet</servlet-name>
+        <url-pattern>/loginout</url-pattern>
+    </servlet-mapping>
+
 </web-app>

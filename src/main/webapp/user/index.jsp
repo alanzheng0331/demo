@@ -4,6 +4,18 @@
     // 设置编码
     response.setCharacterEncoding("UTF-8");
     request.setCharacterEncoding("UTF-8");
+
+    // ******************** 新增：获取登录用户信息（session中存储的用户对象，可根据你的实际项目调整key和属性） ********************
+    // 假设登录成功后，将用户对象存入session，key为"loginUser"，用户头像属性为"avatar"，若没有自定义头像则使用默认头像
+    Object loginUser = session.getAttribute("loginUser");
+    String userAvatar = null;
+    boolean isLogin = false;
+    if (loginUser != null) {
+        isLogin = true;
+        // 这里替换为你的实际用户头像获取逻辑，例如：userAvatar = ((User)loginUser).getAvatar();
+        // 先使用默认头像占位，后续可替换为用户自定义头像路径
+        userAvatar = "${pageContext.request.contextPath}/images/avatar-default.png";
+    }
 %>
 <!DOCTYPE html>
 <html>
@@ -62,6 +74,7 @@
         .nav-buttons {
             display: flex;
             gap: 15px;
+            align-items: center; /* ******************** 新增：垂直居中，保证头像与其他按钮对齐 ******************** */
         }
 
         .nav-btn {
@@ -95,6 +108,23 @@
 
         .nav-btn.logout:hover {
             background: rgba(255, 80, 80, 0.3);
+        }
+
+        /* ******************** 新增：用户头像样式 ******************** */
+        .user-avatar {
+            width: 40px; /* 头像大小 */
+            height: 40px;
+            border-radius: 50%; /* 圆形头像 */
+            object-fit: cover; /* 保证图片不变形 */
+            border: 2px solid rgba(255, 255, 255, 0.8); /* 白色边框，提升美观度 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: translateY(-2px);
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /*  hover时发光效果 */
         }
 
         /* 横幅区 */
@@ -363,6 +393,11 @@
                 text-align: center;
             }
 
+            /* ******************** 新增：响应式下头像居中 ******************** */
+            .user-avatar {
+                margin: 0 auto;
+            }
+
             .banner-title {
                 font-size: 24px;
             }
@@ -388,8 +423,19 @@
         <div class="nav-buttons">
             <!-- 兼职检索绝对路径 -->
             <a href="${pageContext.request.contextPath}/user/search.jsp" class="nav-btn">兼职检索</a>
-            <!-- 登录按钮：绝对路径 + 专属class（避免JS拦截） -->
+
+            <%-- ******************** 核心修改：根据登录状态动态切换元素 ******************** --%>
+            <% if (!isLogin) { %>
+            <!-- 未登录：显示登录/注册按钮 -->
             <a href="${pageContext.request.contextPath}/login/login.jsp" class="nav-btn login login-link">登录/注册</a>
+            <% } else { %>
+            <!-- 已登录：显示用户头像，跳转至个人主页 -->
+            <a href="${pageContext.request.contextPath}/user/personal.jsp" title="我的主页">
+                <img src="<%= userAvatar %>" alt="用户头像" class="user-avatar">
+            </a>
+            <!-- 可选：新增退出登录按钮（根据需求保留/删除） -->
+            <a href="${pageContext.request.contextPath}/login/logoutServlet" class="nav-btn logout">退出登录</a>
+            <% } %>
         </div>
     </div>
 </nav>
@@ -541,12 +587,14 @@
 </footer>
 
 <script>
-    // 所有跳转都是静态的，仅做页面跳转提示（排除登录链接）
+    // 所有跳转都是静态的，仅做页面跳转提示（排除登录链接和头像链接）
     document.addEventListener('DOMContentLoaded', function() {
         const links = document.querySelectorAll('a');
         links.forEach(function(link) {
-            // 排除带有login-link class的登录按钮，其他非jsp链接拦截提示
-            if (!link.classList.contains('login-link') && (link.href === '#' || !link.href.includes('.jsp'))) {
+            // 排除登录按钮、头像链接（带有user-avatar的父级a标签）、jsp链接
+            if (!link.classList.contains('login-link') &&
+                !link.querySelector('.user-avatar') &&
+                (link.href === '#' || !link.href.includes('.jsp'))) {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     var text = this.textContent.trim();

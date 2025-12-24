@@ -61,10 +61,15 @@ public class UserLoginServlet extends HttpServlet {
                 } else {
                     // 登录成功，存入Session
                     HttpSession session = request.getSession();
+                    // 原有Session存储（可保留，也可删除，后续直接通过loginUser获取即可）
                     session.setAttribute("userId", user.getId());
                     session.setAttribute("userName", user.getName());
                     session.setAttribute("userPhone", user.getPhone());
                     session.setAttribute("userRole", user.getRole());
+
+                    // ******************** 新增：将完整User对象存入Session，key为loginUser ********************
+                    session.setAttribute("loginUser", user);
+
                     writer.write(JsonUtil.toJson(Result.success("登录成功")));
                 }
             }
