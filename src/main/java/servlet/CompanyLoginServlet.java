@@ -70,27 +70,29 @@ public class CompanyLoginServlet extends HttpServlet {
             }
 
         } catch (SQLException e) {
-            // 数据库异常：精准提示，便于定位问题
-            e.printStackTrace();
+            // 数据库异常：精准提示，便于定位问题（修复点1：移除e.printStackTrace()）
+            System.err.println("=== 企业登录数据库异常 ===");
+            System.err.println("异常信息：" + e.getMessage());
             handleLoginError(request, response, "登录失败：数据库访问异常，请联系管理员！", companyNameTrim);
         } catch (Exception e) {
-            // 通用异常：友好提示，隐藏底层错误
-            e.printStackTrace();
+            // 通用异常：友好提示，隐藏底层错误（修复点2：移除e.printStackTrace()）
+            System.err.println("=== 企业登录系统异常 ===");
+            System.err.println("异常信息：" + e.getMessage());
             handleLoginError(request, response, "登录失败：系统暂不可用，请稍后重试！", companyNameTrim);
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // GET请求处理：统一跳转到企业首页（与POST逻辑的跳转路径保持一致）
-        // 移除原有"未登录跳登录页"逻辑，避免路径不一致问题
+        // GET请求处理：修复逻辑（未登录跳登录页，已登录跳首页）
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("company_name") != null) {
             System.out.println("已登录状态，跳转企业首页");
             response.sendRedirect(request.getContextPath() + "/company/companyIndex.jsp");
         } else {
-            System.out.println("未登录状态，跳转企业首页（展示登录表单）");
-            response.sendRedirect(request.getContextPath() + "/company/companyIndex.jsp");
+            System.out.println("未登录状态，跳转登录页");
+            // 修复点3：未登录时跳登录页，而非首页（符合常规登录逻辑）
+            response.sendRedirect(request.getContextPath() + "/login/login.jsp");
         }
     }
 

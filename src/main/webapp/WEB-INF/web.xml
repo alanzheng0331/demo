@@ -61,7 +61,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CompanyRegisterServlet</servlet-name>
-        <url-pattern>/company/register</url-pattern>
+        <url-pattern>/companyRegisterServlet</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -81,6 +81,14 @@
         <servlet-name>CompanyLoginServlet</servlet-name>
         <url-pattern>/login/company/login</url-pattern>
     </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>CompanyForgetPwdServlet</servlet-name>-->
+<!--        <servlet-class>servlet.CompanyLoginServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CompanyForgetPwdServlet</servlet-name>-->
+<!--        <url-pattern>/login/company/login</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <servlet>
         <servlet-name>UserLoginoutServlet</servlet-name>

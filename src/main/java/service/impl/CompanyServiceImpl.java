@@ -17,10 +17,10 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyDao companyDao = new CompanyDao();
 
-    // ========== 原有方法（保留不动）==========
+    // ========== 原有方法（保留不动，仅修复resetPwd的密码加密）==========
     @Override
     public String register(Company company) throws SQLException {
-        // 【你的原有代码，完全保留】
+        // 【原有代码完全保留】
         System.out.println("=== 开始企业注册校验 ===");
         System.out.println("企业名称：" + company.getCompanyName());
         System.out.println("信用代码：" + company.getCreditCode());
@@ -81,7 +81,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public String login(String companyName, String pwd) throws SQLException {
-        // 【你的原有代码，完全保留】
+        // 【原有代码完全保留】
         System.out.println("=== 开始企业登录校验（适配Servlet）===");
         System.out.println("登录企业名称：" + companyName);
 
@@ -94,7 +94,7 @@ public class CompanyServiceImpl implements CompanyService {
             return "密码长度不能少于" + CompanyConstants.COMPANY_PWD_MIN_LENGTH + "位！";
         }
 
-        // 2. 核心：根据企业名称查询（必须确保DAO层有findByCompanyName方法）
+        // 2. 核心：根据企业名称查询（DAO层已适配[t-company]表名）
         Company company = companyDao.findByCompanyName(companyNameTrim);
         if (company == null) {
             return "该企业名称未注册！"; // 与Servlet提示逻辑匹配
@@ -124,7 +124,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public String sendForgetPwdCode(String phone) throws SQLException {
-        // 【你的原有代码，完全保留】
+        // 【原有代码完全保留】
         System.out.println("=== 开始发送找回密码验证码 ===");
         System.out.println("接收手机号：" + phone);
 
@@ -152,7 +152,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public boolean checkForgetPwdCode(String phone, String code) throws SQLException {
-        // 【你的原有代码，完全保留】
+        // 【原有代码完全保留】
         System.out.println("=== 开始校验找回密码验证码 ===");
         System.out.println("手机号：" + phone + "，输入验证码：" + code);
 
@@ -190,7 +190,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public String resetPwd(String phone, String code, String newPwd) throws SQLException {
-        // 【你的原有代码，完全保留】
+        // 【原有代码保留，仅修复密码加密问题】
         System.out.println("=== 开始重置企业密码 ===");
         System.out.println("手机号：" + phone + "，新密码长度：" + (newPwd == null ? 0 : newPwd.length()));
 
@@ -204,7 +204,10 @@ public class CompanyServiceImpl implements CompanyService {
             return "验证码无效或已过期，请重新获取！";
         }
 
-        int rows = companyDao.resetPwd(phone.trim(), newPwdTrim);
+        // 修复点：重置密码时需加密（和注册/登录逻辑一致）
+        String encryptNewPwd = MD5Util.md5(newPwdTrim);
+        int rows = companyDao.resetPwd(phone.trim(), encryptNewPwd);
+
         if (rows > 0) {
             return "success";
         } else {
@@ -212,15 +215,22 @@ public class CompanyServiceImpl implements CompanyService {
         }
     }
 
-    // ========== 修复的核心方法（重点）==========
+    // ========== 修复的核心方法（适配DAO层[t-company]表名）==========
     @Override
     public Company getCompanyByNameAndCreditCode(String companyName, String creditCode) throws SQLException {
         System.out.println("=== 校验企业名称+信用代码 ===");
         System.out.println("企业名称：" + companyName + "，信用代码：" + creditCode);
 
-        // 调用DAO层方法，根据名称+信用代码查询企业
-        // 注意：你需要在CompanyDao中实现这个findByNameAndCreditCode方法
-        Company company = companyDao.findByNameAndCreditCode(companyName.trim(), creditCode.trim());
+        // 空值防护（新增，避免DAO层空指针）
+        String companyNameTrim = companyName == null ? "" : companyName.trim();
+        String creditCodeTrim = creditCode == null ? "" : creditCode.trim();
+        if (companyNameTrim.isEmpty() || creditCodeTrim.isEmpty()) {
+            System.out.println("校验失败：企业名称/信用代码为空");
+            return null;
+        }
+
+        // 调用DAO层方法（DAO层已适配[t-company]表名）
+        Company company = companyDao.findByNameAndCreditCode(companyNameTrim, creditCodeTrim);
 
         if (company != null) {
             System.out.println("校验成功：找到匹配企业");
@@ -235,9 +245,15 @@ public class CompanyServiceImpl implements CompanyService {
         System.out.println("=== 重置企业密码（按名称）===");
         System.out.println("企业名称：" + companyName + "，加密密码：" + encryptPwd);
 
-        // 调用DAO层方法，更新企业密码
-        // 注意：你需要在CompanyDao中实现这个updatePwdByCompanyName方法
-        int rows = companyDao.updatePwdByCompanyName(companyName.trim(), encryptPwd);
+        // 空值防护（新增，避免DAO层空指针）
+        String companyNameTrim = companyName == null ? "" : companyName.trim();
+        if (companyNameTrim.isEmpty() || encryptPwd == null || encryptPwd.isEmpty()) {
+            System.out.println("重置失败：企业名称/加密密码为空");
+            return 0;
+        }
+
+        // 调用DAO层方法（DAO层已适配[t-company]表名）
+        int rows = companyDao.updatePwdByCompanyName(companyNameTrim, encryptPwd);
 
         System.out.println("密码重置影响行数：" + rows);
         return rows;
@@ -245,7 +261,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     // ========== 原有工具方法（保留不动）==========
     private String generateRandomCode(int length) {
-        // 【你的原有代码，完全保留】
+        // 【原有代码完全保留】
         Random random = new Random(System.currentTimeMillis());
         StringBuilder code = new StringBuilder();
         for (int i = 0; i < length; i++) {

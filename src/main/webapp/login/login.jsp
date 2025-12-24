@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page pageEncoding="UTF-8" %>
+<%@ page import="java.net.URLDecoder" %>
 <%
     // 设置编码，防止中文乱码
     request.setCharacterEncoding("UTF-8");
@@ -172,6 +173,17 @@
             display: none; /* 默认隐藏 */
         }
 
+        /* JSP后端传参的错误提示样式 */
+        .error-msg {
+            text-align: center;
+            color: #ff4d4f;
+            font-size: 14px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 77, 79, 0.1);
+        }
+
         /* 加载中样式 */
         .loading {
             text-align: center;
@@ -222,7 +234,7 @@
         <button class="tab-btn" id="companyTab">企业登录</button>
     </div>
 
-    <!-- 求职者登录表单（保持不变，匹配t_user表） -->
+    <!-- 求职者登录表单（保持不变） -->
     <div class="login-box" id="jobSeekerLogin">
         <div class="error-tip" id="jobSeekerError"></div>
         <div class="loading" id="jobSeekerLoading">正在登录，请稍候...</div>
@@ -245,39 +257,53 @@
         </div>
     </div>
 
-    <!-- 企业登录表单（修改后，匹配t_company表） -->
+    <!-- 企业登录表单 - 仅修复DOM ID和容器，样式完全保留 -->
     <div class="login-box hidden" id="companyLogin">
-        <div class="error-tip" id="companyError"></div>
-        <div class="loading" id="companyLoading">正在登录，请稍候...</div>
+        <form id="adminLoginForm" action="${pageContext.request.contextPath}/company/login" method="POST">
+            <%-- JSP方式显示错误提示 --%>
+            <%
+                String errorMsg = (String)request.getAttribute("errorMsg");
+                String companyName = (String)request.getAttribute("companyName");
+                if (errorMsg != null && !errorMsg.isEmpty()) {
+            %>
+            <div class="error-msg"><%= errorMsg %></div>
+            <%
+                }
+            %>
 
-        <div class="form-group">
-            <label for="companyName">企业名称</label>
-            <!-- 改为text类型，移除手机号限制，匹配t_company.company_name -->
-            <input type="text" id="companyName" class="form-control" placeholder="请输入企业名称" maxlength="200">
-        </div>
+            <div class="error-tip" id="companyError"></div>
+            <div class="loading" id="companyLoading">正在登录，请稍候...</div>
 
-        <div class="form-group">
-            <label for="companyPwd">企业密码</label>
-            <input type="password" id="companyPwd" class="form-control" placeholder="请输入企业密码">
-        </div>
+            <div class="form-group">
+                <label for="adminUsername">企业名称</label>
+                <input type="text" id="adminUsername" name="adminUsername" class="form-control"
+                       placeholder="请输入企业名称" required
+                       value="<%= companyName != null ? URLDecoder.decode(companyName, "UTF-8") : "" %>">
+            </div>
 
-        <button class="login-btn" id="companyLoginBtn">企业登录</button>
+            <div class="form-group">
+                <label for="adminPassword">企业密码</label>
+                <input type="password" id="adminPassword" name="adminPassword" class="form-control" placeholder="请输入企业密码" required>
+            </div>
 
-        <div class="login-links">
-            <a href="../company/companyRegister.jsp">还没有企业账号？立即注册</a>
-            <a href="companyForgetPwd.jsp">忘记企业密码？</a>
-        </div>
+            <button type="submit" class="login-btn" id="companyLoginBtn">企业登录</button>
+
+            <div class="login-links">
+                <a href="${pageContext.request.contextPath}/company/companyRegister.jsp">企业注册</a>
+                <a href="${pageContext.request.contextPath}/login/companyForgotPwd.jsp">忘记密码</a>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- 企业快捷入口 -->
 <div class="admin-entrance" onclick="switchTab('companyTab')">
-    <i class="fa fa-cog"></i>
+    <<i class="fa fa-cog"></i>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 切换登录标签（修改为支持企业登录）
+        // 修复切换标签逻辑 - 匹配实际DOM ID，样式无变化
         window.switchTab = function(tabId) {
             document.getElementById('jobSeekerLogin').classList.add('hidden');
             document.getElementById('companyLogin').classList.add('hidden');
@@ -296,6 +322,7 @@
             document.getElementById('companyError').style.display = 'none';
         };
 
+        // 通用错误提示方法
         window.showError = function(errorElement, message) {
             errorElement.innerText = message;
             errorElement.style.display = 'block';
@@ -304,7 +331,7 @@
             }, 3000);
         };
 
-        // 求职者登录逻辑（保持不变，匹配t_user表）
+        // 求职者登录逻辑（完全保留）
         window.jobSeekerLogin = function() {
             const phone = document.getElementById('jsPhone').value.trim();
             const password = document.getElementById('jsPassword').value.trim();
@@ -329,7 +356,6 @@
 
             const xhr = new XMLHttpRequest();
             try {
-                // 求职者登录接口
                 xhr.open('POST', 'user/login', true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
 
@@ -374,14 +400,13 @@
             }
         };
 
-        // 企业登录逻辑（修改后，匹配t_company表）
+        // 企业登录逻辑（修复DOM匹配）
         window.companyLogin = function() {
-            const companyName = document.getElementById('companyName').value.trim();
-            const companyPwd = document.getElementById('companyPwd').value.trim();
+            const companyName = document.getElementById('adminUsername').value.trim();
+            const companyPwd = document.getElementById('adminPassword').value.trim();
             const errorTip = document.getElementById('companyError');
             const loading = document.getElementById('companyLoading');
 
-            // 验证规则匹配t_company表字段
             if (!companyName) {
                 showError(errorTip, '请输入企业名称');
                 return;
@@ -394,7 +419,6 @@
                 showError(errorTip, '请输入企业密码');
                 return;
             }
-            // 匹配t_company.company_pwd字段长度限制
             if (companyPwd.length < 6 || companyPwd.length > 32) {
                 showError(errorTip, '企业密码长度需在6-32个字符之间');
                 return;
@@ -402,67 +426,19 @@
 
             loading.style.display = 'block';
             errorTip.style.display = 'none';
-
-            const xhr = new XMLHttpRequest();
-            try {
-                // 企业登录独立接口（对应后端处理t_company表的登录逻辑）
-                xhr.open('POST', 'company/login', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
-
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        loading.style.display = 'none';
-                        if (xhr.status !== 200) {
-                            showError(errorTip, '服务器错误（状态码：' + xhr.status + '），请联系管理员');
-                            return;
-                        }
-                        try {
-                            const res = JSON.parse(xhr.responseText);
-                            if (res.code === 200) {
-                                alert('企业登录成功！');
-                                // 跳转到企业后台首页
-                                window.location.href = '../company/companyIndex.jsp';
-                            } else {
-                                showError(errorTip, res.msg || '企业登录失败，请重试');
-                            }
-                        } catch (e) {
-                            showError(errorTip, '服务器响应格式错误，请联系管理员');
-                        }
-                    }
-                };
-
-                xhr.onerror = function() {
-                    loading.style.display = 'none';
-                    showError(errorTip, '网络异常，请检查网络连接');
-                };
-                xhr.ontimeout = function() {
-                    loading.style.display = 'none';
-                    showError(errorTip, '请求超时，请重试');
-                };
-                xhr.timeout = 10000;
-
-                // 参数匹配t_company表字段：company_name和company_pwd
-                const params = 'companyName=' + encodeURIComponent(companyName) +
-                    '&companyPwd=' + encodeURIComponent(companyPwd);
-                xhr.send(params);
-            } catch (e) {
-                loading.style.display = 'none';
-                showError(errorTip, '请求初始化失败：' + e.message);
-            }
+            document.getElementById('adminLoginForm').submit();
         };
 
-        // 绑定事件
-        document.getElementById('jobSeekerTab').addEventListener('click', function() {
-            switchTab('jobSeekerTab');
-        });
-        document.getElementById('companyTab').addEventListener('click', function() {
-            switchTab('companyTab');
-        });
-
+        // 绑定事件（仅修复ID匹配）
+        document.getElementById('jobSeekerTab').addEventListener('click', () => switchTab('jobSeekerTab'));
+        document.getElementById('companyTab').addEventListener('click', () => switchTab('companyTab'));
         document.getElementById('jsLoginBtn').addEventListener('click', jobSeekerLogin);
-        document.getElementById('companyLoginBtn').addEventListener('click', companyLogin);
+        document.getElementById('companyLoginBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            companyLogin();
+        });
 
-        // 回车登录支持
+        // 回车登录（修复DOM匹配）
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 if (!document.getElementById('jobSeekerLogin').classList.contains('hidden')) {

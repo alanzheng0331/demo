@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>企业注册 - 易兼职管理系统</title>
     <style>
         * {
@@ -19,6 +20,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px 0; /* 避免移动端内容溢出 */
         }
 
         .register-container {
@@ -93,6 +95,7 @@
             cursor: pointer;
             border: 2px solid #e1e1e1;
             transition: all 0.3s ease;
+            object-fit: cover; /* 防止验证码图片变形 */
         }
         .verify-code-img:hover {
             border-color: #667eea;
@@ -149,6 +152,13 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
+        .register-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .register-links {
             display: flex;
             justify-content: center;
@@ -200,6 +210,7 @@
             display: none;
         }
 
+        /* 移动端适配完整补充 */
         @media (max-width: 768px) {
             .register-container {
                 padding: 20px;
@@ -219,7 +230,34 @@
             .verify-code-img {
                 width: 100%;
                 height: 60px;
+                margin-top: 10px;
             }
+
+            .form-control {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .register-btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+
+        /* 加载中样式 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -302,7 +340,7 @@
             <span class="form-tip">点击验证码图片可刷新，防止机器人注册</span>
         </div>
 
-        <button type="submit" class="register-btn">企业注册</button>
+        <button type="submit" class="register-btn" id="registerBtn">企业注册</button>
 
         <div class="register-links">
             <a href="${pageContext.request.contextPath}/login/login.jsp">已有企业账号？立即登录</a>
@@ -311,11 +349,24 @@
 </div>
 
 <script>
+    // 验证码刷新函数（优化兼容性）
     function refreshCompanyVerifyCode() {
-        const ctx = "${pageContext.request.contextPath}";
-        document.getElementById('companyVerifyCodeImg').src = ctx + '/verifyCodeServlet?' + new Date().getTime();
+        try {
+            const ctx = "${pageContext.request.contextPath}";
+            const img = document.getElementById('companyVerifyCodeImg');
+            // 加时间戳防止缓存，同时添加加载状态
+            img.src = ctx + '/verifyCodeServlet?' + new Date().getTime();
+            img.style.opacity = '0.7';
+            img.onload = function() {
+                img.style.opacity = '1';
+            }
+        } catch (e) {
+            console.error('刷新验证码失败：', e);
+            alert('验证码刷新失败，请刷新页面重试！');
+        }
     }
 
+    // 密码强度检测
     const companyPasswordInput = document.getElementById('companyPassword');
     const companyStrengthBar = document.getElementById('companyStrengthBar');
     const companyPasswordError = document.getElementById('companyPasswordError');
@@ -340,6 +391,7 @@
         }
     });
 
+    // 确认密码校验
     const companyConfirmPasswordInput = document.getElementById('companyConfirmPassword');
     companyConfirmPasswordInput.addEventListener('input', function() {
         const password = companyPasswordInput.value;
@@ -349,6 +401,7 @@
         confirmError.style.display = (confirmPassword && password !== confirmPassword) ? 'block' : 'none';
     });
 
+    // 企业名称非空校验
     const companyNameInput = document.getElementById('companyName');
     companyNameInput.addEventListener('input', function() {
         const companyName = this.value.trim();
@@ -356,6 +409,7 @@
         companyNameError.style.display = companyName ? 'none' : 'block';
     });
 
+    // 地址非空校验
     const companyAddressInput = document.getElementById('companyAddress');
     companyAddressInput.addEventListener('input', function() {
         const companyAddress = this.value.trim();
@@ -363,6 +417,7 @@
         companyAddressError.style.display = companyAddress ? 'none' : 'block';
     });
 
+    // 手机号/座机格式校验
     const companyPhoneInput = document.getElementById('companyPhone');
     companyPhoneInput.addEventListener('input', function() {
         const phone = this.value.trim();
@@ -372,6 +427,7 @@
         phoneError.style.display = (phone && !phonePattern.test(phone)) ? 'block' : 'none';
     });
 
+    // 法人姓名非空校验
     const legalPersonNameInput = document.getElementById('legalPersonName');
     legalPersonNameInput.addEventListener('input', function() {
         const legalName = this.value.trim();
@@ -379,6 +435,7 @@
         legalNameError.style.display = legalName ? 'none' : 'block';
     });
 
+    // 信用代码格式校验
     const creditCodeInput = document.getElementById('creditCode');
     creditCodeInput.addEventListener('input', function() {
         const creditCode = this.value.trim();
@@ -388,21 +445,28 @@
         creditCodeError.style.display = (creditCode && !creditCodePattern.test(creditCode)) ? 'block' : 'none';
     });
 
+    // 验证码非空校验
     const companyVerifyCodeInput = document.getElementById('companyVerifyCode');
     companyVerifyCodeInput.addEventListener('input', function() {
         const verifyCodeError = document.getElementById('companyVerifyCodeError');
         verifyCodeError.style.display = this.value.trim() ? 'none' : 'block';
     });
 
-    document.getElementById('companyRegisterForm').addEventListener('submit', function(e) {
+    // 表单提交总校验 + 提交状态优化
+    const registerForm = document.getElementById('companyRegisterForm');
+    const registerBtn = document.getElementById('registerBtn');
+
+    registerForm.addEventListener('submit', function(e) {
         let isValid = true;
 
+        // 1. 企业名称校验
         const companyName = companyNameInput.value.trim();
         if (!companyName) {
             document.getElementById('companyNameError').style.display = 'block';
             isValid = false;
         }
 
+        // 2. 信用代码校验
         const creditCode = creditCodeInput.value.trim();
         const creditCodePattern = /^[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}$/;
         if (!creditCodePattern.test(creditCode)) {
@@ -410,18 +474,21 @@
             isValid = false;
         }
 
+        // 3. 法人姓名校验
         const legalPersonName = legalPersonNameInput.value.trim();
         if (!legalPersonName) {
             document.getElementById('legalPersonNameError').style.display = 'block';
             isValid = false;
         }
 
+        // 4. 地址校验
         const companyAddress = companyAddressInput.value.trim();
         if (!companyAddress) {
             document.getElementById('companyAddressError').style.display = 'block';
             isValid = false;
         }
 
+        // 5. 电话校验
         const companyPhone = companyPhoneInput.value.trim();
         const phonePattern = /^(1[3-9]\d{9})|(\d{3,4}-\d{7,8})$/;
         if (!phonePattern.test(companyPhone)) {
@@ -429,6 +496,7 @@
             isValid = false;
         }
 
+        // 6. 密码校验
         const companyPassword = companyPasswordInput.value.trim();
         if (companyPassword.length < 6) {
             companyPasswordError.style.display = 'block';
@@ -437,32 +505,58 @@
             isValid = false;
         }
 
+        // 7. 确认密码校验
         const companyConfirmPassword = companyConfirmPasswordInput.value.trim();
         if (companyPassword !== companyConfirmPassword) {
             document.getElementById('companyConfirmPasswordError').style.display = 'block';
             isValid = false;
         }
 
+        // 8. 验证码校验
         const companyVerifyCode = companyVerifyCodeInput.value.trim();
         if (!companyVerifyCode) {
             document.getElementById('companyVerifyCodeError').style.display = 'block';
             isValid = false;
         }
 
+        // 校验不通过阻止提交
         if (!isValid) {
             e.preventDefault();
+            // 滚动到第一个错误位置
+            const firstError = document.querySelector('.error-message[style="display: block;"]');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return false;
         }
+
+        // 校验通过，设置提交状态
+        registerBtn.disabled = true;
+        registerBtn.innerHTML = '<span class="loading"></span>提交中...';
     });
 
+    // 页面加载初始化
     window.onload = function() {
+        // 刷新验证码
         refreshCompanyVerifyCode();
+
+        // 错误提示处理（验证码错误时高亮）
         <% if (msg != null && "error".equals(msgType)) { %>
         const verifyCodeError = document.getElementById('companyVerifyCodeError');
-        if (verifyCodeError) {
-            verifyCodeError.style.display = '<%= msg.contains("验证码") ? "block" : "none" %>';
+        if (verifyCodeError && '<%= msg %>'.includes('验证码')) {
+            verifyCodeError.style.display = 'block';
+            // 滚动到验证码输入框
+            companyVerifyCodeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            companyVerifyCodeInput.focus();
         }
         <% } %>
+
+        // 回填数据的校验（如果有回显值，触发一次校验）
+        if (companyNameInput.value) companyNameInput.dispatchEvent(new Event('input'));
+        if (creditCodeInput.value) creditCodeInput.dispatchEvent(new Event('input'));
+        if (legalPersonNameInput.value) legalPersonNameInput.dispatchEvent(new Event('input'));
+        if (companyAddressInput.value) companyAddressInput.dispatchEvent(new Event('input'));
+        if (companyPhoneInput.value) companyPhoneInput.dispatchEvent(new Event('input'));
     };
 </script>
 </body>

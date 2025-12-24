@@ -24,7 +24,8 @@ public class CompanyDao {
         PreparedStatement pstmt = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "INSERT INTO t_company (" +
+            // 关键修改：表名从t_company改为[t_company]（SQL Server中含特殊字符需用[]包裹）
+            String sql = "INSERT INTO [t_company] (" +
                     "company_name, credit_t_code, legal_person_name, company_address, " +
                     "company_phone, company_pwd, company_avatar, status, create_time, update_time) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
@@ -55,10 +56,11 @@ public class CompanyDao {
         ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
+            // 关键修改：表名从t_company改为[t_company]
             String sql = "SELECT [id], [company_name], [credit_t_code], [legal_person_name], " +
                     "[company_address], [company_phone], [company_pwd], [company_avatar], " +
                     "[status], [create_time], [update_time], [verify_code], [code_create_time] " +
-                    "FROM t_company WHERE company_phone = ?";
+                    "FROM [t_company] WHERE company_phone = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, phone);
 
@@ -87,7 +89,7 @@ public class CompanyDao {
     }
 
     /**
-     * 根据企业名称查询企业（核心修改：适配t_company表结构，支持企业名称登录）
+     * 根据企业名称查询企业（核心修改：适配[t_company]表结构，支持企业名称登录）
      * 完整封装所有字段，与findByPhone方法保持一致
      */
     public Company findByCompanyName(String companyName) throws SQLException {
@@ -96,12 +98,11 @@ public class CompanyDao {
         ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
-            // 1. 修正表名：从company改为实际的t_company
-            // 2. 完整查询字段，与findByPhone保持一致，确保字段不缺失
+            // 关键修改：表名从t_company改为[t_company]
             String sql = "SELECT [id], [company_name], [credit_t_code], [legal_person_name], " +
                     "[company_address], [company_phone], [company_pwd], [company_avatar], " +
                     "[status], [create_time], [update_time], [verify_code], [code_create_time] " +
-                    "FROM t_company WHERE company_name = ?";
+                    "FROM [t_company] WHERE company_name = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, companyName.trim()); // 去除空格，避免查询匹配失败
 
@@ -140,7 +141,8 @@ public class CompanyDao {
         PreparedStatement pstmt = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "UPDATE t_company SET [verify_code] = ?, [code_create_time] = GETDATE() WHERE [company_phone] = ?";
+            // 关键修改：表名从t_company改为[t_company]
+            String sql = "UPDATE [t_company] SET [verify_code] = ?, [code_create_time] = GETDATE() WHERE [company_phone] = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, code);
             pstmt.setString(2, phone);
@@ -161,7 +163,8 @@ public class CompanyDao {
         PreparedStatement pstmt = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "UPDATE t_company SET [company_pwd] = ?, [update_time] = GETDATE() WHERE [company_phone] = ?";
+            // 关键修改：表名从t_company改为[t_company]
+            String sql = "UPDATE [t_company] SET [company_pwd] = ?, [update_time] = GETDATE() WHERE [company_phone] = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, MD5Util.md5(newPwd));
             pstmt.setString(2, phone);
@@ -183,7 +186,8 @@ public class CompanyDao {
         ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
-            String sql = "SELECT 1 FROM t_company WHERE [credit_t_code] = ?";
+            // 关键修改：表名从t_company改为[t_company]
+            String sql = "SELECT 1 FROM [t_company] WHERE [credit_t_code] = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, creditCode);
             rs = pstmt.executeQuery();
@@ -196,10 +200,10 @@ public class CompanyDao {
         }
     }
 
-    // 新增：根据企业名称+信用代码查询企业（仅修改表名为t_company，其他逻辑不变）
+    // 新增：根据企业名称+信用代码查询企业（仅修改表名为[t_company]，其他逻辑不变）
     public Company findByNameAndCreditCode(String companyName, String creditCode) throws SQLException {
-        // 关键修复：表名从company改为t_company
-        String sql = "SELECT * FROM t_company WHERE company_name = ? AND credit_t_code = ?";
+        // 关键修改：表名从company改为[t_company]（SQL Server含特殊字符需用[]包裹）
+        String sql = "SELECT * FROM [t_company] WHERE company_name = ? AND credit_t_code = ?";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -224,10 +228,10 @@ public class CompanyDao {
         return null;
     }
 
-    // 新增：根据企业名称更新密码（仅修改表名为t_company，其他逻辑不变）
+    // 新增：根据企业名称更新密码（仅修改表名为[t_company]，其他逻辑不变）
     public int updatePwdByCompanyName(String companyName, String encryptPwd) throws SQLException {
-        // 关键修复：表名从company改为t_company
-        String sql = "UPDATE t_company SET company_pwd = ? WHERE company_name = ?";
+        // 关键修改：表名从company改为[t_company]
+        String sql = "UPDATE [t_company] SET company_pwd = ? WHERE company_name = ?";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
