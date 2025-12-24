@@ -307,7 +307,7 @@
         .job-right {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             align-items: flex-end;
             min-width: 120px;
         }
@@ -337,6 +337,42 @@
         .job-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .job-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 收藏按钮样式 */
+        .collect-btn {
+            background: transparent;
+            border: 2px solid #e1e1e1;
+            color: #999;
+            padding: 8px 0;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .collect-btn:hover {
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+
+        .collect-btn.active {
+            border-color: #ffc107;
+            color: #ffc107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .collect-icon {
+            margin-right: 5px;
         }
 
         /* 分页 */
@@ -382,57 +418,193 @@
             margin-top: 80px;
             text-align: center;
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
         }
 
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .navbar-container {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .logo h1 {
-                font-size: 20px;
-            }
-
-            .main-container {
-                padding-top: 150px;
-            }
-
-            .search-title {
-                font-size: 22px;
-            }
-
-            .job-right {
-                align-items: flex-start;
-                width: 100%;
-            }
-
-            .job-salary {
-                font-size: 18px;
-            }
+        /* 弹窗样式 */
+        .modal-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        @media (max-width: 480px) {
-            .nav-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
+        .modal-mask.active {
+            opacity: 1;
+            visibility: visible;
+        }
 
-            .nav-btn {
-                width: 100%;
-                text-align: center;
-            }
+        .modal-container {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
 
-            .filter-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-            .search-btn {
-                width: 100%;
-            }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-default {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* 简历选择列表样式 */
+        .resume-select-list {
+            margin-top: 10px;
+        }
+
+        .resume-select-item {
+            padding: 12px 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resume-select-item:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .resume-select-item.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .resume-select-info {
+            flex: 1;
+        }
+
+        .resume-select-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .resume-select-type {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .resume-select-check {
+            color: #667eea;
+            font-size: 18px;
+            display: none;
+        }
+
+        .resume-select-item.selected .resume-select-check {
+            display: block;
+        }
+
+        .no-resume-tip {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .no-resume-tip .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* 详情页样式 */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .detail-desc {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -444,8 +616,9 @@
                 <h1>易兼职</h1>
             </a>
             <div class="nav-buttons">
-                <a href="index.html" class="nav-btn home">返回首页</a>
-                <a href="login.html" class="nav-btn">登录/注册</a>
+                <a href="index.html" class="nav-btn home">首页</a>
+                <a href="search.html" class="nav-btn">兼职检索</a>
+                <a href="personal.html" class="nav-btn">个人中心</a>
             </div>
         </div>
     </nav>
@@ -453,272 +626,536 @@
     <!-- 主内容区 -->
     <main class="main-container">
         <!-- 高级搜索栏 -->
-        <div class="search-section">
-            <h2 class="search-title">精准<span>检索</span>合适的兼职</h2>
-            
-            <!-- 筛选条件 -->
+        <section class="search-section">
+            <h2 class="search-title">找到<span>合适</span>的兼职</h2>
             <div class="filter-row">
                 <div class="filter-item">
-                    <label for="keyword">兼职关键词</label>
-                    <input type="text" id="keyword" class="search-input" 
-                           placeholder="家教、服务员、剪辑等">
+                    <label for="keyword">关键词</label>
+                    <input type="text" id="keyword" class="search-input" placeholder="输入职位、公司关键词">
                 </div>
                 <div class="filter-item">
-                    <label for="location">工作地点</label>
-                    <input type="text" id="location" class="search-input" 
-                           placeholder="城市/区域/街道">
+                    <label for="city">工作城市</label>
+                    <select id="city" class="filter-select">
+                        <option value="">全部城市</option>
+                        <option value="beijing">北京</option>
+                        <option value="shanghai">上海</option>
+                        <option value="guangzhou">广州</option>
+                        <option value="shenzhen">深圳</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="jobType">工作类型</label>
+                    <select id="jobType" class="filter-select">
+                        <option value="">全部类型</option>
+                        <option value="education">教育/培训</option>
+                        <option value="service">服务行业</option>
+                        <option value="design">设计/创意</option>
+                        <option value="it">IT/互联网</option>
+                    </select>
                 </div>
                 <div class="filter-item">
                     <label for="salary">薪资范围</label>
                     <select id="salary" class="filter-select">
-                        <option value="">不限</option>
-                        <option value="0-100">100元以下/天</option>
+                        <option value="">全部薪资</option>
+                        <option value="0-100">100元/天以下</option>
                         <option value="100-200">100-200元/天</option>
                         <option value="200-300">200-300元/天</option>
-                        <option value="300+">300元以上/天</option>
+                        <option value="300+">300元/天以上</option>
                     </select>
                 </div>
-                <div class="filter-item">
-                    <label for="type">结算方式</label>
-                    <select id="type" class="filter-select">
-                        <option value="">不限</option>
-                        <option value="day">日结</option>
-                        <option value="week">周结</option>
-                        <option value="month">月结</option>
-                        <option value="project">按单结</option>
-                    </select>
-                </div>
-                <div class="filter-item" style="min-width: 120px;">
-                    <label>&nbsp;</label>
-                    <button type="button" class="search-btn" onclick="searchJobs()">立即检索</button>
-                </div>
+                <button class="search-btn">搜索兼职</button>
             </div>
-
-            <!-- 快捷筛选标签 -->
             <div class="filter-tags">
-                <div class="filter-tag active" onclick="setTag('all')">全部兼职</div>
-                <div class="filter-tag" onclick="setTag('urgent')">急聘</div>
-                <div class="filter-tag" onclick="setTag('day')">日结</div>
-                <div class="filter-tag" onclick="setTag('remote')">远程</div>
-                <div class="filter-tag" onclick="setTag('student')">学生可做</div>
-                <div class="filter-tag" onclick="setTag('noexp')">无需经验</div>
-                <div class="filter-tag" onclick="setTag('weekend')">周末兼职</div>
-                <div class="filter-tag" onclick="setTag('night')">晚班兼职</div>
+                <div class="filter-tag active">全部兼职</div>
+                <div class="filter-tag">远程兼职</div>
+                <div class="filter-tag">日结兼职</div>
+                <div class="filter-tag">周末兼职</div>
+                <div class="filter-tag">大学生兼职</div>
             </div>
-        </div>
+        </section>
 
         <!-- 检索结果区 -->
         <section class="result-section">
             <div class="result-header">
-                <div class="result-count">找到 <strong>18</strong> 个符合条件的兼职</div>
-                <select class="sort-select" id="sortSelect" onchange="sortJobs(this.value)">
-                    <option value="salary-desc" selected>薪资从高到低</option>
+                <div class="result-count">找到 <strong>24</strong> 个相关兼职</div>
+                <select class="sort-select">
+                    <option value="newest">最新发布</option>
+                    <option value="salary-desc">薪资从高到低</option>
                     <option value="salary-asc">薪资从低到高</option>
-                    <option value="time-desc">最新发布</option>
-                    <option value="hot">热度优先</option>
                 </select>
             </div>
 
-            <!-- 兼职列表 - 静态数据 -->
+            <!-- 兼职列表 -->
             <div class="job-list">
-                <!-- 兼职1 -->
-                <div class="job-item">
-                    <div class="job-left">
-                        <div class="job-title">
-                            小学家教辅导（数学/英语）
-                            <span class="job-tag">急聘</span>
-                        </div>
-                        <div class="job-info">
-                            <div class="job-info-item">📍 朝阳区亚运村</div>
-                            <div class="job-info-item">🕒 周末9:00-12:00</div>
-                            <div class="job-info-item">💴 日结</div>
-                            <div class="job-info-item">👨‍🎓 本科及以上</div>
-                        </div>
-                        <div class="job-desc">辅导小学3-6年级数学/英语，要求有相关家教经验，耐心负责，有教师资格证优先。工作时间灵活，可协商。</div>
-                    </div>
-                    <div class="job-right">
-                        <div class="job-salary">¥180/小时</div>
-                        <a href="login.html" class="job-btn">立即应聘</a>
-                    </div>
-                </div>
-
-                <!-- 兼职2 -->
-                <div class="job-item">
-                    <div class="job-left">
-                        <div class="job-title">
-                            奶茶店店员（兼职）
-                            <span class="job-tag">日结</span>
-                        </div>
-                        <div class="job-info">
-                            <div class="job-info-item">📍 海淀区中关村</div>
-                            <div class="job-info-item">🕒 晚班18-22点</div>
-                            <div class="job-info-item">💴 日结</div>
-                            <div class="job-info-item">💪 经验不限</div>
-                        </div>
-                        <div class="job-desc">负责奶茶制作、顾客接待、店面清洁，要求形象良好，沟通能力强，能吃苦耐劳，有餐饮经验优先。</div>
-                    </div>
-                    <div class="job-right">
-                        <div class="job-salary">¥28/小时</div>
-                        <a href="login.html" class="job-btn">立即应聘</a>
-                    </div>
-                </div>
-
-                <!-- 兼职3 -->
-                <div class="job-item">
-                    <div class="job-left">
-                        <div class="job-title">
-                            短视频剪辑兼职
-                            <span class="job-tag">远程</span>
-                        </div>
-                        <div class="job-info">
-                            <div class="job-info-item">📍 远程办公</div>
-                            <div class="job-info-item">🕒 时间灵活</div>
-                            <div class="job-info-item">💴 按单结</div>
-                            <div class="job-info-item">🎬 会PR/剪映</div>
-                        </div>
-                        <div class="job-desc">负责短视频剪辑、字幕制作、简单特效，要求会使用PR或剪映，有网感，能按时交稿。新手可教，按视频条数结算。</div>
-                    </div>
-                    <div class="job-right">
-                        <div class="job-salary">¥50-200/条</div>
-                        <a href="login.html" class="job-btn">立即应聘</a>
-                    </div>
-                </div>
-
-                <!-- 兼职4 -->
-                <div class="job-item">
-                    <div class="job-left">
-                        <div class="job-title">
-                            超市理货员（周末兼职）
-                            <span class="job-tag">周末</span>
-                        </div>
-                        <div class="job-info">
-                            <div class="job-info-item">📍 丰台区方庄</div>
-                            <div class="job-info-item">🕒 周六日8:00-18:00</div>
-                            <div class="job-info-item">💴 日结</div>
-                            <div class="job-info-item">💪 无需经验</div>
-                        </div>
-                        <div class="job-desc">负责超市货架整理、商品补货、临期商品检查，要求能吃苦耐劳，工作认真负责，每周能稳定出勤。</div>
-                    </div>
-                    <div class="job-right">
-                        <div class="job-salary">¥180/天</div>
-                        <a href="login.html" class="job-btn">立即应聘</a>
-                    </div>
-                </div>
-
-                <!-- 兼职5 -->
-                <div class="job-item">
-                    <div class="job-left">
-                        <div class="job-title">
-                            校园推广员（学生优先）
-                            <span class="job-tag">学生可做</span>
-                        </div>
-                        <div class="job-info">
-                            <div class="job-info-item">📍 各大高校</div>
-                            <div class="job-info-item">🕒 课余时间</div>
-                            <div class="job-info-item">💴 日结</div>
-                            <div class="job-info-item">👨‍🎓 在校学生</div>
-                        </div>
-                        <div class="job-desc">负责校园内产品推广、扫码注册、发放传单，要求沟通能力强，有校园资源优先，按完成量结算，多劳多得。</div>
-                    </div>
-                    <div class="job-right">
-                        <div class="job-salary">¥100-300/天</div>
-                        <a href="login.html" class="job-btn">立即应聘</a>
-                    </div>
-                </div>
+                <!-- 动态生成的兼职列表将在这里显示 -->
             </div>
 
             <!-- 分页 -->
             <div class="pagination">
-                <a href="javascript:void(0)" class="page-btn">«</a>
-                <a href="javascript:void(0)" class="page-btn active">1</a>
-                <a href="javascript:void(0)" class="page-btn">2</a>
-                <a href="javascript:void(0)" class="page-btn">3</a>
-                <a href="javascript:void(0)" class="page-btn">4</a>
-                <a href="javascript:void(0)" class="page-btn">5</a>
-                <a href="javascript:void(0)" class="page-btn">»</a>
+                <a href="#" class="page-btn">上一页</a>
+                <a href="#" class="page-btn active">1</a>
+                <a href="#" class="page-btn">2</a>
+                <a href="#" class="page-btn">3</a>
+                <a href="#" class="page-btn">4</a>
+                <a href="#" class="page-btn">5</a>
+                <a href="#" class="page-btn">下一页</a>
             </div>
         </section>
     </main>
 
-    <!-- 底部 -->
-    <footer class="footer">
-        © 2025 易兼职 - 精准检索靠谱兼职
-    </footer>
-<script src="theme-control.js"></script>
+    <!-- 兼职详情弹窗 -->
+    <div class="modal-mask" id="jobDetailModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="detailTitle">兼职详情</h2>
+                <button class="modal-close" onclick="closeModal('jobDetailModal')">×</button>
+            </div>
+            <div class="modal-body" id="detailContent">
+                <!-- 详情内容动态生成 -->
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-default" onclick="toggleDetailCollect()">收藏</button>
+                <button class="modal-btn btn-primary" onclick="openResumeSelectModal()">立即投递</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 简历选择弹窗 -->
+    <div class="modal-mask" id="resumeSelectModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="resumeModalTitle">选择简历投递</h2>
+                <button class="modal-close" onclick="closeModal('resumeSelectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>请选择要投递的简历（建议选择与职位匹配的简历）：</p>
+                <div class="resume-select-list" id="resumeSelectList">
+                    <!-- 简历列表动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-default" onclick="closeModal('resumeSelectModal')">取消</button>
+                <button class="modal-btn btn-primary" onclick="confirmResumeSelection()">确认投递</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 全局变量存储当前筛选状态
-        let currentTag = 'all';
-        
-        // 搜索兼职（模拟）
-        function searchJobs() {
-            const keyword = document.getElementById('keyword').value.trim();
-            const location = document.getElementById('location').value.trim();
-            const salary = document.getElementById('salary').value;
-            const type = document.getElementById('type').value;
-            
-            // 模拟搜索提示
-            alert(`已执行搜索：
-关键词：${keyword || '不限'}
-地点：${location || '不限'}
-薪资：${salary ? (salary === '0-100' ? '100元以下/天' : 
-                    salary === '100-200' ? '100-200元/天' : 
-                    salary === '200-300' ? '200-300元/天' : '300元以上/天') : '不限'}
-结算方式：${type ? (type === 'day' ? '日结' : 
-                    type === 'week' ? '周结' : 
-                    type === 'month' ? '月结' : '按单结') : '不限'}
-标签：${currentTag === 'all' ? '全部' : 
-        currentTag === 'urgent' ? '急聘' : 
-        currentTag === 'day' ? '日结' : 
-        currentTag === 'remote' ? '远程' : 
-        currentTag === 'student' ? '学生可做' : 
-        currentTag === 'noexp' ? '无需经验' : 
-        currentTag === 'weekend' ? '周末兼职' : '晚班兼职'}`);
-        }
+        // 全局数据中心
+        const jobDataCenter = {
+            allJobs: [],
+            filteredJobs: [],
+            appliedJobIds: new Set(),
+            collectedJobIds: new Set(),
+            currentJobId: 0,
+            selectedResumeId: null,
 
-        // 设置筛选标签
-        function setTag(tag) {
-            // 移除所有标签的active类
-            document.querySelectorAll('.filter-tag').forEach(el => {
-                el.classList.remove('active');
-            });
-            // 给当前标签添加active类
-            event.target.classList.add('active');
-            // 更新当前标签
-            currentTag = tag;
-            
-            // 模拟筛选
-            console.log(`筛选标签已切换为：${tag}`);
-        }
+            init() {
+                // 初始化兼职数据
+                this.allJobs = [
+                    {
+                        id: 1,
+                        title: '小学家教辅导（数学/英语）',
+                        type: '教育',
+                        location: '朝阳区亚运村',
+                        time: '周末',
+                        settle: '日结',
+                        publishDate: '2025-05-10',
+                        desc: '招聘小学3-6年级数学/英语家教，要求有相关辅导经验，能制定个性化辅导方案，提升孩子学习成绩。',
+                        salary: '¥180/小时',
+                        salaryPerHour: 180,
+                        city: 'beijing',
+                        isRemote: false,
+                        require: '1. 本科及以上学历，师范类专业优先；2. 有1年以上小学家教经验；3. 熟悉小学数学/英语教材；4. 有耐心，善于沟通；5. 周末能稳定授课2-3小时/天',
+                        employerId: 101,
+                        employerName: '王女士（家教雇主）'
+                    },
+                    {
+                        id: 2,
+                        title: '短视频剪辑兼职',
+                        type: 'IT/互联网',
+                        location: '远程办公',
+                        time: '灵活安排',
+                        settle: '按单结',
+                        publishDate: '2025-05-08',
+                        desc: '招聘短视频剪辑兼职，主要负责抖音/快手短视频剪辑，每条400元，按单结算。需提供过往作品。',
+                        salary: '¥400/条',
+                        salaryPerHour: 200,
+                        city: '',
+                        isRemote: true,
+                        require: '1. 熟练使用PR/剪映等剪辑软件；2. 有短视频剪辑经验；3. 能独立完成脚本理解、素材剪辑、配乐、字幕等；4. 审美良好，节奏感强',
+                        employerId: 102,
+                        employerName: '李经理（传媒公司）'
+                    },
+                    {
+                        id: 3,
+                        title: '奶茶店店员（兼职）',
+                        type: '服务',
+                        location: '海淀区中关村',
+                        time: '周末全天',
+                        settle: '日结',
+                        publishDate: '2025-05-01',
+                        desc: '中关村奶茶店招聘兼职店员，主要负责点单、制作奶茶、清洁等工作，薪资28元/小时，日结。',
+                        salary: '¥28/小时',
+                        salaryPerHour: 28,
+                        city: 'beijing',
+                        isRemote: false,
+                        require: '1. 年龄18-30岁，形象良好；2. 能吃苦耐劳，有服务意识；3. 周末能全天上班；4. 有餐饮行业经验优先',
+                        employerId: 103,
+                        employerName: '张店长（奶茶店）'
+                    },
+                    {
+                        id: 4,
+                        title: 'Python编程兼职',
+                        type: 'IT/互联网',
+                        location: '远程办公',
+                        time: '工作日晚上',
+                        settle: '周结',
+                        publishDate: '2025-04-25',
+                        desc: '招聘Python编程兼职，主要负责数据处理、简单爬虫开发等工作，薪资300元/天，周结。',
+                        salary: '¥300/天',
+                        salaryPerHour: 37.5,
+                        city: '',
+                        isRemote: true,
+                        require: '1. 熟练掌握Python基础语法；2. 熟悉爬虫、数据分析优先；3. 能独立完成简单的编程任务；4. 有良好的代码规范',
+                        employerId: 104,
+                        employerName: '陈工程师（科技公司）'
+                    },
+                    {
+                        id: 5,
+                        title: '线上文案编辑兼职',
+                        type: '设计/创意',
+                        location: '远程办公',
+                        time: '灵活安排',
+                        settle: '按篇结',
+                        publishDate: '2025-05-09',
+                        desc: '负责公众号、小红书文案撰写，要求文字功底扎实，有网感，能抓住热点话题。',
+                        salary: '¥150/篇',
+                        salaryPerHour: 75,
+                        city: '',
+                        isRemote: true,
+                        require: '1. 中文相关专业优先；2. 有新媒体文案经验；3. 能独立完成选题和撰写；4. 按时交稿不拖延',
+                        employerId: 105,
+                        employerName: '刘编辑（自媒体工作室）'
+                    },
+                    {
+                        id: 6,
+                        title: '校园推广兼职',
+                        type: '服务',
+                        location: '北京科技大学',
+                        time: '工作日下午',
+                        settle: '日结',
+                        publishDate: '2025-05-05',
+                        desc: '负责校园内APP推广，引导学生下载注册，按有效用户数量结算，日结薪资。',
+                        salary: '¥120/天',
+                        salaryPerHour: 30,
+                        city: 'beijing',
+                        isRemote: false,
+                        require: '1. 在校大学生优先；2. 性格开朗，善于沟通；3. 有推广经验者优先；4. 能完成每日推广指标',
+                        employerId: 106,
+                        employerName: '赵经理（推广公司）'
+                    },
+                    {
+                        id: 7,
+                        title: 'UI设计兼职',
+                        type: '设计/创意',
+                        location: '远程办公',
+                        time: '灵活安排',
+                        settle: '按单结',
+                        publishDate: '2025-04-30',
+                        desc: '负责移动端APP界面设计，根据需求完成原型和视觉设计，按项目结算费用。',
+                        salary: '¥500/单',
+                        salaryPerHour: 125,
+                        city: '',
+                        isRemote: true,
+                        require: '1. 设计相关专业；2. 熟练使用Figma、Sketch等设计工具；3. 有UI设计作品；4. 理解用户体验设计原则',
+                        employerId: 107,
+                        employerName: '孙总监（设计公司）'
+                    }
+                ];
+                this.filteredJobs = [...this.allJobs];
+                
+                // 从本地存储加载状态
+                this.loadFromLocalStorage();
+                // 初始渲染
+                this.renderAll();
+            },
 
-        // 排序兼职（模拟）
-        function sortJobs(sortType) {
-            alert(`已切换排序方式：${
-                sortType === 'salary-desc' ? '薪资从高到低' : 
-                sortType === 'salary-asc' ? '薪资从低到高' : 
-                sortType === 'time-desc' ? '最新发布' : '热度优先'
-            }`);
-        }
+            loadFromLocalStorage() {
+                const applied = localStorage.getItem('appliedJobIds');
+                const collected = localStorage.getItem('collectedJobIds');
+                if (applied) this.appliedJobIds = new Set(JSON.parse(applied));
+                if (collected) this.collectedJobIds = new Set(JSON.parse(collected));
+            },
 
-        // 回车键触发检索
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && (e.target.id === 'keyword' || e.target.id === 'location')) {
-                searchJobs();
-            }
-        });
+            saveToLocalStorage() {
+                localStorage.setItem('appliedJobIds', JSON.stringify([...this.appliedJobIds]));
+                localStorage.setItem('collectedJobIds', JSON.stringify([...this.collectedJobIds]));
+            },
 
-        // 分页按钮点击事件
-        document.querySelectorAll('.page-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // 移除所有分页按钮的active类
-                document.querySelectorAll('.page-btn').forEach(el => {
-                    el.classList.remove('active');
+            applyFilters(filters) {
+                this.filteredJobs = this.allJobs.filter(job => {
+                    // 关键词筛选
+                    if (filters.keyword && !job.title.includes(filters.keyword) && !job.desc.includes(filters.keyword)) {
+                        return false;
+                    }
+                    // 城市筛选
+                    if (filters.city && job.city !== filters.city) return false;
+                    // 工作类型筛选
+                    if (filters.jobType && job.type !== filters.jobType) return false;
+                    // 薪资筛选
+                    if (filters.salary) {
+                        const [min, max] = filters.salary.split('-').map(Number);
+                        if (job.salaryPerHour < min || (max && job.salaryPerHour > max)) return false;
+                    }
+                    // 标签筛选
+                    if (filters.tags.length) {
+                        if (filters.tags.includes('remote') && !job.isRemote) return false;
+                        if (filters.tags.includes('dailyPay') && job.settle !== '日结') return false;
+                        if (filters.tags.includes('weekend') && job.time !== '周末' && job.time !== '周末全天') return false;
+                    }
+                    return true;
                 });
-                // 给当前按钮添加active类（除了箭头）
-                if (this.textContent !== '«' && this.textContent !== '»') {
-                    this.classList.add('active');
+                this.renderAll();
+            },
+
+            applyJob(jobId) {
+                this.appliedJobIds.add(jobId);
+                this.saveToLocalStorage();
+                this.renderAll();
+                alert('投递成功！可在"我的投递"中查看进度');
+            },
+
+            toggleCollect(jobId) {
+                if (this.collectedJobIds.has(jobId)) {
+                    this.collectedJobIds.delete(jobId);
+                    alert('已取消收藏');
+                } else {
+                    this.collectedJobIds.add(jobId);
+                    alert('收藏成功！可在"我的收藏"中查看');
                 }
-                // 模拟分页
-                console.log(`切换到第${this.textContent}页`);
+                this.saveToLocalStorage();
+                this.renderAll();
+            },
+
+            renderAll() {
+                this.renderJobList();
+                this.updateResultCount();
+            },
+
+            renderJobList() {
+                const jobListEl = document.querySelector('.job-list');
+                if (!jobListEl) return;
+
+                jobListEl.innerHTML = this.filteredJobs.map(job => `
+                    <div class="job-item" onclick="jobDataCenter.openJobDetail(${job.id})">
+                        <div class="job-left">
+                            <div class="job-title">
+                                ${job.title}
+                                <span class="job-tag">${job.type}</span>
+                            </div>
+                            <div class="job-info">
+                                <div class="job-info-item">📍 ${job.location}</div>
+                                <div class="job-info-item">⏰ ${job.time}</div>
+                                <div class="job-info-item">💴 ${job.settle}</div>
+                                <div class="job-info-item">📅 ${job.publishDate}发布</div>
+                            </div>
+                            <div class="job-desc">${job.desc}</div>
+                        </div>
+                        <div class="job-right">
+                            <div class="job-salary">${job.salary}</div>
+                            <button class="job-btn" onclick="event.stopPropagation(); jobDataCenter.prepareDelivery(${job.id})"
+                                ${this.appliedJobIds.has(job.id) ? 'disabled' : ''}>
+                                ${this.appliedJobIds.has(job.id) ? '已投递' : '立即投递'}
+                            </button>
+                            <button class="collect-btn ${this.collectedJobIds.has(job.id) ? 'active' : ''}"
+                                onclick="event.stopPropagation(); jobDataCenter.toggleCollect(${job.id})">
+                                <span class="collect-icon">⭐</span>
+                                ${this.collectedJobIds.has(job.id) ? '已收藏' : '收藏'}
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            updateResultCount() {
+                const countEl = document.querySelector('.result-count strong');
+                if (countEl) {
+                    countEl.textContent = this.filteredJobs.length;
+                }
+            },
+
+            openJobDetail(jobId) {
+                this.currentJobId = jobId;
+                const job = this.allJobs.find(j => j.id === jobId);
+                if (!job) return;
+
+                const detailHtml = `
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">工作类型</span>
+                            <span class="detail-value">${job.type}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">工作地点</span>
+                            <span class="detail-value">${job.location}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">工作时间</span>
+                            <span class="detail-value">${job.time}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">结算方式</span>
+                            <span class="detail-value">${job.settle}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">薪资水平</span>
+                            <span class="detail-value">${job.salary}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">发布时间</span>
+                            <span class="detail-value">${job.publishDate}</span>
+                        </div>
+                    </div>
+                    <h4>职位描述</h4>
+                    <div class="detail-desc">${job.desc}</div>
+                    <h4 style="margin-top: 15px;">任职要求</h4>
+                    <div class="detail-desc">${job.require}</div>
+                    <h4 style="margin-top: 15px;">雇主信息</h4>
+                    <div class="detail-desc">${job.employerName}</div>
+                `;
+
+                document.getElementById('detailTitle').textContent = job.title;
+                document.getElementById('detailContent').innerHTML = detailHtml;
+                document.querySelector('#jobDetailModal .btn-default').textContent = 
+                    this.collectedJobIds.has(jobId) ? '取消收藏' : '收藏';
+                openModal('jobDetailModal');
+            },
+
+            // 准备投递 - 打开简历选择弹窗
+            prepareDelivery(jobId) {
+                if (this.appliedJobIds.has(jobId)) {
+                    alert('该职位已投递，请勿重复投递！');
+                    return;
+                }
+                this.currentJobId = jobId;
+                this.selectedResumeId = null;
+                renderResumeList();
+                
+                // 设置弹窗标题，显示职位名称
+                const job = this.allJobs.find(j => j.id === jobId);
+                document.getElementById('resumeModalTitle').textContent = `选择简历投递 - ${job.title}`;
+                
+                openModal('resumeSelectModal');
+            }
+        };
+
+        // 简历数据
+        const resumeData = [
+            { id: 1, name: "通用简历", type: "基础版", updateTime: "2025-04-20" },
+            { id: 2, name: "教育类兼职简历", type: "专业版", updateTime: "2025-05-01" },
+            { id: 3, name: "设计类兼职简历", type: "专业版", updateTime: "2025-05-05" }
+        ];
+
+        // 弹窗控制
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 打开简历选择弹窗（从详情页）
+        function openResumeSelectModal() {
+            closeModal('jobDetailModal');
+            jobDataCenter.prepareDelivery(jobDataCenter.currentJobId);
+        }
+
+        // 渲染简历列表
+        function renderResumeList() {
+            const listEl = document.getElementById('resumeSelectList');
+            listEl.innerHTML = resumeData.map(resume => `
+                <div class="resume-select-item ${jobDataCenter.selectedResumeId === resume.id ? 'selected' : ''}"
+                    onclick="selectResume(${resume.id})">
+                    <div class="resume-select-info">
+                        <div class="resume-select-name">${resume.name}</div>
+                        <div class="resume-select-type">${resume.type} | 最后更新：${resume.updateTime}</div>
+                    </div>
+                    <div class="resume-select-check">✓</div>
+                </div>
+            `).join('');
+        }
+
+        // 选择简历
+        function selectResume(resumeId) {
+            jobDataCenter.selectedResumeId = resumeId;
+            renderResumeList();
+        }
+
+        // 确认投递
+        function confirmResumeSelection() {
+            if (!jobDataCenter.selectedResumeId) {
+                alert('请选择要投递的简历');
+                return;
+            }
+
+            // 执行投递操作
+            jobDataCenter.applyJob(jobDataCenter.currentJobId);
+            
+            // 关闭弹窗
+            closeModal('resumeSelectModal');
+            
+            // 重置选中的简历ID
+            jobDataCenter.selectedResumeId = null;
+        }
+
+        // 详情页收藏切换
+        function toggleDetailCollect() {
+            jobDataCenter.toggleCollect(jobDataCenter.currentJobId);
+            document.querySelector('#jobDetailModal .btn-default').textContent = 
+                jobDataCenter.collectedJobIds.has(jobDataCenter.currentJobId) ? '取消收藏' : '收藏';
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            jobDataCenter.init();
+
+            // 搜索按钮事件
+            document.querySelector('.search-btn').addEventListener('click', () => {
+                const filters = {
+                    keyword: document.getElementById('keyword').value,
+                    city: document.getElementById('city').value,
+                    jobType: document.getElementById('jobType').value,
+                    salary: document.getElementById('salary').value,
+                    tags: Array.from(document.querySelectorAll('.filter-tag.active'))
+                        .filter(tag => tag.textContent !== '全部兼职')
+                        .map(tag => {
+                            switch(tag.textContent) {
+                                case '远程兼职': return 'remote';
+                                case '日结兼职': return 'dailyPay';
+                                case '周末兼职': return 'weekend';
+                                default: return null;
+                            }
+                        }).filter(Boolean)
+                };
+                jobDataCenter.applyFilters(filters);
+            });
+
+            // 筛选标签点击事件
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    // 处理"全部兼职"标签的互斥逻辑
+                    if (tag.textContent === '全部兼职') {
+                        document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                        tag.classList.add('active');
+                    } else {
+                        document.querySelector('.filter-tag').classList.remove('active');
+                        tag.classList.toggle('active');
+                    }
+                });
             });
         });
     </script>
