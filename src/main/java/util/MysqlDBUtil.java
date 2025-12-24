@@ -14,7 +14,7 @@ public class MysqlDBUtil {
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String URL = "jdbc:mysql://localhost:3306/studentparttimejobdb?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8";
     private static final String USER = "root";
-    private static final String PASSWORD = "040105"; // 改为你的MySQL密码
+    private static final String PASSWORD = "20040331"; // 改为你的MySQL密码
 
     // 加载驱动
     static {
