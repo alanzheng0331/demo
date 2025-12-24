@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>登录</title>
-
+    
     <style>
         * {
             margin: 0;
@@ -275,7 +275,7 @@
     </div>
 
     <!-- 用户登录表单 -->
-    <form id="userLoginForm" class="login-box" action="userLoginProcess.jsp" method="POST">
+    <form id="userLoginForm" class="login-box" action="http://localhost:8080/part_time_system_war_exploded/servletTest" method="POST">
         <div class="form-group">
             <label for="username">用户名</label>
             <input type="text" id="username" name="username" class="form-control" placeholder="请输入用户名" required>
@@ -294,8 +294,8 @@
         </div>
     </form>
 
-    <!-- 企业登录表单 - 核心修改：action指向Servlet路径，字段名保持不变 -->
-    <form id="adminLoginForm" class="login-box hidden" action="${pageContext.request.contextPath}/company/login" method="POST">
+    <!-- 企业登录表单 -->
+    <form id="adminLoginForm" class="login-box hidden" action="http://localhost:8080/part_time_system_war_exploded/servletTest" method="POST">
         <div class="form-group">
             <label for="adminUsername">企业名称</label>
             <input type="text" id="adminUsername" name="adminUsername" class="form-control" placeholder="请输入企业名称" required>
@@ -324,49 +324,6 @@
     </div>
 </a>
 
-<script>
-    // 替换原login.js的功能，确保标签切换正常
-    function showUserLogin() {
-        document.getElementById('userLoginForm').classList.remove('hidden');
-        document.getElementById('adminLoginForm').classList.add('hidden');
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        document.querySelectorAll('.tab-btn')[1].classList.remove('active');
-    }
-
-    function showAdminLogin() {
-        document.getElementById('adminLoginForm').classList.remove('hidden');
-        document.getElementById('userLoginForm').classList.add('hidden');
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        document.querySelectorAll('.tab-btn')[0].classList.remove('active');
-    }
-
-    // 页面加载时显示错误提示（适配Servlet返回的errorMsg）
-    window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const errorMsg = urlParams.get('errorMsg');
-        const companyName = urlParams.get('companyName');
-
-        // 如果有错误信息，自动切换到企业登录标签并显示提示
-        if (errorMsg) {
-            showAdminLogin();
-            // 创建错误提示元素
-            const errorDiv = document.createElement('div');
-            errorDiv.style.color = '#e74c3c';
-            errorDiv.style.marginBottom = '20px';
-            errorDiv.style.textAlign = 'center';
-            errorDiv.style.fontWeight = 'bold';
-            errorDiv.textContent = errorMsg;
-
-            // 将提示插入到企业登录表单顶部
-            const adminForm = document.getElementById('adminLoginForm');
-            adminForm.insertBefore(errorDiv, adminForm.firstChild);
-
-            // 回填企业名称
-            if (companyName) {
-                document.getElementById('adminUsername').value = companyName;
-            }
-        }
-    }
-</script>
+<!--<script src="login.js"></script>-->
 </body>
 </html>

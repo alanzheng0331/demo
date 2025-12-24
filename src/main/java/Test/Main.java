@@ -3,18 +3,16 @@ package test;
 
 import test.test.TestModelDao;
 import test.test.TestRoot;
-import test.test.TestUser;
+
 
 /**
  * 测试类：基于用户提供的测试表（test/test_user/test_company）测试核心方法
  */
 public class Main {
     public static void main(String[] args) {
-        new TestModelDao().mainX();
+        //new TestModelDao().mainX();
         try{
-            new TestUser().Test_Login();
-            new TestUser().Test_Register();
-            new TestUser().Test_Show();
+
             new TestRoot().Test_Login();
             new TestRoot().Test_Show();
         }catch(Exception e){

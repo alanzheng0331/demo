@@ -37,7 +37,7 @@ document.getElementById('userLoginForm').addEventListener('submit', function(e) 
     }
 
     // 验证通过：跳转到个人用户首页
-    window.location.href = '../user/index.html';
+    // window.location.href = '../user/index.html';
 });
 
 // 企业（admin）登录表单 - 带跳转

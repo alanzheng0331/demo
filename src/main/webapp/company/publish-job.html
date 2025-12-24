@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 发布兼职职位</title>
+    <style>
+        /* 全局样式重置 - 与企业端一致 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 顶部导航栏 - 完全复用企业端样式 */
+        .navbar {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-item a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item a:hover, .nav-item a.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .auth-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        /* 主内容区 - 表单样式 */
+        .form-section {
+            padding: 40px 0;
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3e50;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .form-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            margin: 10px auto 0;
+        }
+
+        .form-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #2d3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: "*";
+            color: #e74c3c;
+            margin-left: 5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        /* 薪资范围 - 双输入框布局 */
+        .salary-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .salary-item {
+            flex: 1;
+        }
+
+        .salary-unit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* 结算方式 - 单选按钮样式 */
+        .settle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .settle-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .settle-radio {
+            width: 16px;
+            height: 16px;
+            accent-color: #3498db;
+        }
+
+        /* 时间范围 - 双日期布局 */
+        .date-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .date-item {
+            flex: 1;
+        }
+
+        /* 文本域样式 */
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        /* 表单提示 */
+        .form-tip {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        /* 提交按钮 */
+        .form-submit {
+            background-color: #3498db;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 4px;
+            display: block;
+            margin: 30px auto 0;
+        }
+
+        .form-submit:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* 底部区域 - 复用企业端样式 */
+        .footer {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        .footer-col ul li a:hover {
+            color: #3498db;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .salary-group, .date-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-wrap {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .auth-btns {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .settle-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-submit {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 - 与企业端首页一致 -->
+    <nav class="navbar">
+        <div class="container navbar-wrap">
+            <a href="companyIndex.html" class="logo">
+                <h1>易兼职·企业端</h1>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="companyIndex.html">首页</a></li>
+                <li class="nav-item"><a href="publish-job.html" class="active">发布兼职</a></li>
+                <li class="nav-item"><a href="HelpCenter.html">帮助中心</a></li>
+            </ul>
+            <div class="auth-btns">
+                <button class="login-btn" onclick="window.location.href='enterprise-login.html'">企业登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 - 发布兼职表单 -->
+    <section class="form-section">
+        <div class="container">
+            <h3 class="form-title">发布兼职职位</h3>
+            <div class="form-card">
+                <form id="publishForm" onsubmit="return validateForm()">
+                    <!-- 职位名称 -->
+                    <div class="form-group">
+                        <label class="form-label required">职位名称</label>
+                        <input type="text" class="form-input" id="jobTitle" name="jobTitle" placeholder="例如：小学家教、短视频剪辑、奶茶店店员">
+                        <p class="form-tip">请填写清晰的职位名称，便于求职者快速识别</p>
+                    </div>
+
+                    <!-- 薪资待遇 -->
+                    <div class="form-group">
+                        <label class="form-label required">薪资待遇</label>
+                        <div class="salary-group">
+                            <div class="salary-item">
+                                <input type="number" class="form-input" id="minSalary" name="minSalary" placeholder="最低薪资" min="0" step="0.01">
+                            </div>
+                            <div class="salary-item">
+                                <input type="number" class="form-input" id="maxSalary" name="maxSalary" placeholder="最高薪资" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <div class="salary-unit">
+                            <label><input type="radio" name="salaryUnit" value="hour" checked class="settle-radio"> 元/小时</label>
+                            <label><input type="radio" name="salaryUnit" value="day" class="settle-radio"> 元/天</label>
+                            <label><input type="radio" name="salaryUnit" value="piece" class="settle-radio"> 元/单</label>
+                        </div>
+                    </div>
+
+                    <!-- 工作地点 -->
+                    <div class="form-group">
+                        <label class="form-label required">工作地点</label>
+                        <input type="text" class="form-input" id="workLocation" name="workLocation" placeholder="例如：北京市朝阳区亚运村、远程办公">
+                        <p class="form-tip">请填写具体地址或注明“远程办公”，便于求职者判断</p>
+                    </div>
+
+                    <!-- 结算方式 -->
+                    <div class="form-group">
+                        <label class="form-label required">结算方式</label>
+                        <div class="settle-group">
+                            <div class="settle-item">
+                                <input type="radio" name="settleType" value="day" class="settle-radio" id="settleDay" checked>
+                                <label for="settleDay">日结</label>
+                            </div>
+                            <div class="settle-item">
+                                <input type="radio" name="settleType" value="week" class="settle-radio" id="settleWeek">
+                                <label for="settleWeek">周结</label>
+                            </div>
+                            <div class="settle-item">
+                                <input type="radio" name="settleType" value="month" class="settle-radio" id="settleMonth">
+                                <label for="settleMonth">月结</label>
+                            </div>
+                            <div class="settle-item">
+                                <input type="radio" name="settleType" value="piece" class="settle-radio" id="settlePiece">
+                                <label for="settlePiece">按单结</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 时间范围选择 -->
+                    <div class="form-group">
+                        <label class="form-label required">工作时间范围</label>
+                        <div class="date-group">
+                            <div class="date-item">
+                                <input type="date" class="form-input" id="startDate" name="startDate">
+                            </div>
+                            <div class="date-item">
+                                <input type="date" class="form-input" id="endDate" name="endDate">
+                            </div>
+                        </div>
+                        <p class="form-tip">请选择兼职的起止时间，若为长期兼职可填写预计结束时间</p>
+                    </div>
+
+                    <!-- 对接雇主 -->
+                    <div class="form-group">
+                        <label class="form-label required">对接雇主</label>
+                        <input type="text" class="form-input" id="contactPerson" name="contactPerson" placeholder="填写联系人姓名">
+                        <input type="tel" class="form-input" id="contactPhone" name="contactPhone" placeholder="填写联系电话" style="margin-top: 10px;">
+                        <p class="form-tip">将作为求职者的对接人信息，将对外展示（可填写工作手机号）</p>
+                    </div>
+
+                    <!-- 岗位要求 -->
+                    <div class="form-group">
+                        <label class="form-label required">岗位要求</label>
+                        <textarea class="form-textarea" id="jobRequire" name="jobRequire" placeholder="例如：1. 本科及以上学历；2. 有相关工作经验优先；3. 能吃苦耐劳..."></textarea>
+                        <p class="form-tip">请列出核心要求，每条要求单独一行，便于求职者快速查看</p>
+                    </div>
+
+                    <!-- 职位描述 -->
+                    <div class="form-group">
+                        <label class="form-label required">职位描述</label>
+                        <textarea class="form-textarea" id="jobDesc" name="jobDesc" placeholder="详细描述工作内容、工作时间、任职要求补充等信息..."></textarea>
+                        <p class="form-tip">描述越详细，越容易吸引合适的求职者</p>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <button type="submit" class="form-submit">发布兼职职位</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部区域 - 复用企业端样式 -->
+    <footer class="footer">
+        <div class="container footer-wrap">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">企业合作</a></li>
+                    <li><a href="#">新闻动态</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>服务支持</h3>
+                <ul>
+                    <li><a href="HelpCenter.html">帮助中心</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">知识产权</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <ul>
+                    <li><a href="#">电话：400-123-4567</a></li>
+                    <li><a href="#">邮箱：service@yijianzhi.com</a></li>
+                    <li><a href="#">地址：北京市朝阳区XX大厦</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container copyright">
+            © 2025 易兼职 版权所有 | 京ICP备12345678号
+        </div>
+    </footer>
+
+    <script>
+        // 表单验证逻辑
+        function validateForm() {
+            const jobTitle = document.getElementById('jobTitle').value.trim();
+            const minSalary = document.getElementById('minSalary').value;
+            const maxSalary = document.getElementById('maxSalary').value;
+            const workLocation = document.getElementById('workLocation').value.trim();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const contactPerson = document.getElementById('contactPerson').value.trim();
+            const contactPhone = document.getElementById('contactPhone').value.trim();
+            const jobRequire = document.getElementById('jobRequire').value.trim();
+            const jobDesc = document.getElementById('jobDesc').value.trim();
+
+            // 职位名称验证
+            if (!jobTitle) {
+                alert('请填写职位名称');
+                return false;
+            }
+
+            // 薪资验证
+            if (!minSalary || !maxSalary) {
+                alert('请填写完整的薪资范围');
+                return false;
+            }
+            if (parseFloat(minSalary) > parseFloat(maxSalary)) {
+                alert('最低薪资不能大于最高薪资');
+                return false;
+            }
+
+            // 工作地点验证
+            if (!workLocation) {
+                alert('请填写工作地点');
+                return false;
+            }
+
+            // 时间范围验证
+            if (!startDate || !endDate) {
+                alert('请选择完整的工作时间范围');
+                return false;
+            }
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('开始时间不能晚于结束时间');
+                return false;
+            }
+
+            // 对接人信息验证
+            if (!contactPerson) {
+                alert('请填写联系人姓名');
+                return false;
+            }
+            const phoneReg = /^1[3-9]\d{9}$/;
+            if (!phoneReg.test(contactPhone)) {
+                alert('请填写有效的联系电话');
+                return false;
+            }
+
+            // 岗位要求验证
+            if (!jobRequire) {
+                alert('请填写岗位要求');
+                return false;
+            }
+            if (jobRequire.split('\n').length < 2) {
+                alert('岗位要求至少填写2条核心内容');
+                return false;
+            }
+
+            // 职位描述验证
+            if (!jobDesc) {
+                alert('请填写职位描述');
+                return false;
+            }
+            if (jobDesc.length < 50) {
+                alert('职位描述请至少填写50字，描述越详细越易吸引求职者');
+                return false;
+            }
+
+            // 验证通过，模拟提交
+            alert('兼职职位发布成功！平台将在1-2个工作日内审核，审核通过后将对外展示');
+            return true;
+        }
+
+        // 导航栏滚动效果 - 复用企业端逻辑
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.style.padding = '15px 0';
+            }
+        });
+
+        // 初始化日期选择（默认开始日期为今天）
+        window.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            // 默认结束日期为7天后
+            const nextWeek = new Date();
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            document.getElementById('endDate').value = nextWeek.toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>

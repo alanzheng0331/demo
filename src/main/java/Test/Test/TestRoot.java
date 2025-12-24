@@ -9,6 +9,7 @@ public class TestRoot {
     }
 
     public void Test_Show() throws Exception {
-        System.out.println(new AllOfImpl().RootShow());
+        System.out.println(new AllOfImpl().RootShowUser());
+        System.out.println(new AllOfImpl().RootShowCompany());
     }
 }

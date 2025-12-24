@@ -34,10 +34,12 @@ public class RootLoginDao extends ModelDao {
     public List<Map<String, Object>> Test_RUNNING(String USERNAME,String PASSWORD) throws Exception {
         if(USERNAME.equals("root") && PASSWORD.equals("root")){
             // 获取数据模板
-            List<Map<String, Object>> dataList = PublicDao.getTestUserInsertTemplate();
+            // 1. 创建实例（自动初始化空值模板）
+            PublicDao publicDao =new PublicDao();
+            List<Map<String, Object>> dataList = publicDao.getUserInsertTemplate();
             // 直接修改第一个Map中的值（索引为0）
-            dataList.get(0).put("NAME", USERNAME);       // 修改NAME
-            dataList.get(0).put("PASSWORD", USERNAME);       // 修改PASSWORD
+            dataList.get(0).put(publicDao.getUserName(), USERNAME);       // 修改NAME
+            dataList.get(0).put(publicDao.getUserName(), USERNAME);       // 修改PASSWORD
             //直接插入
             return dataList;
         }else{

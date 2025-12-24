@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易兼职 - 企业端 | 投诉兼职者</title>
+    <style>
+        /* 全局样式重置 - 复用企业端统一样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 顶部导航栏 - 复用企业端样式，帮助中心/意见反馈高亮 */
+        .navbar {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-item a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item a:hover, .nav-item a.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .auth-btns {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        /* 主内容区 - 投诉表单样式 */
+        .feedback-section {
+            padding: 40px 0;
+            min-height: calc(100vh - 220px);
+        }
+
+        .feedback-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3e50;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .feedback-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .feedback-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            margin: 10px auto 0;
+        }
+
+        .feedback-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .feedback-tip {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #2d3e50;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .feedback-tip strong {
+            color: #e74c3c;
+        }
+
+        /* 表单通用样式 */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #2d3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: "*";
+            color: #e74c3c;
+            margin-left: 5px;
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-select:focus, .form-input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 150px;
+            transition: border-color 0.3s ease;
+            line-height: 1.8;
+        }
+
+        .form-textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-tip {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .form-tip.count {
+            text-align: right;
+            color: #999;
+        }
+
+        .form-tip.warning {
+            color: #e74c3c;
+            display: none;
+        }
+
+        .form-tip.warning.show {
+            display: block;
+        }
+
+        /* 提交按钮 */
+        .form-submit {
+            background-color: #e74c3c;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 4px;
+            display: block;
+            margin: 30px auto 0;
+        }
+
+        .form-submit:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* 底部区域 - 复用企业端样式 */
+        .footer {
+            background-color: #2d3e50;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        .footer-col ul li a:hover {
+            color: #3498db;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .feedback-card {
+                padding: 25px;
+            }
+
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-wrap {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .auth-btns {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .form-submit {
+                width: 100%;
+            }
+
+            .feedback-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 - 复用企业端样式，意见反馈高亮 -->
+    <nav class="navbar">
+        <div class="container navbar-wrap">
+            <a href="companyIndex.html" class="logo">
+                <h1>易兼职·企业端</h1>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="companyIndex.html">首页</a></li>
+                <li class="nav-item"><a href="publish-job.html">发布兼职</a></li>
+               
+                <li class="nav-item"><a href="HelpCenter.html">帮助中心</a></li>
+                
+            </ul>
+            <div class="auth-btns">
+                <button class="login-btn" onclick="window.location.href='enterprise-login.html'">企业登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 - 投诉兼职者表单 -->
+    <section class="feedback-section">
+        <div class="container">
+            <h3 class="feedback-title">投诉兼职者</h3>
+            <p class="feedback-subtitle">请准确填写投诉信息，平台将在1-3个工作日内核实处理</p>
+            
+            <div class="feedback-card">
+                <!-- 投诉提示 -->
+                <div class="feedback-tip">
+                    <strong>投诉须知：</strong>请确保投诉信息真实有效，恶意投诉将限制企业账号使用权限；平台仅受理兼职者违规行为投诉（如旷工、虚报工时、工作质量不达标等），其他问题请联系客服。
+                </div>
+                
+                <form id="complaintForm" onsubmit="return validateComplaintForm()">
+                    <!-- 1. 选择发布的兼职岗位 -->
+                    <div class="form-group">
+                        <label class="form-label required" for="jobSelect">所属兼职岗位</label>
+                        <select class="form-select" id="jobSelect" name="jobSelect" onchange="loadJobWorkers()">
+                            <option value="">-- 请选择你发布的兼职岗位 --</option>
+                            <!-- 模拟发布的兼职岗位数据 -->
+                            <option value="1">展会引导员（2025-12-20 北京国际会展中心）</option>
+                            <option value="2">餐饮服务员（2025-12-22 朝阳区XX餐厅）</option>
+                            <option value="3">物流分拣员（2025-12-25 顺义区物流园）</option>
+                        </select>
+                        <p class="form-tip warning" id="jobSelectTip">请选择所属兼职岗位</p>
+                    </div>
+
+                    <!-- 2. 选择被投诉的兼职者（联动加载） -->
+                    <div class="form-group">
+                        <label class="form-label required" for="workerSelect">被投诉兼职者</label>
+                        <select class="form-select" id="workerSelect" name="workerSelect">
+                            <option value="">-- 请先选择兼职岗位 --</option>
+                        </select>
+                        <p class="form-tip warning" id="workerSelectTip">请选择被投诉的兼职者</p>
+                        <p class="form-tip">兼职者信息包含姓名/手机号（脱敏显示），仅企业和平台可见</p>
+                    </div>
+
+                    <!-- 3. 投诉类型 -->
+                    <div class="form-group">
+                        <label class="form-label required" for="complaintType">投诉类型</label>
+                        <select class="form-select" id="complaintType" name="complaintType">
+                            <option value="">-- 请选择投诉类型 --</option>
+                            <option value="absenteeism">旷工（未按时到岗/擅自离岗）</option>
+                            <option value="falseHours">虚报工时（多报工作时长）</option>
+                            <option value="workQuality">工作质量不达标（未完成指定工作）</option>
+                            <option value="violateRules">违反工作规则（与客户/同事冲突）</option>
+                            <option value="other">其他违规行为</option>
+                        </select>
+                        <p class="form-tip warning" id="complaintTypeTip">请选择投诉类型</p>
+                    </div>
+
+                    <!-- 4. 投诉原因（详细描述） -->
+                    <div class="form-group">
+                        <label class="form-label required" for="complaintReason">投诉详细原因</label>
+                        <textarea class="form-textarea" id="complaintReason" name="complaintReason" placeholder="请详细描述投诉原因，包括：事件发生时间、具体行为、造成的影响等（例：2025-12-20 10:00，兼职者小李未按时到岗，导致展会入口无人引导，影响参展人员入场效率...）" oninput="countTextLength()"></textarea>
+                        <p class="form-tip count" id="textCount">0/500 字</p>
+                        <p class="form-tip warning" id="complaintReasonTip">请填写投诉详细原因（至少50字）</p>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <button type="submit" class="form-submit">提交投诉</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部区域 - 复用企业端样式 -->
+    <footer class="footer">
+        <div class="container footer-wrap">
+            <div class="footer-col">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">平台介绍</a></li>
+                    <li><a href="#">企业合作</a></li>
+                    <li><a href="#">新闻动态</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>服务支持</h3>
+                <ul>
+                    <li><a href="HelpCenter.html">帮助中心</a></li>
+                    <li><a href="feedback.html">意见反馈</a></li>
+                    <li><a href="#">联系客服</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>法律条款</h3>
+                <ul>
+                    <li><a href="#">用户协议</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">知识产权</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <ul>
+                    <li><a href="#">电话：400-123-4567</a></li>
+                    <li><a href="#">邮箱：service@yijianzhi.com</a></li>
+                    <li><a href="#">地址：北京市朝阳区XX大厦</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container copyright">
+            © 2025 易兼职 版权所有 | 京ICP备12345678号
+        </div>
+    </footer>
+
+    <script>
+        // ========== 模拟数据：岗位对应的兼职者列表 ==========
+        const jobWorkersMap = {
+            "1": [ // 展会引导员
+                { id: "101", name: "小李（138****5678）" },
+                { id: "102", name: "小张（139****1234）" },
+                { id: "103", name: "小王（137****8765）" }
+            ],
+            "2": [ // 餐饮服务员
+                { id: "201", name: "小赵（158****4321）" },
+                { id: "202", name: "小钱（159****9876）" }
+            ],
+            "3": [ // 物流分拣员
+                { id: "301", name: "小孙（188****6543）" },
+                { id: "302", name: "小周（189****2109）" },
+                { id: "303", name: "小吴（178****8907）" }
+            ]
+        };
+
+        // ========== 核心功能：岗位选择联动加载兼职者 ==========
+        function loadJobWorkers() {
+            const jobSelect = document.getElementById("jobSelect");
+            const workerSelect = document.getElementById("workerSelect");
+            const selectedJobId = jobSelect.value;
+
+            // 清空兼职者下拉框
+            workerSelect.innerHTML = "";
+
+            // 未选择岗位时提示
+            if (!selectedJobId) {
+                workerSelect.innerHTML = '<option value="">-- 请先选择兼职岗位 --</option>';
+                return;
+            }
+
+            // 加载对应岗位的兼职者
+            const workers = jobWorkersMap[selectedJobId];
+            if (workers && workers.length > 0) {
+                // 添加默认选项
+                let options = '<option value="">-- 请选择被投诉的兼职者 --</option>';
+                // 拼接兼职者选项
+                workers.forEach(worker => {
+                    options += `<option value="${worker.id}">${worker.name}</option>`;
+                });
+                workerSelect.innerHTML = options;
+            } else {
+                // 该岗位暂无兼职者
+                workerSelect.innerHTML = '<option value="">该岗位暂无兼职者</option>';
+            }
+
+            // 清空错误提示
+            document.getElementById("workerSelectTip").classList.remove("show");
+        }
+
+        // ========== 投诉原因字数统计 ==========
+        function countTextLength() {
+            const complaintReason = document.getElementById("complaintReason");
+            const textCount = document.getElementById("textCount");
+            const length = complaintReason.value.trim().length;
+            textCount.textContent = `${length}/500 字`;
+
+            // 字数超限提示
+            if (length > 500) {
+                complaintReason.value = complaintReason.value.trim().slice(0, 500);
+                textCount.textContent = `500/500 字`;
+                document.getElementById("complaintReasonTip").textContent = "投诉原因最多500字，已自动截断";
+                document.getElementById("complaintReasonTip").classList.add("show");
+            } else {
+                document.getElementById("complaintReasonTip").classList.remove("show");
+            }
+        }
+
+        // ========== 表单提交验证 ==========
+        function validateComplaintForm() {
+            let isValid = true;
+
+            // 1. 验证兼职岗位
+            const jobSelect = document.getElementById("jobSelect");
+            const jobSelectTip = document.getElementById("jobSelectTip");
+            if (!jobSelect.value) {
+                jobSelectTip.classList.add("show");
+                isValid = false;
+            } else {
+                jobSelectTip.classList.remove("show");
+            }
+
+            // 2. 验证兼职者
+            const workerSelect = document.getElementById("workerSelect");
+            const workerSelectTip = document.getElementById("workerSelectTip");
+            if (!workerSelect.value) {
+                workerSelectTip.classList.add("show");
+                isValid = false;
+            } else {
+                workerSelectTip.classList.remove("show");
+            }
+
+            // 3. 验证投诉类型
+            const complaintType = document.getElementById("complaintType");
+            const complaintTypeTip = document.getElementById("complaintTypeTip");
+            if (!complaintType.value) {
+                complaintTypeTip.classList.add("show");
+                isValid = false;
+            } else {
+                complaintTypeTip.classList.remove("show");
+            }
+
+            // 4. 验证投诉原因（至少50字）
+            const complaintReason = document.getElementById("complaintReason");
+            const complaintReasonTip = document.getElementById("complaintReasonTip");
+            const reasonLength = complaintReason.value.trim().length;
+            if (reasonLength < 50) {
+                complaintReasonTip.textContent = `投诉原因至少50字（当前仅${reasonLength}字）`;
+                complaintReasonTip.classList.add("show");
+                isValid = false;
+            } else {
+                complaintReasonTip.classList.remove("show");
+            }
+
+            // 验证不通过时滚动到第一个错误项
+            if (!isValid) {
+                const firstError = document.querySelector(".form-tip.warning.show");
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+                return false;
+            }
+
+            // 验证通过，模拟提交
+            const formData = new FormData();
+            formData.append("jobId", jobSelect.value);
+            formData.append("workerId", workerSelect.value);
+            formData.append("complaintType", complaintType.value);
+            formData.append("complaintReason", complaintReason.value.trim());
+
+            // 模拟接口提交
+            alert(`投诉提交成功！\n\n投诉信息：\n1. 兼职岗位：${jobSelect.options[jobSelect.selectedIndex].text}\n2. 被投诉者：${workerSelect.options[workerSelect.selectedIndex].text}\n3. 投诉类型：${complaintType.options[complaintType.selectedIndex].text}\n\n平台将尽快核实，处理结果将通过企业中心和预留邮箱通知您。`);
+            
+            // 重置表单
+            document.getElementById("complaintForm").reset();
+            document.getElementById("textCount").textContent = "0/500 字";
+
+            return false; // 阻止默认提交
+        }
+
+        // ========== 导航栏滚动效果 ==========
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.style.padding = '15px 0';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+USE StudentPartTimeJobDB;
+GO
+
+-- 1. 禁用所有外键
+DECLARE @sql NVARCHAR(MAX) = N'';
+SELECT @sql += N'ALTER TABLE [' + s.name + N'].[' + t.name + N'] DROP CONSTRAINT [' + fk.name + N'];' + CHAR(13)
+FROM   sys.foreign_keys fk
+JOIN   sys.tables      t ON fk.parent_object_id = t.object_id
+JOIN   sys.schemas     s ON t.schema_id = s.schema_id;
+EXEC (@sql);
+GO
+
+-- 2. 删除所有用户表
+DECLARE @sql2 NVARCHAR(MAX) = N'';
+SELECT @sql2 += N'DROP TABLE [' + s.name + N'].[' + t.name + N'];' + CHAR(13)
+FROM   sys.tables  t
+JOIN   sys.schemas s ON t.schema_id = s.schema_id
+WHERE  t.is_ms_shipped = 0;   -- 只删用户表
+EXEC (@sql2);
+GO
+
+
+/* =====================================================
+   学生兼职平台 - SQL Server 版
+   仅保留建表及索引，已去掉所有 MySQL 特有语法与测试数据
+   ===================================================== */
+
+-- 1. 求职申请表
+IF OBJECT_ID('t_apply', 'U') IS NOT NULL DROP TABLE t_apply;
+GO
+
+CREATE TABLE t_apply
+(
+    id            bigint IDENTITY(1,1) NOT NULL,
+    user_id       bigint NOT NULL,
+    job_id        bigint NOT NULL,
+    resume_id     bigint NOT NULL,
+    attach_info   nvarchar(max) NULL,               -- 附加说明
+    apply_status  nvarchar(20) NOT NULL,            -- 申请状态（如：已投递/已面试/已录用/已拒绝）
+    apply_time    datetime2 NOT NULL,               -- 申请时间
+    update_time   datetime2 NOT NULL,               -- 状态最后更新时间
+    CONSTRAINT PK_t_apply PRIMARY KEY (id),
+    CONSTRAINT UK_t_apply_user_job UNIQUE (user_id, job_id)
+);
+GO
+
+CREATE INDEX IX_t_apply_job  ON t_apply (job_id);
+CREATE INDEX IX_t_apply_user ON t_apply (user_id);
+GO
+
+-- 2. 企业信息表
+IF OBJECT_ID('t_company', 'U') IS NOT NULL DROP TABLE t_company;
+GO
+
+CREATE TABLE t_company
+(
+    id               bigint IDENTITY(1,1) NOT NULL,
+    company_name     nvarchar(200) NOT NULL,        -- 企业名称
+    credit_code      nvarchar(18)  NOT NULL,        -- 统一社会信用代码
+    legal_person_name nvarchar(50) NOT NULL,        -- 法人姓名
+    company_address  nvarchar(500) NOT NULL,        -- 企业地址
+    company_phone    nvarchar(20)  NOT NULL,        -- 企业联系电话
+    company_pwd      nvarchar(32)  NOT NULL,        -- 登录密码（MD5）
+    company_avatar   nvarchar(500) NULL,            -- 企业 LOGO/头像 URL
+    status           int NULL,                       -- 状态：0 未审核 1 已通过 2 已封禁
+    create_time      datetime2 NULL,                -- 注册时间
+    update_time      datetime2 NULL,                -- 资料更新时间
+    verify_code      nvarchar(6)  NULL,             -- 手机验证码
+    code_create_time datetime2 NULL,                -- 验证码生成时间
+    CONSTRAINT PK_t_company PRIMARY KEY (id),
+    CONSTRAINT UK_t_company_name       UNIQUE (company_name),
+    CONSTRAINT UK_t_company_credit_code UNIQUE (credit_code)
+);
+GO
+
+CREATE INDEX IX_t_company_credit_code ON t_company (credit_code);
+CREATE INDEX IX_t_company_phone       ON t_company (company_phone);
+GO
+
+-- 3. 兼职评价表
+IF OBJECT_ID('t_evaluate', 'U') IS NOT NULL DROP TABLE t_evaluate;
+GO
+
+CREATE TABLE t_evaluate
+(
+    id          bigint IDENTITY(1,1) NOT NULL,
+    user_id     bigint NOT NULL,                    -- 评价人（求职者）
+    job_id      bigint NOT NULL,                    -- 岗位 ID
+    salary_score int NOT NULL,                     -- 薪资评分 1-5
+    real_score   int NOT NULL,                     -- 真实度评分 1-5
+    env_score    int NOT NULL,                     -- 工作环境评分 1-5
+    content      nvarchar(max) NULL,               -- 评价内容
+    reply        nvarchar(max) NULL,               -- 企业回复
+    create_time  datetime2 NOT NULL,               -- 评价时间
+    reply_time   datetime2 NULL,                   -- 回复时间
+    CONSTRAINT PK_t_evaluate PRIMARY KEY (id)
+);
+GO
+
+CREATE INDEX IX_t_evaluate_job ON t_evaluate (job_id);
+GO
+
+-- 4. 兼职岗位表
+IF OBJECT_ID('t_job', 'U') IS NOT NULL DROP TABLE t_job;
+GO
+
+CREATE TABLE t_job
+(
+    id            bigint IDENTITY(1,1) NOT NULL,
+    title         nvarchar(100) NOT NULL,          -- 岗位标题
+    type          nvarchar(50)  NOT NULL,          -- 岗位类型（如：派单/家教/促销）
+    province      nvarchar(50)  NULL,              -- 省
+    city          nvarchar(50)  NULL,              -- 市
+    district      nvarchar(50)  NULL,              -- 区
+    salary        decimal(10,2) NOT NULL,          -- 薪资（元/天或元/小时）
+    salary_range  nvarchar(50)  NULL,              -- 薪资区间文本描述
+    content       nvarchar(max) NULL,              -- 岗位描述
+    company_name  nvarchar(100) NOT NULL,          -- 发布企业名称
+    apply_count   int NOT NULL DEFAULT 0,          -- 已申请人数
+    publish_time  datetime2 NOT NULL,              -- 发布时间
+    valid_time    datetime2 NOT NULL,              -- 截止有效期
+    status        nvarchar(20)  NOT NULL,          -- 状态（如：招聘中/已结束/已关闭）
+    publisher_id  bigint NOT NULL,                 -- 发布人（企业用户 ID）
+    CONSTRAINT PK_t_job PRIMARY KEY (id)
+);
+GO
+
+CREATE INDEX IX_t_job_publisher ON t_job (publisher_id);
+GO
+
+-- 5. 用户消息表
+IF OBJECT_ID('t_message', 'U') IS NOT NULL DROP TABLE t_message;
+GO
+
+CREATE TABLE t_message
+(
+    id          bigint IDENTITY(1,1) NOT NULL,
+    user_id     bigint NOT NULL,                    -- 接收用户
+    msg_type    nvarchar(50) NOT NULL,              -- 消息类型（系统/面试/录用）
+    title       nvarchar(100) NOT NULL,             -- 消息标题
+    content     nvarchar(max) NOT NULL,             -- 消息内容
+    is_read     int NOT NULL DEFAULT 0,             -- 是否已读 0 未读 1 已读
+    create_time datetime2 NOT NULL,                 -- 发送时间
+    update_time datetime2 NULL,                     -- 阅读时间
+    CONSTRAINT PK_t_message PRIMARY KEY (id)
+);
+GO
+
+CREATE INDEX IX_t_message_user ON t_message (user_id);
+GO
+
+-- 6. 用户简历表
+IF OBJECT_ID('t_resume', 'U') IS NOT NULL DROP TABLE t_resume;
+GO
+
+CREATE TABLE t_resume
+(
+    id              bigint IDENTITY(1,1) NOT NULL,
+    user_id         bigint NOT NULL,                -- 所属用户
+    resume_name     nvarchar(100) NOT NULL,         -- 简历名称（如：默认简历）
+    file_path       nvarchar(255) NOT NULL,         -- 文件存储路径
+    file_name       nvarchar(100) NOT NULL,         -- 原始文件名
+    education       nvarchar(50)  NULL,             -- 学历
+    work_experience nvarchar(max) NULL,             -- 工作经历
+    skill_tags      nvarchar(200) NULL,             -- 技能标签，逗号分隔
+    expected_salary nvarchar(50)  NULL,             -- 期望薪资
+    is_default      int NOT NULL DEFAULT 0,         -- 是否默认简历 0 否 1 是
+    create_time     datetime2 NOT NULL,             -- 创建时间
+    update_time     datetime2 NOT NULL,             -- 更新时间
+    CONSTRAINT PK_t_resume PRIMARY KEY (id)
+);
+GO
+
+CREATE INDEX IX_t_resume_user ON t_resume (user_id);
+GO
+
+-- 7. 用户信息表
+IF OBJECT_ID('t_user', 'U') IS NOT NULL DROP TABLE t_user;
+GO
+
+CREATE TABLE t_user
+(
+    id              bigint IDENTITY(1,1) NOT NULL,
+    role            nvarchar(20)  NOT NULL,         -- 角色：job_seeker / company
+    name            nvarchar(50)  NOT NULL,         -- 姓名/昵称
+    phone           nvarchar(20)  NOT NULL,         -- 手机号（登录账号）
+    email           nvarchar(100) NULL,             -- 邮箱
+    password        nvarchar(100) NOT NULL,         -- 密码（加密后）
+    skill_tags      nvarchar(200) NULL,             -- 技能标签
+    expected_salary nvarchar(50)  NULL,             -- 期望薪资
+    avatar          nvarchar(200) NULL,             -- 头像 URL
+    create_time     datetime2 NOT NULL,             -- 注册时间
+    update_time     datetime2 NOT NULL,             -- 资料更新时间
+    status          int NOT NULL DEFAULT 1,         -- 状态：0 禁用 1 正常
+    CONSTRAINT PK_t_user PRIMARY KEY (id),
+    CONSTRAINT UK_t_user_phone UNIQUE (phone)
+);
+GO
+
+
+
+-- 学生兼职平台 SQL Server 版 - 数据插入脚本
+-- 说明：执行前需确保建表脚本已执行，且切换到目标数据库
+USE StudentPartTimeJobDB;
+GO
+
+-- ======================================
+-- 1. 插入用户信息表 t_user 数据
+-- ======================================
+-- 注意：id是IDENTITY自增列，无需手动插入，由SQL Server自动生成
+INSERT INTO t_user (
+    role, name, phone, email, password,
+    skill_tags, expected_salary, avatar,
+    create_time, update_time, status
+)
+VALUES
+('job_seeker', 'user1', '18162790472', '', '123456', '', '', NULL, '2025-12-23 05:11:21', '2025-12-23 05:11:21', 1),
+('job_seeker', 'user2', '19071212195', '', '123456', '', '', NULL, '2025-12-23 05:26:35', '2025-12-23 05:26:35', 1),
+('job_seeker', 'user3', '18155637158', '', '123456', '', '', NULL, '2025-12-23 05:32:06', '2025-12-23 05:32:06', 1),
+('job_seeker', 'user4', '18155886423', '', '123456', '', '', NULL, '2025-12-23 06:11:39', '2025-12-23 06:11:39', 1),
+('job_seeker', 'user5', '18153263235', '', '123456', '', '', NULL, '2025-12-23 06:13:15', '2025-12-23 06:13:15', 1);
+GO
+
+-- ======================================
+-- 2. 插入企业信息表 t_company 数据
+-- ======================================
+-- 注意：id是IDENTITY自增列，无需手动插入；company_name和credit_code为唯一约束，数据不可重复
+INSERT INTO t_company (
+    company_name, credit_code, legal_person_name, company_address,
+    company_phone, company_pwd, company_avatar, status,
+    create_time, update_time, verify_code, code_create_time
+)
+VALUES
+-- 企业1：科技公司
+('北京智联科技有限公司', '91110108MA000001X', '张三', '北京市海淀区中关村大街1号',
+ '010-12345678', 'e10adc3949ba59abbe56e057f20f883e', '/avatar/company/1.png', 1,
+ '2025-12-20 10:00:00', '2025-12-20 10:00:00', '668899', '2025-12-20 09:59:00'),
+-- 企业2：教育公司
+('上海学而思教育科技有限公司', '91310115MA000002Y', '李四', '上海市浦东新区张江高科技园区博云路2号',
+ '021-87654321', 'e10adc3949ba59abbe56e057f20f883e', '/avatar/company/2.png', 1,
+ '2025-12-20 10:05:00', '2025-12-20 10:05:00', '123456', '2025-12-20 10:04:00'),
+-- 企业3：零售公司
+('广州沃尔玛超市有限公司', '91440101MA000003Z', '王五', '广州市天河区天河路383号',
+ '020-23456789', 'e10adc3949ba59abbe56e057f20f883e', '/avatar/company/3.png', 2,
+ '2025-12-20 10:10:00', '2025-12-20 10:10:00', '987654', '2025-12-20 10:09:00'),
+-- 企业4：餐饮公司（未审核状态）
+('深圳海底捞餐饮股份有限公司', '91440300MA000004A', '赵六', '深圳市南山区科技园南区科苑路10号',
+ '0755-34567890', 'e10adc3949ba59abbe56e057f20f883e', '/avatar/company/4.png', 0,
+ '2025-12-20 10:15:00', '2025-12-20 10:15:00', '456789', '2025-12-20 10:14:00');
+GO
+
+-- 若后续需要添加其他表的测试数据，可在此扩展
+-- 示例：INSERT INTO t_job (...) VALUES (...);

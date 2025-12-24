@@ -12,7 +12,7 @@ import java.util.Map;
 public class UserLoginDao extends ModelDao {
     public UserLoginDao() {
         super(
-                new TableNameBasis().getTableNameTestUser()
+                new TableNameBasis().getTableNameUser()
         );
     }
 
@@ -33,7 +33,7 @@ public class UserLoginDao extends ModelDao {
     //测试 手动输入：
     public List<Map<String, Object>> Test_RUNNING(String PASSWORD, String USERNAME, String PHONE) throws Exception {
         // 获取数据模板
-        List<Map<String, Object>> dataList = PublicDao.getTestUserInsertTemplate();
+        List<Map<String, Object>> dataList = new PublicDao().getUserInsertTemplate();
         //System.out.println(dataList);
         // 直接修改第一个Map中的值（索引为0）
                 dataList.get(0).put("PASSWORD", PASSWORD);     // 修改USER_ID

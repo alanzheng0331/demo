@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Test页面 - 接收表单数据</title>
+</head>
+<body>
+<h1>从登录表单接收的数据：</h1>
+<div id="data-container"></div>
+
+<script>
+    // 封装函数：获取URL中的参数
+    function getUrlParam(paramName) {
+        // 获取URL参数部分
+        var search = window.location.search.substring(1);
+        // 分割成键值对数组
+        var params = search.split("&");
+        for (var i = 0; i < params.length; i++) {
+            var pair = params[i].split("=");
+            // 解码参数值（对应Servlet中的URLEncoder）
+            if (pair[0] === paramName) {
+                return decodeURIComponent(pair[1] || "");
+            }
+        }
+        return ""; // 无参数时返回空
+    }
+
+    // 获取所有参数
+    var username = getUrlParam("username");
+    var password = getUrlParam("password");
+    var adminUsername = getUrlParam("adminUsername");
+    var adminPassword = getUrlParam("adminPassword");
+
+    // 展示数据到页面
+    var container = document.getElementById("data-container");
+    container.innerHTML = `
+            <p>用户登录 - 用户名：${username}</p>
+            <p>用户登录 - 密码：${password}</p>
+            <hr>
+            <p>企业登录 - 企业名称：${adminUsername}</p>
+            <p>企业登录 - 企业密码：${adminPassword}</p>
+        `;
+</script>
+</body>
+</html>
